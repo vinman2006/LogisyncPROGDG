@@ -180,9 +180,8 @@ function AppContent() {
         }}
       />
 
-      {/* ─── HERO SECTION with Three.js particle background ───────────────── */}
-      <div className="relative overflow-hidden">
-        <ThreeJsBackground />
+      {/* ─── HERO SECTION with Sticky Scroll-Driven Logistics Conveyor ───── */}
+      <div className="relative">
         <HeroShipmentStream 
           onOpenDashboard={handleOpenLogin}
           onOpenAiAssistant={() => handleOpenAiAssistant()}
