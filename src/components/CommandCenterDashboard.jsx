@@ -57,6 +57,7 @@ import ApiHubDashboard from './ApiHubDashboard';
 import ShipmentJourneyFlow from './ShipmentJourneyFlow';
 import DocumentViewerModal from './DocumentViewerModal';
 import ProofOfDeliveryModal from './ProofOfDeliveryModal';
+import LogiSyncAiAssistant from './LogiSyncAiAssistant';
 
 // ─── LOGISYNCPRO LOGO ICON ──────────────────────────────────────────────────
 const LogiSyncMark = () => (
@@ -541,11 +542,8 @@ export default function CommandCenterDashboard({
                   key={item.id}
                   type="button"
                   onClick={() => {
-                    if (item.isAi && onOpenAiAssistant) {
-                      onOpenAiAssistant();
-                    } else {
-                      setActiveTab(item.id);
-                    }
+                    // AI assistant opens as a full inline tab
+                    setActiveTab(item.id);
                   }}
                   className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                     isActive
@@ -837,6 +835,19 @@ export default function CommandCenterDashboard({
           {activeTab === 'create-shipment' && renderCreateShipmentView()}
           {activeTab === 'messages' && renderMessagesView()}
           {activeTab === 'settings' && renderSettingsView()}
+          {activeTab === 'ai-assistant' && (
+            <div className="h-full flex flex-col">
+              <LogiSyncAiAssistant
+                isOpen={true}
+                inline={true}
+                onClose={() => setActiveTab('command-center')}
+                initialQuery=''
+                onOpenDashboard={() => setActiveTab('command-center')}
+                onOpenApiHub={() => setActiveTab('api-hub')}
+                onOpenPublicMap={() => setActiveTab('public-transit-map')}
+              />
+            </div>
+          )}
         </main>
       </div>
 

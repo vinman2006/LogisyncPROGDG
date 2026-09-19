@@ -42,7 +42,8 @@ export default function LogiSyncAiAssistant({
   initialQuery = '',
   onOpenDashboard,
   onOpenApiHub,
-  onOpenPublicMap 
+  onOpenPublicMap,
+  inline = false,
 }) {
   const [apiKey, setApiKey] = useState(() => {
     return localStorage.getItem('logisync_gemini_api_key') || import.meta.env.VITE_GEMINI_API_KEY || '';
@@ -290,22 +291,30 @@ export default function LogiSyncAiAssistant({
 
   if (!isOpen) return null;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-end">
-      {/* Backdrop */}
-      <div 
-        onClick={onClose}
-        className="fixed inset-0 bg-black/75 backdrop-blur-sm transition-opacity duration-300 cursor-pointer"
-      />
+  // Inline mode: fills parent. Modal mode: fixed overlay drawer.
+  const outerClass = inline
+    ? 'flex flex-col h-full bg-[#030e0b] text-white'
+    : 'fixed inset-0 z-50 flex items-center justify-end';
 
-      {/* Main Drawer / Modal Panel */}
-      <div 
-        className={`relative z-50 flex flex-col bg-[#030e0b] border-l border-[#13493b] shadow-2xl text-white transition-all duration-300 ${
-          isFullScreen 
-            ? 'w-full h-full max-w-none' 
-            : 'w-full max-w-2xl h-full sm:h-[94vh] sm:my-auto sm:mr-4 sm:rounded-3xl border sm:border-[#1b5c49]'
-        }`}
-      >
+  const innerClass = inline
+    ? 'flex flex-col flex-1 bg-[#030e0b] text-white overflow-hidden'
+    : `relative z-50 flex flex-col bg-[#030e0b] border-l border-[#13493b] shadow-2xl text-white transition-all duration-300 ${
+        isFullScreen
+          ? 'w-full h-full max-w-none'
+          : 'w-full max-w-2xl h-full sm:h-[94vh] sm:my-auto sm:mr-4 sm:rounded-3xl border sm:border-[#1b5c49]'
+      }`;
+
+  return (
+    <div className={outerClass}>
+      {/* Backdrop (modal mode only) */}
+      {!inline && (
+        <div
+          onClick={onClose}
+          className="fixed inset-0 bg-black/75 backdrop-blur-sm transition-opacity duration-300 cursor-pointer"
+        />
+      )}
+      {/* Main Panel */}
+      <div className={innerClass}>
         {/* ─── 1. TOP HEADER BAR ────────────────────────────────────────── */}
         <div className="h-16 px-6 border-b border-[#0f382e] bg-[#051713] flex items-center justify-between shrink-0 sm:rounded-t-3xl">
           <div className="flex items-center gap-3">
