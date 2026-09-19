@@ -34,6 +34,10 @@ export async function getPool() {
     },
   });
 
+  poolInstance.on('error', (err) => {
+    console.warn('[NeonDB] Idle client pool connection error caught:', err.message);
+  });
+
   return poolInstance;
 }
 

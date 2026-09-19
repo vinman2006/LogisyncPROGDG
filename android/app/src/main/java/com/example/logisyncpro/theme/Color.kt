@@ -1,4 +1,4 @@
-package com.example.logisyncpro.theme
+﻿package com.example.logisyncpro.theme
 
 import androidx.compose.ui.graphics.Color
 
@@ -34,3 +34,6 @@ val StatusDeliveredText = Color(0xFF818CF8)
 
 val StatusCancelledBg = Color(0x33EF4444)
 val StatusCancelledText = Color(0xFFF87171)
+
+val SafetyOrangeBg = Color(0x33FF5500)
+val EmeraldBg = Color(0x2210B981)

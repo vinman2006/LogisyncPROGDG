@@ -122,7 +122,7 @@ function AppContent() {
           initialTab={dashboardTab}
           onExitToLanding={() => setCurrentView('landing')}
           onOpenOnboarding={handleOpenOnboarding}
-          onOpenAiAssistant={() => handleOpenAiAssistant()}
+          onOpenAiAssistant={(query) => handleOpenAiAssistant(query)}
         />
       </div>
     );

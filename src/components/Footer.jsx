@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, ArrowRight, Globe, ChevronDown } from 'lucide-react';
+import { Mail, ArrowRight, Globe, ChevronDown, X, ExternalLink, Sparkles, Check } from 'lucide-react';
 
 // ─── 3D ISOMETRIC LOGISYNC CUBE MARK ─────────────────────────────────────────
 const LogiSyncCubeMark = () => (
@@ -74,6 +74,116 @@ const SocialIconInstagram = () => (
   </svg>
 );
 
+// ─── FOOTER INFO MODAL CONTENT SPECIFICATIONS ────────────────────────────────
+const FOOTER_MODAL_DATA = {
+  careers: {
+    title: 'Careers at LogiSyncPRO',
+    badge: 'ENGINEERING & OPS',
+    subtitle: 'Build the world’s most responsive multi-modal logistics platform.',
+    description: 'We are hiring systems engineers, machine learning scientists, and logistics network architects across remote and regional hub locations.',
+    items: [
+      { title: 'Staff Distributed Systems Engineer (Rust / Elixir)', meta: 'Telemetry & Event Stream', tag: 'Remote' },
+      { title: 'Logistics AI Research Scientist (Python / PyTorch)', meta: 'Predictive Neural Dispatch', tag: 'Hybrid' },
+      { title: 'Senior Product Designer & Design Systems', meta: 'Design & Interaction', tag: 'Remote' },
+      { title: 'Global Maritime Solutions Architect', meta: 'Carrier Integration & AIS', tag: 'Dubai / Mumbai' }
+    ],
+    actionText: 'Apply with Gemini AI',
+    actionQuery: 'Tell me about career openings, interview stages, and how to submit an application for engineering or operations roles at LogiSyncPRO.'
+  },
+  blog: {
+    title: 'LogiSyncPRO Engineering Blog',
+    badge: 'RESEARCH & TECH',
+    subtitle: 'Deep dives on distributed telemetry, neural dispatching, and zero-variance cold chains.',
+    description: 'Explore our latest architecture whitepapers and engineering postmortems on global supply chain optimization.',
+    items: [
+      { title: 'Predictive Port Congestion Bypass with Heuristic Neural Models', meta: 'Machine Learning • 8 min read', tag: 'AI' },
+      { title: 'Benchmarking NeonDB PostgreSQL for 10M Real-Time Sensor Telemetry Packets', meta: 'Database Architecture • 6 min read', tag: 'Postgres' },
+      { title: 'Eliminating Maritime Demurrage with Automated Smart Bills of Lading', meta: 'Supply Chain Operations • 5 min read', tag: 'Operations' }
+    ],
+    actionText: 'Discuss Research with AI',
+    actionQuery: 'Summarize key engineering breakthroughs and logistics innovations from the LogiSyncPRO engineering blog.'
+  },
+  news: {
+    title: 'Press & Logistics News',
+    badge: 'PLATFORM RELEASES',
+    subtitle: 'Official announcements, enterprise partnerships, and network rollouts.',
+    description: 'Stay updated on platform milestones, multi-modal network activations, and enterprise certifications.',
+    items: [
+      { title: 'LogiSyncPRO Deploys Multi-Agent Autonomous Dispatch Across Asia-Pacific', meta: 'Press Release • October 2026', tag: 'New' },
+      { title: 'Intermodal Rail-to-Ocean Visibility Network Integrated with GS1 EPCIS 2.0', meta: 'Partnership • September 2026', tag: 'Network' },
+      { title: 'LogiSyncPRO Achieves ISO 27001 & SOC 2 Type II Cryptographic Compliance', meta: 'Security • August 2026', tag: 'Security' }
+    ],
+    actionText: 'View API & Integration Hub',
+    actionType: 'api-hub'
+  },
+  contact: {
+    title: 'Enterprise Support & Sales',
+    badge: '24/7 GLOBAL NOC',
+    subtitle: 'Direct channels for enterprise accounts, freight forwarders, and carrier networks.',
+    description: 'Our global logistics engineering and operations team is available around the clock to support enterprise deployments.',
+    items: [
+      { title: 'Global Enterprise Sales Desk', meta: 'enterprise@logisyncpro.com', tag: '+1 (800) 564-4796' },
+      { title: '24/7 Live Telemetry Dispatch Desk', meta: 'noc@logisyncpro.com', tag: 'Direct Line' },
+      { title: 'Developer & Webhook Support', meta: 'api-support@logisyncpro.com', tag: 'REST & Webhooks' }
+    ],
+    actionText: 'Ask Gemini Assistant',
+    actionQuery: 'I would like to contact LogiSyncPRO enterprise sales and customer support for high-volume freight logistics.'
+  },
+  privacy: {
+    title: 'Privacy & Data Governance Charter',
+    badge: 'GDPR / CCPA / ISO 27701',
+    subtitle: 'Cryptographic data isolation and zero third-party telemetry monetization.',
+    description: 'LogiSyncPRO strictly protects your freight, cargo manifests, and fleet telemetry with enterprise role-based encryption and tamper-evident audit logs.',
+    items: [
+      { title: 'NeonDB Cryptographic Isolation', meta: 'Tenant data strictly segregated in private Postgres schemas', tag: 'Compliant' },
+      { title: 'GPS Telemetry Anonymization', meta: 'Driver identities decoupled from public coordinate streams', tag: 'Protected' },
+      { title: 'Immutable Audit Trail', meta: 'All custody handoffs recorded in append-only cryptographic event tables', tag: 'Verified' }
+    ],
+    actionText: 'Review Security Specifications',
+    actionQuery: 'Explain LogiSyncPRO data protection policies, GDPR compliance, and encryption standards.'
+  },
+  terms: {
+    title: 'Terms of Service & SLA',
+    badge: 'ENTERPRISE SLA 99.99%',
+    subtitle: 'Operational guarantees, automated demurrage mitigation, and carrier terms.',
+    description: 'Our Master Services Agreement delivers clear operational standards, high API availability guarantees, and automated delay reconciliation.',
+    items: [
+      { title: '99.99% High Availability Guarantee', meta: 'Carrier dispatch API and tracking streams backed by service credits', tag: '99.99%' },
+      { title: 'Demurrage Arbitration Protocol', meta: 'Algorithmic delay attribution across ports and customs facilities', tag: 'Guaranteed' },
+      { title: 'Multi-Modal Carrier Clearing', meta: 'Standardized custody transitions governed by GS1 EPCIS 2.0 specs', tag: 'Standard' }
+    ],
+    actionText: 'Ask Terms Details',
+    actionQuery: 'What are the Service Level Agreements and Terms of Service governing LogiSyncPRO freight transactions?'
+  },
+  cookies: {
+    title: 'Cookie & Local Storage Policy',
+    badge: 'STRICT PRIVACY',
+    subtitle: 'Zero third-party trackers, zero advertising pixels.',
+    description: 'We only utilize essential local storage and session cookies required for NeonDB authentication and map viewport rendering.',
+    items: [
+      { title: 'Session Authentication Storage', meta: 'Encrypted token storage for authorized workspace operations', tag: 'Essential' },
+      { title: 'Map Viewport Preferences', meta: 'Local caching of vector map coordinates and zoom levels', tag: 'Functional' },
+      { title: 'Zero Advertising Trackers', meta: 'No behavioral targeting, third-party analytics pixels, or ad networks', tag: 'Strict' }
+    ],
+    actionText: 'Got It, Close',
+    actionType: 'close'
+  },
+  sitemap: {
+    title: 'LogiSyncPRO Platform Directory',
+    badge: 'PLATFORM SITEMAP',
+    subtitle: 'Direct navigation to all application views and telemetry consoles.',
+    description: 'Explore our complete command infrastructure, public maps, and developer endpoints.',
+    items: [
+      { title: 'Command Center Dashboard', meta: 'Live fleet telemetry, active shipments, and corridor control', tag: 'Go &rarr;', nav: 'command-center' },
+      { title: 'OpenStreetMap Package Tracker', meta: 'Satellite and street-level package delivery GPS tracking', tag: 'Go &rarr;', nav: 'package-locations' },
+      { title: 'Public Transit Corridors Map', meta: 'Global maritime, air, and rail corridor visualization', tag: 'Go &rarr;', nav: 'public-map' },
+      { title: 'API Hub & GS1 EPCIS Specifications', meta: 'Interactive REST API testing and webhook event simulator', tag: 'Go &rarr;', nav: 'api-hub' }
+    ],
+    actionText: 'Open Command Center',
+    actionType: 'command-center'
+  }
+};
+
 export default function Footer({
   onOpenDashboard,
   onOpenAiAssistant,
@@ -84,6 +194,7 @@ export default function Footer({
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [selectedRegion, setSelectedRegion] = useState('India (EN)');
   const [isRegionMenuOpen, setIsRegionMenuOpen] = useState(false);
+  const [activeInfoModal, setActiveInfoModal] = useState(null);
 
   const handleNewsletterSubmit = (e) => {
     e.preventDefault();
@@ -229,24 +340,40 @@ export default function Footer({
                 </button>
               </li>
               <li>
-                <a href="#careers" className="hover:text-white transition-colors">
+                <button
+                  type="button"
+                  onClick={() => setActiveInfoModal('careers')}
+                  className="hover:text-white transition-colors cursor-pointer text-left"
+                >
                   Careers
-                </a>
+                </button>
               </li>
               <li>
-                <a href="#blog" className="hover:text-white transition-colors">
+                <button
+                  type="button"
+                  onClick={() => setActiveInfoModal('blog')}
+                  className="hover:text-white transition-colors cursor-pointer text-left"
+                >
                   Blog
-                </a>
+                </button>
               </li>
               <li>
-                <a href="#news" className="hover:text-white transition-colors">
+                <button
+                  type="button"
+                  onClick={() => setActiveInfoModal('news')}
+                  className="hover:text-white transition-colors cursor-pointer text-left"
+                >
                   News
-                </a>
+                </button>
               </li>
               <li>
-                <a href="#contact" className="hover:text-white transition-colors">
+                <button
+                  type="button"
+                  onClick={() => setActiveInfoModal('contact')}
+                  className="hover:text-white transition-colors cursor-pointer text-left"
+                >
                   Contact
-                </a>
+                </button>
               </li>
             </ul>
           </div>
@@ -385,18 +512,34 @@ export default function Footer({
           </div>
 
           <div className="flex flex-wrap items-center gap-5 sm:gap-6">
-            <a href="#privacy" className="hover:text-slate-300 transition-colors">
+            <button
+              type="button"
+              onClick={() => setActiveInfoModal('privacy')}
+              className="hover:text-slate-300 transition-colors cursor-pointer"
+            >
               Privacy
-            </a>
-            <a href="#terms" className="hover:text-slate-300 transition-colors">
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveInfoModal('terms')}
+              className="hover:text-slate-300 transition-colors cursor-pointer"
+            >
               Terms
-            </a>
-            <a href="#cookies" className="hover:text-slate-300 transition-colors">
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveInfoModal('cookies')}
+              className="hover:text-slate-300 transition-colors cursor-pointer"
+            >
               Cookies
-            </a>
-            <a href="#sitemap" className="hover:text-slate-300 transition-colors">
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveInfoModal('sitemap')}
+              className="hover:text-slate-300 transition-colors cursor-pointer"
+            >
               Sitemap
-            </a>
+            </button>
 
             {/* Region / Locale Dropdown */}
             <div className="relative">
@@ -435,6 +578,137 @@ export default function Footer({
           </div>
         </div>
       </div>
+
+      {/* ─── FOOTER INFORMATION / COMPLIANCE MODAL ───────────────────────── */}
+      {activeInfoModal && FOOTER_MODAL_DATA[activeInfoModal] && (() => {
+        const modal = FOOTER_MODAL_DATA[activeInfoModal];
+        return (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 select-none">
+            <div
+              onClick={() => setActiveInfoModal(null)}
+              className="fixed inset-0 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200 cursor-pointer"
+            />
+            <div className="relative w-full max-w-xl bg-[#061424] border border-[#1e3456] rounded-3xl p-6 sm:p-8 text-slate-200 shadow-2xl z-10 animate-in zoom-in-95 duration-200">
+              {/* Modal Header */}
+              <div className="flex items-center justify-between pb-4 border-b border-white/10">
+                <div className="flex items-center gap-2.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#ff5500] animate-pulse" />
+                  <span className="text-[10px] font-mono tracking-widest text-[#ff7733] font-bold uppercase">
+                    {modal.badge}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setActiveInfoModal(null)}
+                  aria-label="Close modal"
+                  className="w-8 h-8 rounded-full bg-[#0d2038] hover:bg-[#18365c] border border-white/10 text-slate-300 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+                >
+                  <X size={15} />
+                </button>
+              </div>
+
+              {/* Title & Subtitle */}
+              <div className="pt-4 pb-3">
+                <h3 className="text-xl sm:text-2xl font-display font-black text-white tracking-tight">
+                  {modal.title}
+                </h3>
+                <p className="text-xs text-[#ff7733] font-medium mt-0.5">
+                  {modal.subtitle}
+                </p>
+                <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                  {modal.description}
+                </p>
+              </div>
+
+              {/* Items List */}
+              <div className="space-y-2 py-3">
+                {modal.items.map((item, idx) => (
+                  <div
+                    key={idx}
+                    onClick={() => {
+                      if (item.nav) {
+                        setActiveInfoModal(null);
+                        if (item.nav === 'public-map') onOpenTransitMap?.();
+                        else if (item.nav === 'api-hub') onOpenApiHub?.();
+                        else onOpenDashboard?.(item.nav);
+                      }
+                    }}
+                    className={`p-3 rounded-2xl bg-[#091b30] border border-[#1b3456]/80 flex items-center justify-between gap-3 ${
+                      item.nav ? 'cursor-pointer hover:border-[#ff5500]/50 hover:bg-[#0e2744] transition-all' : ''
+                    }`}
+                  >
+                    <div className="min-w-0">
+                      <div className="text-xs font-bold text-white truncate">
+                        {item.title}
+                      </div>
+                      <div className="text-[11px] text-slate-400 truncate mt-0.5">
+                        {item.meta}
+                      </div>
+                    </div>
+                    <span className="shrink-0 px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-mono text-[#ff7733] font-semibold">
+                      {item.tag}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Modal Footer Buttons */}
+              <div className="pt-4 mt-2 border-t border-white/10 flex items-center justify-between gap-3">
+                {modal.actionQuery && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const q = modal.actionQuery;
+                      setActiveInfoModal(null);
+                      if (onOpenAiAssistant) onOpenAiAssistant(q);
+                    }}
+                    className="flex-1 py-2.5 px-4 rounded-full bg-gradient-to-r from-[#ff6b00] to-[#ff5500] hover:from-[#ff7700] hover:to-[#ff4400] text-slate-950 text-xs font-bold font-display uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md shadow-[#ff5500]/20 hover:scale-[1.02]"
+                  >
+                    <Sparkles size={13} className="text-slate-950" />
+                    <span>{modal.actionText}</span>
+                  </button>
+                )}
+
+                {modal.actionType === 'api-hub' && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveInfoModal(null);
+                      if (onOpenApiHub) onOpenApiHub();
+                    }}
+                    className="flex-1 py-2.5 px-4 rounded-full bg-[#ff5500] hover:bg-[#ff6924] text-slate-950 text-xs font-bold font-display uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md"
+                  >
+                    <span>{modal.actionText}</span>
+                    <ArrowRight size={13} />
+                  </button>
+                )}
+
+                {modal.actionType === 'command-center' && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveInfoModal(null);
+                      if (onOpenDashboard) onOpenDashboard('command-center');
+                    }}
+                    className="flex-1 py-2.5 px-4 rounded-full bg-[#ff5500] hover:bg-[#ff6924] text-slate-950 text-xs font-bold font-display uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md"
+                  >
+                    <span>{modal.actionText}</span>
+                    <ArrowRight size={13} />
+                  </button>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => setActiveInfoModal(null)}
+                  className="py-2.5 px-5 rounded-full bg-[#0a182c] hover:bg-[#102440] border border-white/10 text-xs font-mono text-slate-400 hover:text-white transition-colors cursor-pointer"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </footer>
   );
 }

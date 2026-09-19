@@ -11,6 +11,7 @@ import {
   ChevronDown,
   Plus,
   ArrowLeft,
+  ArrowRight,
   Clock,
   MapPin,
   Truck,
@@ -33,7 +34,11 @@ import {
   Database,
   Shield,
   Link2,
-  X
+  X,
+  Compass,
+  FileText,
+  PenTool,
+  Printer
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import {
@@ -49,6 +54,9 @@ import OpenStreetMapPackageTracker from './OpenStreetMapPackageTracker';
 import TransportSystemWorkflow from './TransportSystemWorkflow';
 import PublicTransitMap from './PublicTransitMap';
 import ApiHubDashboard from './ApiHubDashboard';
+import ShipmentJourneyFlow from './ShipmentJourneyFlow';
+import DocumentViewerModal from './DocumentViewerModal';
+import ProofOfDeliveryModal from './ProofOfDeliveryModal';
 
 // ─── LOGISYNCPRO LOGO ICON ──────────────────────────────────────────────────
 const LogiSyncMark = () => (
@@ -72,6 +80,14 @@ export default function CommandCenterDashboard({
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [notificationOpen, setNotificationOpen] = useState(false);
+  const [journeySelectedShipmentId, setJourneySelectedShipmentId] = useState(null);
+
+  const handleOpenJourney = (shipment) => {
+    if (shipment) {
+      setJourneySelectedShipmentId(shipment.tracking_number || shipment.id);
+    }
+    setActiveTab('shipment-journey');
+  };
 
   // NeonDB User Profile state
   const [neonUser, setNeonUser] = useState(() => onboardingProfile || null);
@@ -87,6 +103,26 @@ export default function CommandCenterDashboard({
   const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [isDbDetailsModalOpen, setIsDbDetailsModalOpen] = useState(false);
   const [activeSettingModal, setActiveSettingModal] = useState(null);
+
+  // Phase 1: e-BOL and e-POD Document Viewer State
+  const [isDocModalOpen, setIsDocModalOpen] = useState(false);
+  const [selectedDocShipment, setSelectedDocShipment] = useState(null);
+  const [docType, setDocType] = useState('bol'); // 'bol' | 'pod'
+
+  // Phase 1: Touch Signature & OTP Proof of Delivery Modal State
+  const [isPodModalOpen, setIsPodModalOpen] = useState(false);
+  const [podShipmentTarget, setPodShipmentTarget] = useState(null);
+
+  const handleOpenDoc = (shipment, type = 'bol') => {
+    setSelectedDocShipment(shipment);
+    setDocType(type);
+    setIsDocModalOpen(true);
+  };
+
+  const handleOpenPod = (shipment) => {
+    setPodShipmentTarget(shipment);
+    setIsPodModalOpen(true);
+  };
 
   useEffect(() => {
     if (onboardingProfile) {
@@ -346,6 +382,58 @@ export default function CommandCenterDashboard({
     }
   };
 
+  // ─── HANDLER: CONFIRM DELIVERY WITH RECEIVER POD & TOUCH SIGNATURE ────────
+  const handleConfirmDeliveryWithPod = async (shipmentId, podData) => {
+    setIsProcessingAction(true);
+    setActionError(null);
+    setActionSuccess(null);
+
+    try {
+      const targetReq = requests.find(r => r.id === shipmentId || r.tracking_number === shipmentId) || podShipmentTarget;
+      const dbId = targetReq?.id || shipmentId;
+      const trackingNumber = targetReq?.tracking_number || shipmentId;
+
+      const auditDescription = `Delivered & Verified by ${podData.receiverName} (${podData.receiverRole || 'Consignee'}). Seal: ${podData.sealNumber}. Handover OTP #${podData.otpCode}. Recipient Touch-Signature captured.`;
+
+      // Update status in NeonDB
+      await updateTransportStatus(user, dbId, 'DELIVERED', auditDescription);
+
+      const enrichedShipment = {
+        ...targetReq,
+        status: 'DELIVERED',
+        delivered_at: podData.deliveredAt,
+        pod_data: podData
+      };
+
+      // Update state locally
+      setRequests(prev => prev.map(r => {
+        if (r.id === dbId || r.tracking_number === trackingNumber) {
+          return {
+            ...r,
+            status: 'DELIVERED',
+            delivered_at: podData.deliveredAt,
+            pod_data: podData
+          };
+        }
+        return r;
+      }));
+
+      setActionSuccess(`Proof of Delivery recorded for ${trackingNumber}! Official e-POD is now generated.`);
+      setIsPodModalOpen(false);
+
+      // Automatically launch e-POD document viewer for instant download/preview
+      setSelectedDocShipment(enrichedShipment);
+      setDocType('pod');
+      setIsDocModalOpen(true);
+      await loadRequests(true);
+    } catch (err) {
+      console.error('[Dashboard] Error completing delivery with POD:', err);
+      setActionError(err.message || 'Could not record Proof of Delivery');
+    } finally {
+      setIsProcessingAction(false);
+    }
+  };
+
   // ─── HANDLER: VIEW AUDIT EVENT HISTORY ────────────────────────────────────
   const handleViewEvents = async (request) => {
     setSelectedRequestForEvents(request);
@@ -395,7 +483,11 @@ export default function CommandCenterDashboard({
       <aside className="w-64 bg-[#080f24] text-[#8da2c0] border-r border-[#151f38] flex flex-col justify-between shrink-0 z-30">
         <div>
           {/* Top Brand Logo */}
-          <div className="h-18 px-6 flex items-center gap-3 border-b border-[#151f38]">
+          <div 
+            onClick={onExitToLanding}
+            className={`h-18 px-6 flex items-center gap-3 border-b border-[#151f38] ${onExitToLanding ? 'cursor-pointer hover:bg-white/[0.02] transition-colors' : ''}`}
+            title="LogiSyncPRO - Return to Landing Page"
+          >
             <LogiSyncMark />
             <div className="flex items-baseline text-lg font-black tracking-tight text-white">
               <span>LogiSync</span>
@@ -424,6 +516,7 @@ export default function CommandCenterDashboard({
               { id: 'api-hub', label: 'API & Interop Hub', icon: Network },
               { id: 'public-transit-map', label: 'Public Map', icon: MapPin },
               { id: 'shipments', label: currentRole === 'TRANSPORT_PROVIDER' ? 'All Loads & Shipments' : 'My Shipments', icon: Package },
+              { id: 'shipment-journey', label: 'Shipment Journey', icon: Compass, badge: 'FLOW' },
               { id: 'transport-system', label: 'Transport System', icon: GitBranch },
               { id: 'package-locations', label: 'Private Fleet Map', icon: Map },
               { id: 'routes', label: 'Routes', icon: Share2 },
@@ -467,33 +560,6 @@ export default function CommandCenterDashboard({
               );
             })}
           </nav>
-        </div>
-
-        {/* Bottom Sidebar Tools & Support */}
-        <div className="p-4 border-t border-[#151f38] space-y-2">
-          {/* Quick Return to Landing Page */}
-          {onExitToLanding && (
-            <button
-              type="button"
-              onClick={onExitToLanding}
-              className="w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs text-[#8da2c0] hover:text-white bg-[#0f1733] hover:bg-[#162145] border border-[#1a274e] transition-all cursor-pointer"
-            >
-              <div className="flex items-center gap-2">
-                <Home size={14} />
-                <span>Landing Page</span>
-              </div>
-              <ExternalLink size={12} className="text-[#64748b]" />
-            </button>
-          )}
-
-          {/* Database Live Connectivity Indicator */}
-          <div className="px-3.5 py-2 rounded-xl bg-[#0b132b] border border-[#162248] flex items-center justify-between text-[11px]">
-            <div className="flex items-center gap-2 truncate">
-              <span className="w-2 h-2 rounded-full bg-[#00d68f] animate-pulse shrink-0" />
-              <span className="text-[#a5b4fc] truncate font-medium">NeonDB Postgres</span>
-            </div>
-            <span className="text-[9px] font-mono uppercase text-[#00d68f] font-bold">Synced</span>
-          </div>
         </div>
       </aside>
 
@@ -638,6 +704,20 @@ export default function CommandCenterDashboard({
                     <span>Workspace Settings</span>
                   </button>
 
+                  {onExitToLanding && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setUserDropdownOpen(false);
+                        onExitToLanding();
+                      }}
+                      className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-[#94a3b8] hover:bg-white/5 text-left transition-colors cursor-pointer"
+                    >
+                      <Home size={14} />
+                      <span>Back to Landing Page</span>
+                    </button>
+                  )}
+
                   <button
                     type="button"
                     onClick={async () => {
@@ -717,6 +797,32 @@ export default function CommandCenterDashboard({
           )}
           {activeTab === 'package-locations' && renderPackageLocationsView()}
           {activeTab === 'shipments' && renderShipmentsView()}
+          {activeTab === 'shipment-journey' && (
+            <ShipmentJourneyFlow
+              shipments={normalizedShipments}
+              initialSelectedId={journeySelectedShipmentId}
+              onSelectShipment={(id) => setJourneySelectedShipmentId(id)}
+              onBack={() => setActiveTab('shipments')}
+              user={user}
+              onUpdateStatus={handleUpdateStatus}
+              onOpenDoc={(shipment, type) => handleOpenDoc(shipment, type)}
+              onOpenPod={(shipment) => handleOpenPod(shipment)}
+              onAddEvent={async ({ requestId, eventType, description }) => {
+                try {
+                  if (user?.uid) {
+                    await fetch(`/api/transport-requests/${requestId}/events?uid=${encodeURIComponent(user.uid)}`, {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ eventType, description }),
+                    });
+                    await loadRequests(true);
+                  }
+                } catch (e) {
+                  console.warn('Could not record journey audit event:', e);
+                }
+              }}
+            />
+          )}
           {activeTab === 'routes' && renderRoutesView()}
           {activeTab === 'analytics' && renderAnalyticsView()}
           {activeTab === 'create-shipment' && renderCreateShipmentView()}
@@ -727,6 +833,24 @@ export default function CommandCenterDashboard({
 
       {/* ─── MODAL: SHIPMENT AUDIT EVENT HISTORY ────────────────────────────── */}
       {selectedRequestForEvents && renderAuditEventsModal()}
+
+      {/* ─── MODAL: ELECTRONIC BILL OF LADING & PROOF OF DELIVERY VIEWER ────── */}
+      <DocumentViewerModal
+        isOpen={isDocModalOpen}
+        onClose={() => setIsDocModalOpen(false)}
+        shipment={selectedDocShipment}
+        initialDocType={docType}
+      />
+
+      {/* ─── MODAL: RECEIVER TOUCH SIGNATURE & OTP HANDOVER ──────────────────── */}
+      <ProofOfDeliveryModal
+        isOpen={isPodModalOpen}
+        onClose={() => setIsPodModalOpen(false)}
+        shipment={podShipmentTarget}
+        onConfirmDelivery={async (shipmentId, podData) => {
+          await handleConfirmDeliveryWithPod(shipmentId, podData);
+        }}
+      />
     </div>
   );
 
@@ -915,13 +1039,48 @@ export default function CommandCenterDashboard({
                       }`}>
                         {req.status.replace('_', ' ')}
                       </span>
-                      <button
-                        type="button"
-                        onClick={() => handleViewEvents(req)}
-                        className="block text-[10px] text-[#7ea597] hover:text-[#10b981] mt-1 font-semibold cursor-pointer underline"
-                      >
-                        Audit Trail
-                      </button>
+                      <div className="flex items-center justify-end gap-2 mt-1">
+                        <button
+                          type="button"
+                          onClick={() => handleOpenDoc(req, 'bol')}
+                          className="text-[10px] text-amber-400 hover:text-amber-300 font-bold cursor-pointer flex items-center gap-1"
+                          title="View / Print Electronic Bill of Lading"
+                        >
+                          <FileText size={11} />
+                          <span>e-BOL</span>
+                        </button>
+                        {req.status === 'DELIVERED' && (
+                          <>
+                            <span className="text-[#3b5e52]">&bull;</span>
+                            <button
+                              type="button"
+                              onClick={() => handleOpenDoc(req, 'pod')}
+                              className="text-[10px] text-emerald-400 hover:text-emerald-300 font-bold cursor-pointer flex items-center gap-1"
+                              title="View / Print Electronic Proof of Delivery"
+                            >
+                              <ShieldCheck size={11} />
+                              <span>e-POD</span>
+                            </button>
+                          </>
+                        )}
+                        <span className="text-[#3b5e52]">&bull;</span>
+                        <button
+                          type="button"
+                          onClick={() => handleOpenJourney(req)}
+                          className="text-[10px] text-[#10b981] hover:underline font-bold cursor-pointer flex items-center gap-1"
+                        >
+                          <Compass size={11} />
+                          <span>Journey</span>
+                        </button>
+                        <span className="text-[#3b5e52]">&bull;</span>
+                        <button
+                          type="button"
+                          onClick={() => handleViewEvents(req)}
+                          className="text-[10px] text-[#7ea597] hover:text-[#10b981] font-semibold cursor-pointer underline"
+                        >
+                          Audit Trail
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1168,16 +1327,49 @@ export default function CommandCenterDashboard({
                         </span>
                       </div>
 
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2">
                         <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#082920] text-[#34d399] border border-[#0f4a3a]">
                           {req.status.replace('_', ' ')}
                         </span>
                         <button
                           type="button"
+                          onClick={() => handleOpenDoc(req, 'bol')}
+                          className="inline-flex items-center gap-1 text-xs font-bold text-amber-400 hover:underline cursor-pointer"
+                          title="View / Print Electronic Bill of Lading"
+                        >
+                          <FileText size={12} />
+                          <span>e-BOL</span>
+                        </button>
+                        {req.status === 'DELIVERED' && (
+                          <>
+                            <span className="text-[#3b5e52]">&bull;</span>
+                            <button
+                              type="button"
+                              onClick={() => handleOpenDoc(req, 'pod')}
+                              className="inline-flex items-center gap-1 text-xs font-bold text-emerald-400 hover:underline cursor-pointer"
+                              title="View / Print Electronic Proof of Delivery"
+                            >
+                              <ShieldCheck size={12} />
+                              <span>e-POD</span>
+                            </button>
+                          </>
+                        )}
+                        <span className="text-[#3b5e52]">&bull;</span>
+                        <button
+                          type="button"
+                          onClick={() => handleOpenJourney(req)}
+                          className="inline-flex items-center gap-1 text-xs font-bold text-[#10b981] hover:underline cursor-pointer"
+                        >
+                          <Compass size={12} />
+                          <span>Journey</span>
+                        </button>
+                        <span className="text-[#3b5e52]">&bull;</span>
+                        <button
+                          type="button"
                           onClick={() => handleViewEvents(req)}
                           className="text-xs text-[#7ea597] hover:text-white underline cursor-pointer"
                         >
-                          View Events
+                          Events
                         </button>
                       </div>
                     </div>
@@ -1228,18 +1420,31 @@ export default function CommandCenterDashboard({
                         <button
                           type="button"
                           disabled={isProcessingAction}
-                          onClick={() => handleUpdateStatus(req.id, 'DELIVERED', 'Cargo delivered successfully. Recipient digital signature confirmed.')}
-                          className="px-4 py-2 rounded-xl bg-[#059669] hover:bg-[#047857] text-white text-xs font-bold cursor-pointer transition-all"
+                          onClick={() => handleOpenPod(req)}
+                          className="px-4 py-2 rounded-xl bg-[#059669] hover:bg-[#047857] text-white text-xs font-bold cursor-pointer transition-all shadow-md flex items-center gap-1.5"
+                          title="Capture Recipient Touch Signature & OTP Handover"
                         >
-                          4. Mark Delivered & Complete
+                          <PenTool size={13} />
+                          <span>4. Complete Handover (Sign & OTP)</span>
                         </button>
                       )}
 
                       {req.status === 'DELIVERED' && (
-                        <span className="text-xs text-[#10b981] font-bold flex items-center gap-1.5">
-                          <CheckCircle2 size={16} />
-                          <span>Delivered & Verified</span>
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-[#10b981] font-bold flex items-center gap-1.5">
+                            <CheckCircle2 size={16} />
+                            <span>Delivered & Verified</span>
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => handleOpenDoc(req, 'pod')}
+                            className="px-3 py-1.5 rounded-lg bg-emerald-950 text-emerald-300 border border-emerald-800 text-[11px] font-bold hover:bg-emerald-900 transition-colors flex items-center gap-1 cursor-pointer"
+                            title="View / Print Official e-POD Document"
+                          >
+                            <FileText size={12} />
+                            <span>View e-POD</span>
+                          </button>
+                        </div>
                       )}
 
                       {/* Alternate statuses */}
@@ -1456,22 +1661,34 @@ export default function CommandCenterDashboard({
           )}
         </div>
 
-        {/* Filter Pills */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
-          {['All', 'Pending', 'In Transit', 'Delivered', 'Cancelled'].map((tab) => (
-            <button
-              key={tab}
-              type="button"
-              onClick={() => setShipmentFilterTab(tab)}
-              className={`px-4 py-1.5 rounded-xl font-semibold transition-all cursor-pointer ${
-                shipmentFilterTab === tab
-                  ? 'bg-[#059669] text-white shadow-md'
-                  : 'bg-[#061e18] text-[#8ab2a3] border border-[#0f382e] hover:text-white'
-              }`}
-            >
-              {tab}
-            </button>
-          ))}
+        {/* Filter Pills and Journey Quick Link */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1">
+            {['All', 'Pending', 'In Transit', 'Delivered', 'Cancelled'].map((tab) => (
+              <button
+                key={tab}
+                type="button"
+                onClick={() => setShipmentFilterTab(tab)}
+                className={`px-4 py-1.5 rounded-xl font-semibold transition-all cursor-pointer ${
+                  shipmentFilterTab === tab
+                    ? 'bg-[#059669] text-white shadow-md'
+                    : 'bg-[#061e18] text-[#8ab2a3] border border-[#0f382e] hover:text-white'
+                }`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('shipment-journey')}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#072a20] hover:bg-[#0c4434] text-emerald-400 border border-emerald-800 font-bold transition-all cursor-pointer shadow-sm self-start sm:self-auto"
+          >
+            <Compass size={14} />
+            <span>Open End-to-End Journey</span>
+            <ArrowRight size={13} />
+          </button>
         </div>
 
         {/* Shipments Table */}
@@ -1497,7 +1714,7 @@ export default function CommandCenterDashboard({
                     <th className="py-3.5 px-5">Shipper</th>
                     <th className="py-3.5 px-5">Carrier</th>
                     <th className="py-3.5 px-5">Status</th>
-                    <th className="py-3.5 px-5 text-right">Audit</th>
+                    <th className="py-3.5 px-5 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#0c2a22]">
@@ -1536,14 +1753,55 @@ export default function CommandCenterDashboard({
                         </span>
                       </td>
                       <td className="py-4 px-5 text-right">
-                        <button
-                          type="button"
-                          onClick={() => handleViewEvents(s)}
-                          className="p-1.5 rounded-lg text-[#7ea597] hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
-                          title="View Events"
-                        >
-                          <Eye size={15} />
-                        </button>
+                        <div className="flex items-center justify-end gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => handleOpenDoc(s, 'bol')}
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-amber-300 bg-amber-950/50 hover:bg-amber-900/60 border border-amber-800/60 transition-all cursor-pointer shadow-xs"
+                            title="View Electronic Bill of Lading (e-BOL)"
+                          >
+                            <FileText size={12} />
+                            <span>e-BOL</span>
+                          </button>
+                          {s.status === 'DELIVERED' ? (
+                            <button
+                              type="button"
+                              onClick={() => handleOpenDoc(s, 'pod')}
+                              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-emerald-300 bg-emerald-950/50 hover:bg-emerald-900/60 border border-emerald-800/60 transition-all cursor-pointer shadow-xs"
+                              title="View Electronic Proof of Delivery (e-POD)"
+                            >
+                              <ShieldCheck size={12} />
+                              <span>e-POD</span>
+                            </button>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => handleOpenPod(s)}
+                              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-sky-300 bg-sky-950/50 hover:bg-sky-900/60 border border-sky-800/60 transition-all cursor-pointer shadow-xs"
+                              title="Capture Receiver Touch Signature & OTP Handover"
+                            >
+                              <PenTool size={12} />
+                              <span>Sign POD</span>
+                            </button>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => handleOpenJourney(s)}
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-[#10b981] bg-[#07291f] hover:bg-[#0d4534] border border-[#145944] transition-all cursor-pointer shadow-xs"
+                            title="View End-to-End Shipment Journey"
+                          >
+                            <Compass size={13} />
+                            <span>Journey</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleViewEvents(s)}
+                            className="p-1.5 rounded-lg text-[#7ea597] hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
+                            title="View Events"
+                          >
+                            <Eye size={15} />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -1669,29 +1927,61 @@ export default function CommandCenterDashboard({
   function renderRoutesView() {
     return (
       <div className="max-w-4xl mx-auto space-y-6 text-white animate-in fade-in duration-200">
-        <div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Active Transit Routes</h1>
-          <p className="mt-0.5 text-xs text-[#7ea597]">
-            Corridors established by your transport requests in NeonDB.
-          </p>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-bold text-white tracking-tight">Active Transit Routes</h1>
+            <p className="mt-0.5 text-xs text-[#7ea597]">
+              Corridors established by your transport requests in NeonDB.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setActiveTab('create-shipment')}
+            className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#10b981] to-[#059669] hover:from-[#059669] hover:to-[#047857] text-white text-xs font-bold transition-all cursor-pointer shadow-md inline-flex items-center gap-2 w-fit"
+          >
+            <Plus size={14} />
+            <span>New Freight Corridor</span>
+          </button>
         </div>
 
         <div className="bg-[#061b15] rounded-3xl border border-[#0f382e] p-6 shadow-xl">
           {requests.length === 0 ? (
             <div className="py-12 text-center text-xs text-[#7ea597]">
-              No active corridors yet. Submit or accept a transport request to establish real freight corridors.
+              <p>No active corridors yet. Submit or accept a transport request to establish real freight corridors.</p>
+              <button
+                type="button"
+                onClick={() => setActiveTab('create-shipment')}
+                className="mt-4 px-4 py-2 rounded-xl bg-[#10b981] hover:bg-[#059669] text-white text-xs font-bold transition-all cursor-pointer shadow-md inline-flex items-center gap-2"
+              >
+                <span>Create First Shipment Corridor</span>
+                <ArrowRight size={13} />
+              </button>
             </div>
           ) : (
             <div className="space-y-3">
               {requests.map((r) => (
-                <div key={r.id} className="p-3.5 rounded-xl bg-[#041611] border border-[#0e352a] flex items-center justify-between text-xs">
+                <div key={r.id} className="p-4 rounded-2xl bg-[#041611] border border-[#0e352a] hover:border-[#1a5444] transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
                   <div>
-                    <div className="font-bold text-white">{r.pickup_location} &rarr; {r.delivery_location}</div>
-                    <div className="text-[11px] text-[#7ea597]">Payload: {r.cargo_type} ({r.weight})</div>
+                    <div className="font-bold text-white text-sm flex items-center gap-2">
+                      <span>{r.pickup_location}</span>
+                      <span className="text-emerald-400">&rarr;</span>
+                      <span>{r.delivery_location}</span>
+                    </div>
+                    <div className="text-[11px] text-[#7ea597] mt-0.5">Payload: {r.cargo_type} ({r.weight})</div>
                   </div>
-                  <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#07241d] text-[#34d399] border border-[#0f4a3a]">
-                    {r.status}
-                  </span>
+                  <div className="flex items-center gap-2.5">
+                    <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#07241d] text-[#34d399] border border-[#0f4a3a]">
+                      {r.status}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => handleOpenJourney(r)}
+                      className="px-3 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 text-emerald-300 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                    >
+                      <span>Inspect Journey</span>
+                      <ArrowRight size={12} />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -1707,29 +1997,86 @@ export default function CommandCenterDashboard({
   function renderAnalyticsView() {
     return (
       <div className="max-w-4xl mx-auto space-y-6 text-white animate-in fade-in duration-200">
-        <div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Real Network Analytics</h1>
-          <p className="mt-0.5 text-xs text-[#7ea597]">
-            Live operational metrics computed directly from your NeonDB Postgres database.
-          </p>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-bold text-white tracking-tight">Real Network Analytics</h1>
+            <p className="mt-0.5 text-xs text-[#7ea597]">
+              Live operational metrics computed directly from your NeonDB Postgres database.
+            </p>
+          </div>
+          {onOpenAiAssistant && (
+            <button
+              type="button"
+              onClick={() => onOpenAiAssistant('Run comprehensive operational analytics and predict throughput bottlenecks across active shipments')}
+              className="px-4 py-2 rounded-xl bg-[#ff5500]/15 hover:bg-[#ff5500]/25 border border-[#ff5500]/40 text-[#ff7733] text-xs font-bold transition-all cursor-pointer inline-flex items-center gap-2 w-fit"
+            >
+              <Sparkles size={13} />
+              <span>Analyze with Gemini AI</span>
+            </button>
+          )}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="p-5 rounded-2xl bg-[#061b15] border border-[#0f382e]">
-            <div className="text-xs text-[#7ea597]">Total Database Records</div>
+          <div 
+            onClick={() => setActiveTab('shipments')}
+            className="p-5 rounded-2xl bg-[#061b15] hover:bg-[#092b22] border border-[#0f382e] hover:border-[#1a5444] transition-all cursor-pointer group shadow-sm"
+            title="Click to view all shipment records"
+          >
+            <div className="text-xs text-[#7ea597] group-hover:text-emerald-300 transition-colors">Total Database Records</div>
             <div className="text-3xl font-black text-white mt-1">{requests.length}</div>
+            <div className="text-[10px] text-emerald-400 mt-2 flex items-center gap-1 font-mono">
+              <span>View Shipments Table &rarr;</span>
+            </div>
           </div>
-          <div className="p-5 rounded-2xl bg-[#061b15] border border-[#0f382e]">
-            <div className="text-xs text-[#7ea597]">Completed Deliveries</div>
+          <div 
+            onClick={() => setActiveTab('shipments')}
+            className="p-5 rounded-2xl bg-[#061b15] hover:bg-[#092b22] border border-[#0f382e] hover:border-[#1a5444] transition-all cursor-pointer group shadow-sm"
+            title="Click to view completed deliveries"
+          >
+            <div className="text-xs text-[#7ea597] group-hover:text-emerald-300 transition-colors">Completed Deliveries</div>
             <div className="text-3xl font-black text-[#10b981] mt-1">
               {requests.filter(r => r.status === 'DELIVERED').length}
             </div>
+            <div className="text-[10px] text-emerald-400 mt-2 flex items-center gap-1 font-mono">
+              <span>Inspect Milestones &rarr;</span>
+            </div>
           </div>
-          <div className="p-5 rounded-2xl bg-[#061b15] border border-[#0f382e]">
-            <div className="text-xs text-[#7ea597]">Active Carriers</div>
+          <div 
+            onClick={() => setActiveTab('package-locations')}
+            className="p-5 rounded-2xl bg-[#061b15] hover:bg-[#092b22] border border-[#0f382e] hover:border-[#1a5444] transition-all cursor-pointer group shadow-sm"
+            title="Click to track live carrier fleets on map"
+          >
+            <div className="text-xs text-[#7ea597] group-hover:text-sky-300 transition-colors">Active Carriers</div>
             <div className="text-3xl font-black text-[#38bdf8] mt-1">
               {new Set(requests.map(r => r.provider_id).filter(Boolean)).size}
             </div>
+            <div className="text-[10px] text-[#38bdf8] mt-2 flex items-center gap-1 font-mono">
+              <span>Open Fleet Map &rarr;</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick drill-down action cards */}
+        <div className="p-6 rounded-3xl bg-[#061b15] border border-[#0f382e] flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div>
+            <div className="text-sm font-bold text-white">Continuous Network Intelligence</div>
+            <div className="text-xs text-[#7ea597] mt-0.5">Launch interactive map tracking or trigger autonomous dispatch workflows.</div>
+          </div>
+          <div className="flex items-center gap-2.5">
+            <button
+              type="button"
+              onClick={() => setActiveTab('package-locations')}
+              className="px-3.5 py-2 rounded-xl bg-[#0d2a21] hover:bg-[#12382c] border border-[#1b4e3e] text-white text-xs font-semibold transition-colors cursor-pointer"
+            >
+              Open Fleet Map
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('shipments')}
+              className="px-3.5 py-2 rounded-xl bg-[#10b981] hover:bg-[#059669] text-white text-xs font-bold transition-colors cursor-pointer shadow-md"
+            >
+              View Shipments
+            </button>
           </div>
         </div>
       </div>
@@ -1747,7 +2094,7 @@ export default function CommandCenterDashboard({
           <p className="mt-0.5 text-xs text-[#7ea597]">Direct carrier and shipper event notifications.</p>
         </div>
 
-        <div className="bg-[#061b15] rounded-3xl border border-[#0f382e] p-12 text-center shadow-xl">
+        <div className="bg-[#061b15] rounded-3xl border border-[#0f382e] p-10 text-center shadow-xl">
           <div className="w-14 h-14 rounded-2xl bg-[#092b22] flex items-center justify-center text-[#7ea597] mx-auto mb-3">
             <Mail size={26} />
           </div>
@@ -1755,6 +2102,33 @@ export default function CommandCenterDashboard({
           <p className="text-xs text-[#6e9386] mt-1 max-w-sm mx-auto">
             Audit events for all shipments are logged in real-time in the NeonDB shipment_events table.
           </p>
+          <div className="flex flex-wrap items-center justify-center gap-3 mt-6">
+            <button
+              type="button"
+              onClick={() => setActiveTab('shipments')}
+              className="px-4 py-2 rounded-xl bg-[#0d2a21] hover:bg-[#12382c] border border-[#1b4e3e] text-white text-xs font-semibold transition-colors cursor-pointer"
+            >
+              Inspect Shipment Milestones
+            </button>
+            {onOpenAiAssistant && (
+              <button
+                type="button"
+                onClick={() => onOpenAiAssistant('Summarize the latest system telemetry events and highlight any delayed cargo shipments')}
+                className="px-4 py-2 rounded-xl bg-[#ff5500]/15 hover:bg-[#ff5500]/25 border border-[#ff5500]/40 text-[#ff7733] text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
+              >
+                <Sparkles size={13} />
+                <span>Audit with Gemini AI</span>
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => loadInitialData && loadInitialData()}
+              className="px-4 py-2 rounded-xl bg-[#10b981] hover:bg-[#059669] text-white text-xs font-bold transition-colors cursor-pointer flex items-center gap-1.5"
+            >
+              <RefreshCw size={13} />
+              <span>Refresh Stream</span>
+            </button>
+          </div>
         </div>
       </div>
     );

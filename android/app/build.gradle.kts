@@ -12,8 +12,8 @@ android {
         applicationId = "com.example.logisyncpro"
         minSdk = 24
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 12
+        versionName = "2.4.0"
     }
 
     signingConfigs {
@@ -29,13 +29,13 @@ android {
         debug {
             // Default to production cloud API URL; can also fallback to dev
             buildConfigField("String", "API_BASE_URL", "\"https://logisync-apk-backend.onrender.com/\"")
-            buildConfigField("String", "FALLBACK_DEV_URL", "\"http://10.0.2.2:5050/\"")
+            buildConfigField("String", "FALLBACK_DEV_URL", "\"https://logisync-apk-backend.onrender.com/\"")
         }
         release {
             signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            // Production Release APK strictly uses production HTTPS API — zero localhost/10.0.2.2
+            // Production Release APK strictly uses production HTTPS API â€” zero localhost/10.0.2.2
             buildConfigField("String", "API_BASE_URL", "\"https://logisync-apk-backend.onrender.com/\"")
             buildConfigField("String", "FALLBACK_DEV_URL", "\"https://logisync-apk-backend.onrender.com/\"")
         }
@@ -112,6 +112,7 @@ dependencies {
 
   // Google Play Services Auth & Firebase Authentication
   implementation("com.google.android.gms:play-services-auth:21.3.0")
+  implementation("com.google.android.gms:play-services-location:21.3.0")
   implementation(platform("com.google.firebase:firebase-bom:33.10.0"))
   implementation("com.google.firebase:firebase-auth-ktx")
 }

@@ -20,6 +20,7 @@ export default function FeatureGridSection({
   const profileName = onboardingProfile?.name || user?.displayName || user?.email?.split('@')[0] || 'User';
   const sectionRef = useRef(null);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [mapZoom, setMapZoom] = useState(1);
 
   // ── Pinned Scroll Progress Calculation ──────────────────────────────────────
   useEffect(() => {
@@ -701,46 +702,75 @@ export default function FeatureGridSection({
 
                     {/* Nav Tabs */}
                     <div className="hidden sm:flex items-center gap-1">
-                      <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#0e3026] text-white text-xs font-semibold border border-[#205242]">
+                      <button
+                        type="button"
+                        onClick={() => onOpenDashboard && onOpenDashboard('command-center')}
+                        className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#0e3026] text-white text-xs font-semibold border border-[#205242] cursor-pointer hover:bg-[#123d30] transition-colors"
+                      >
                         <Home className="w-3.5 h-3.5 text-emerald-400" />
                         <span>Overview</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[#7ca69a] hover:text-white text-xs transition-colors cursor-pointer">
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => onOpenDashboard && onOpenDashboard('shipments')}
+                        className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[#7ca69a] hover:text-white text-xs transition-colors cursor-pointer"
+                      >
                         <Package className="w-3.5 h-3.5" />
                         <span>Shipments</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[#7ca69a] hover:text-white text-xs transition-colors cursor-pointer">
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => onOpenDashboard && onOpenDashboard('package-locations')}
+                        className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[#7ca69a] hover:text-white text-xs transition-colors cursor-pointer"
+                      >
                         <Truck className="w-3.5 h-3.5" />
                         <span>Fleet</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[#7ca69a] hover:text-white text-xs transition-colors cursor-pointer">
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => onOpenDashboard && onOpenDashboard('analytics')}
+                        className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[#7ca69a] hover:text-white text-xs transition-colors cursor-pointer"
+                      >
                         <BarChart3 className="w-3.5 h-3.5" />
                         <span>Analytics</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[#7ca69a] hover:text-white text-xs transition-colors cursor-pointer">
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => onOpenDashboard && onOpenDashboard('analytics')}
+                        className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[#7ca69a] hover:text-white text-xs transition-colors cursor-pointer"
+                      >
                         <FileText className="w-3.5 h-3.5" />
                         <span>Reports</span>
-                      </div>
+                      </button>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-2 sm:gap-3">
                     {/* Search Box */}
-                    <div className="relative hidden md:block">
-                      <Search className="w-3 h-3 text-[#7ca69a] absolute left-2.5 top-1/2 -translate-y-1/2" />
+                    <div 
+                      onClick={() => onOpenDashboard && onOpenDashboard('shipments')}
+                      title="Click to search live shipments in Command Center"
+                      className="relative hidden md:block cursor-pointer group"
+                    >
+                      <Search className="w-3 h-3 text-[#7ca69a] group-hover:text-emerald-400 absolute left-2.5 top-1/2 -translate-y-1/2 transition-colors" />
                       <input 
                         type="text" 
                         readOnly 
                         placeholder="Search shipments..." 
-                        className="bg-[#09221b] border border-[#1b4337] rounded-full pl-7 pr-3 py-1 text-[11px] text-[#c2ebfa] placeholder-[#5d8378] w-36 lg:w-44 focus:outline-none"
+                        className="bg-[#09221b] hover:bg-[#0e2f25] border border-[#1b4337] group-hover:border-[#256353] rounded-full pl-7 pr-3 py-1 text-[11px] text-[#c2ebfa] placeholder-[#5d8378] w-36 lg:w-44 focus:outline-none cursor-pointer transition-colors"
                       />
                     </div>
 
                     {/* Notification Bell */}
-                    <div className="relative p-1.5 rounded-full bg-[#09221b] border border-[#1b4337] text-[#7ca69a] hover:text-white cursor-pointer">
+                    <button
+                      type="button"
+                      onClick={() => onOpenDashboard && onOpenDashboard('messages')}
+                      title="Open telemetry notifications & events"
+                      className="relative p-1.5 rounded-full bg-[#09221b] hover:bg-[#0e2f25] border border-[#1b4337] text-[#7ca69a] hover:text-white cursor-pointer transition-colors"
+                    >
                       <Bell className="w-3.5 h-3.5" />
                       <span className="w-1.5 h-1.5 rounded-full bg-[#ea580c] absolute top-1 right-1" />
-                    </div>
+                    </button>
 
                     {/* User Avatar & Profile Dropdown */}
                     {user ? (
@@ -840,11 +870,15 @@ export default function FeatureGridSection({
                           <span>All systems operational</span>
                         </div>
                         <span className="text-[#5b7d72] font-mono hidden md:inline">Thu, Oct 24, 2026 14:00 UTC</span>
-                        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#0c2820] border border-[#1b483c] text-white text-[11px] font-medium cursor-pointer hover:bg-[#11352a]">
+                        <button
+                          type="button"
+                          onClick={() => onOpenPublicMap ? onOpenPublicMap() : onOpenDashboard && onOpenDashboard('package-locations')}
+                          className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#0c2820] border border-[#1b483c] text-white text-[11px] font-medium cursor-pointer hover:bg-[#11352a] transition-colors"
+                        >
                           <Globe className="w-3 h-3 text-emerald-400" />
                           <span>Global View</span>
                           <ChevronDown className="w-3 h-3 text-[#7ca69a]" />
-                        </div>
+                        </button>
                       </div>
                     </div>
 
@@ -853,8 +887,16 @@ export default function FeatureGridSection({
                       {/* Interactive Map View */}
                       <div className="md:col-span-8 relative rounded-2xl bg-[#051612] border border-[#1b3e34] p-2.5 overflow-hidden flex flex-col justify-between">
                         {/* SVG Map Canvas */}
-                        <div className="absolute inset-0">
-                          <svg viewBox="0 0 540 220" className="w-full h-full object-cover" fill="none">
+                        <div className="absolute inset-0 overflow-hidden">
+                          <svg 
+                            viewBox="0 0 540 220" 
+                            className="w-full h-full object-cover transition-transform duration-300 ease-out origin-center" 
+                            style={{ 
+                              transform: `scale(${mapZoom})`,
+                              transformOrigin: '345px 105px'
+                            }}
+                            fill="none"
+                          >
                             {/* Dark Topographic Contours */}
                             <path d="M 20 190 Q 90 120 190 140 T 340 90 T 500 130" stroke="#0e2a22" strokeWidth="36" strokeLinecap="round" opacity="0.6" />
                             <path d="M 50 200 Q 130 90 230 110 T 370 70 T 530 100" stroke="#091f19" strokeWidth="26" strokeLinecap="round" opacity="0.8" />
@@ -905,15 +947,33 @@ export default function FeatureGridSection({
 
                         {/* Left Zoom Controls */}
                         <div className="relative z-10 flex flex-col gap-1 w-5 rounded-lg bg-[#071d17]/90 border border-[#1b4337] p-0.5 text-[#7ca69a] shadow-lg">
-                          <button className="w-4 h-4 flex items-center justify-center hover:text-white transition-colors">
+                          <button 
+                            type="button"
+                            onClick={() => setMapZoom(z => Math.min(Number((z + 0.25).toFixed(2)), 2.25))}
+                            title="Zoom in vector map"
+                            aria-label="Zoom in"
+                            className="w-4 h-4 flex items-center justify-center hover:text-white transition-colors cursor-pointer"
+                          >
                             <Plus className="w-2.5 h-2.5" />
                           </button>
                           <div className="h-px bg-[#1b4337] w-full" />
-                          <button className="w-4 h-4 flex items-center justify-center hover:text-white transition-colors">
+                          <button 
+                            type="button"
+                            onClick={() => setMapZoom(z => Math.max(Number((z - 0.25).toFixed(2)), 0.75))}
+                            title="Zoom out vector map"
+                            aria-label="Zoom out"
+                            className="w-4 h-4 flex items-center justify-center hover:text-white transition-colors cursor-pointer"
+                          >
                             <Minus className="w-2.5 h-2.5" />
                           </button>
                           <div className="h-px bg-[#1b4337] w-full" />
-                          <button className="w-4 h-4 flex items-center justify-center hover:text-white transition-colors">
+                          <button 
+                            type="button"
+                            onClick={() => setMapZoom(1)}
+                            title="Reset map zoom"
+                            aria-label="Reset zoom"
+                            className="w-4 h-4 flex items-center justify-center hover:text-white transition-colors cursor-pointer"
+                          >
                             <Crosshair className="w-2.5 h-2.5" />
                           </button>
                         </div>
@@ -934,9 +994,13 @@ export default function FeatureGridSection({
                       </div>
 
                       {/* Container Inspection Sidebar Card */}
-                      <div className="md:col-span-4 rounded-2xl bg-[#051612] border border-[#1b3e34] p-2.5 sm:p-3 flex flex-col justify-between">
+                      <div 
+                        onClick={() => onOpenDashboard && onOpenDashboard('shipments')}
+                        title="Click to track container #LS-9428 in Command Center"
+                        className="md:col-span-4 rounded-2xl bg-[#051612] hover:bg-[#071f19] border border-[#1b3e34] hover:border-[#256353] p-2.5 sm:p-3 flex flex-col justify-between cursor-pointer transition-all group shadow-sm"
+                      >
                         <div className="flex items-center justify-between pb-1.5 border-b border-[#1b3e34]/70">
-                          <span className="font-semibold text-white text-[11px] sm:text-xs">Container #LS-9428</span>
+                          <span className="font-semibold text-white text-[11px] sm:text-xs group-hover:text-emerald-300 transition-colors">Container #LS-9428</span>
                           <span className="px-1.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-[7.5px] font-bold text-emerald-400">
                             IN TRANSIT
                           </span>
@@ -981,9 +1045,13 @@ export default function FeatureGridSection({
                     {/* Section 2: 4 KPI Cards */}
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
                       {/* Active Shipments */}
-                      <div className="rounded-xl bg-[#051612] border border-[#1b3e34] p-2 sm:p-2.5 flex flex-col justify-between">
+                      <div 
+                        onClick={() => onOpenDashboard && onOpenDashboard('shipments')}
+                        title="Click to view all active shipments"
+                        className="rounded-xl bg-[#051612] hover:bg-[#071f19] border border-[#1b3e34] hover:border-emerald-500/50 p-2 sm:p-2.5 flex flex-col justify-between cursor-pointer transition-all group"
+                      >
                         <div className="flex items-center gap-1.5">
-                          <div className="w-6 h-6 rounded-lg bg-[#0e2c22] border border-[#1c4b3a] flex items-center justify-center text-emerald-400">
+                          <div className="w-6 h-6 rounded-lg bg-[#0e2c22] border border-[#1c4b3a] flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
                             <Package className="w-3 h-3" />
                           </div>
                           <div className="text-[9.5px] text-[#7ca69a] font-medium leading-none">Active Shipments</div>
@@ -1006,9 +1074,13 @@ export default function FeatureGridSection({
                       </div>
 
                       {/* On-Time Delivery */}
-                      <div className="rounded-xl bg-[#051612] border border-[#1b3e34] p-2 sm:p-2.5 flex flex-col justify-between">
+                      <div 
+                        onClick={() => onOpenDashboard && onOpenDashboard('analytics')}
+                        title="Click to view on-time analytics"
+                        className="rounded-xl bg-[#051612] hover:bg-[#071f19] border border-[#1b3e34] hover:border-emerald-500/50 p-2 sm:p-2.5 flex flex-col justify-between cursor-pointer transition-all group"
+                      >
                         <div className="flex items-center gap-1.5">
-                          <div className="w-6 h-6 rounded-lg bg-[#0e2c22] border border-[#1c4b3a] flex items-center justify-center text-emerald-400">
+                          <div className="w-6 h-6 rounded-lg bg-[#0e2c22] border border-[#1c4b3a] flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
                             <Clock className="w-3 h-3" />
                           </div>
                           <div className="text-[9.5px] text-[#7ca69a] font-medium leading-none">On-Time Delivery</div>
@@ -1027,9 +1099,13 @@ export default function FeatureGridSection({
                       </div>
 
                       {/* In Transit */}
-                      <div className="rounded-xl bg-[#051612] border border-[#1b3e34] p-2 sm:p-2.5 flex flex-col justify-between">
+                      <div 
+                        onClick={() => onOpenDashboard && onOpenDashboard('shipments')}
+                        title="Click to view in-transit cargo"
+                        className="rounded-xl bg-[#051612] hover:bg-[#071f19] border border-[#1b3e34] hover:border-emerald-500/50 p-2 sm:p-2.5 flex flex-col justify-between cursor-pointer transition-all group"
+                      >
                         <div className="flex items-center gap-1.5">
-                          <div className="w-6 h-6 rounded-lg bg-[#0e2c22] border border-[#1c4b3a] flex items-center justify-center text-emerald-400">
+                          <div className="w-6 h-6 rounded-lg bg-[#0e2c22] border border-[#1c4b3a] flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
                             <Truck className="w-3 h-3" />
                           </div>
                           <div className="text-[9.5px] text-[#7ca69a] font-medium leading-none">In Transit</div>
@@ -1052,9 +1128,13 @@ export default function FeatureGridSection({
                       </div>
 
                       {/* At Risk */}
-                      <div className="rounded-xl bg-[#051612] border border-[#1b3e34] p-2 sm:p-2.5 flex flex-col justify-between">
+                      <div 
+                        onClick={() => onOpenDashboard && onOpenDashboard('shipments')}
+                        title="Click to view at-risk shipments"
+                        className="rounded-xl bg-[#051612] hover:bg-[#071f19] border border-[#1b3e34] hover:border-rose-500/50 p-2 sm:p-2.5 flex flex-col justify-between cursor-pointer transition-all group"
+                      >
                         <div className="flex items-center gap-1.5">
-                          <div className="w-6 h-6 rounded-lg bg-[#261412] border border-[#48201a] flex items-center justify-center text-rose-400">
+                          <div className="w-6 h-6 rounded-lg bg-[#261412] border border-[#48201a] flex items-center justify-center text-rose-400 group-hover:scale-110 transition-transform">
                             <AlertTriangle className="w-3 h-3" />
                           </div>
                           <div className="text-[9.5px] text-[#7ca69a] font-medium leading-none">At Risk</div>
@@ -1079,7 +1159,11 @@ export default function FeatureGridSection({
                       <div className="md:col-span-8 rounded-2xl bg-[#051612] border border-[#1b3e34] p-2.5 sm:p-3 flex flex-col justify-between">
                         <div className="flex items-center justify-between pb-1.5 border-b border-[#1b3e34]/70">
                           <span className="font-semibold text-white text-xs">Recent Shipments</span>
-                          <button className="text-[10px] text-[#7ca69a] hover:text-white flex items-center gap-1 transition-colors">
+                          <button 
+                            type="button"
+                            onClick={() => onOpenDashboard && onOpenDashboard('shipments')}
+                            className="text-[10px] text-[#7ca69a] hover:text-white flex items-center gap-1 transition-colors cursor-pointer"
+                          >
                             <span>View all</span>
                             <ArrowRight className="w-3 h-3" />
                           </button>
@@ -1097,8 +1181,12 @@ export default function FeatureGridSection({
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-[#1b3e34]/40 font-medium">
-                              <tr>
-                                <td className="py-1 text-white font-mono">LS-9428</td>
+                              <tr 
+                                onClick={() => onOpenDashboard && onOpenDashboard('shipments')}
+                                className="cursor-pointer hover:bg-emerald-950/30 transition-colors group"
+                                title="Click to inspect LS-9428"
+                              >
+                                <td className="py-1 text-white font-mono group-hover:text-emerald-300">LS-9428</td>
                                 <td className="py-1 text-[#a8c7bd]">Mumbai → Dubai</td>
                                 <td className="py-1 text-emerald-400">● In Transit</td>
                                 <td className="py-1 text-white font-mono">2h 18m</td>
@@ -1108,8 +1196,12 @@ export default function FeatureGridSection({
                                   </div>
                                 </td>
                               </tr>
-                              <tr>
-                                <td className="py-1 text-white font-mono">LS-7710</td>
+                              <tr 
+                                onClick={() => onOpenDashboard && onOpenDashboard('shipments')}
+                                className="cursor-pointer hover:bg-emerald-950/30 transition-colors group"
+                                title="Click to inspect LS-7710"
+                              >
+                                <td className="py-1 text-white font-mono group-hover:text-emerald-300">LS-7710</td>
                                 <td className="py-1 text-[#a8c7bd]">Singapore → Mumbai</td>
                                 <td className="py-1 text-amber-400">● Delayed</td>
                                 <td className="py-1 text-white font-mono">6h 32m</td>
@@ -1119,8 +1211,12 @@ export default function FeatureGridSection({
                                   </div>
                                 </td>
                               </tr>
-                              <tr>
-                                <td className="py-1 text-white font-mono">LS-5581</td>
+                              <tr 
+                                onClick={() => onOpenDashboard && onOpenDashboard('shipments')}
+                                className="cursor-pointer hover:bg-emerald-950/30 transition-colors group"
+                                title="Click to inspect LS-5581"
+                              >
+                                <td className="py-1 text-white font-mono group-hover:text-emerald-300">LS-5581</td>
                                 <td className="py-1 text-[#a8c7bd]">Shanghai → Singapore</td>
                                 <td className="py-1 text-emerald-400">● Delivered</td>
                                 <td className="py-1 text-[#7ca69a] font-mono">Completed</td>
@@ -1142,25 +1238,37 @@ export default function FeatureGridSection({
                         </span>
 
                         <div className="space-y-1.5 pt-1.5">
-                          <button className="w-full flex items-center justify-between p-1.5 sm:p-2 rounded-xl bg-[#09221b] hover:bg-[#0e2f25] border border-[#1b4337] text-left text-[10.5px] text-white transition-colors group">
+                          <button 
+                            type="button"
+                            onClick={() => onOpenPublicMap ? onOpenPublicMap() : onOpenDashboard && onOpenDashboard('package-locations')}
+                            className="w-full flex items-center justify-between p-1.5 sm:p-2 rounded-xl bg-[#09221b] hover:bg-[#0e2f25] border border-[#1b4337] text-left text-[10.5px] text-white transition-colors group cursor-pointer"
+                          >
                             <div className="flex items-center gap-1.5">
-                              <Search className="w-3 h-3 text-[#7ca69a] group-hover:text-emerald-400" />
+                              <Search className="w-3 h-3 text-[#7ca69a] group-hover:text-emerald-400 transition-colors" />
                               <span>Track a Shipment</span>
                             </div>
                             <ArrowRight className="w-3 h-3 text-[#7ca69a] group-hover:text-white group-hover:translate-x-0.5 transition-transform" />
                           </button>
 
-                          <button className="w-full flex items-center justify-between p-1.5 sm:p-2 rounded-xl bg-[#09221b] hover:bg-[#0e2f25] border border-[#1b4337] text-left text-[10.5px] text-white transition-colors group">
+                          <button 
+                            type="button"
+                            onClick={() => onOpenDashboard && onOpenDashboard('create-shipment')}
+                            className="w-full flex items-center justify-between p-1.5 sm:p-2 rounded-xl bg-[#09221b] hover:bg-[#0e2f25] border border-[#1b4337] text-left text-[10.5px] text-white transition-colors group cursor-pointer"
+                          >
                             <div className="flex items-center gap-1.5">
-                              <Calendar className="w-3 h-3 text-[#7ca69a] group-hover:text-emerald-400" />
+                              <Calendar className="w-3 h-3 text-[#7ca69a] group-hover:text-emerald-400 transition-colors" />
                               <span>Schedule a Pickup</span>
                             </div>
                             <ArrowRight className="w-3 h-3 text-[#7ca69a] group-hover:text-white group-hover:translate-x-0.5 transition-transform" />
                           </button>
 
-                          <button className="w-full flex items-center justify-between p-1.5 sm:p-2 rounded-xl bg-[#09221b] hover:bg-[#0e2f25] border border-[#1b4337] text-left text-[10.5px] text-white transition-colors group">
+                          <button 
+                            type="button"
+                            onClick={() => onOpenAiAssistant ? onOpenAiAssistant('Calculate freight shipping quote for standard cargo with customs clearance') : onOpenDashboard && onOpenDashboard('command-center')}
+                            className="w-full flex items-center justify-between p-1.5 sm:p-2 rounded-xl bg-[#09221b] hover:bg-[#0e2f25] border border-[#1b4337] text-left text-[10.5px] text-white transition-colors group cursor-pointer"
+                          >
                             <div className="flex items-center gap-1.5">
-                              <FileText className="w-3 h-3 text-[#7ca69a] group-hover:text-emerald-400" />
+                              <FileText className="w-3 h-3 text-[#7ca69a] group-hover:text-emerald-400 transition-colors" />
                               <span>Get a Quote</span>
                             </div>
                             <ArrowRight className="w-3 h-3 text-[#7ca69a] group-hover:text-white group-hover:translate-x-0.5 transition-transform" />

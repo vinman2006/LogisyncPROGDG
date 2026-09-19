@@ -681,13 +681,6 @@ export default function HeroShipmentStream({
 
         </div>
 
-        {/* ── SUBTLE BOTTOM CAPTION: Matches reference mockup ─────────────── */}
-        <div className="relative z-10 pb-4 text-center">
-          <div className="inline-flex items-center gap-2 text-[10px] sm:text-[11px] font-mono tracking-widest text-[#93a8d9] uppercase opacity-80">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#ff7700] animate-ping" />
-            <span>Boxes continuously move from left to right as the user scrolls down</span>
-          </div>
-        </div>
 
       </div>
     </section>

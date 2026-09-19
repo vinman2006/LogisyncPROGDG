@@ -1,364 +1,507 @@
 package com.example.logisyncpro.ui.screens
 
+import android.content.Intent
+import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.logisyncpro.data.model.ShipmentEvent
+import com.example.logisyncpro.data.datasource.DemoDataSource
+import com.example.logisyncpro.data.model.TransportRequest
 import com.example.logisyncpro.data.repository.LogiSyncRepository
 import com.example.logisyncpro.theme.*
-import com.example.logisyncpro.ui.components.GlassCard
-import com.example.logisyncpro.ui.components.PrimaryButton
-import com.example.logisyncpro.ui.components.StatusBadge
 import kotlinx.coroutines.launch
 
+/**
+ * Screen 2 — Shipment Details
+ * Matches reference design:
+ * - Consignment Number (LS-782341) & Status (In Transit)
+ * - Route: Nagpur → Mumbai
+ * - 4-stage horizontal progress tracker (Picked Up -> In Transit -> Out for Delivery -> Delivered)
+ * - Shipment Information card (Order ID, Consignment No, Customer, Items, Weight, Expected Delivery)
+ * - Quick feature navigation: Live Tracking, Route, Timeline, Delivery Proof, Invoice
+ * - Share Tracking Link button
+ */
 @Composable
 fun ShipmentDetailScreen(
     requestId: Int,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    onNavigateToTracking: (Int) -> Unit,
+    onNavigateToTimeline: (Int) -> Unit = {},
+    onNavigateToRoute: (Int) -> Unit = {},
+    onNavigateToProof: (Int) -> Unit = {},
+    onNavigateToInvoice: (Int) -> Unit = {}
 ) {
+    val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val requests by LogiSyncRepository.requests.collectAsState()
-    val currentUser by LogiSyncRepository.currentUser.collectAsState()
-    val isLoading by LogiSyncRepository.isLoading.collectAsState()
 
-    val request = requests.find { it.id == requestId }
-    var events by remember { mutableStateOf<List<ShipmentEvent>>(emptyList()) }
-
-    // Fetch audit timeline events
-    LaunchedEffect(requestId) {
-        events = LogiSyncRepository.getShipmentEvents(requestId)
+    var shipment by remember {
+        mutableStateOf(
+            requests.find { it.id == requestId }
+                ?: DemoDataSource.getShipmentById(requestId)
+                ?: DemoDataSource.demoShipments.first()
+        )
     }
 
-    val isCarrier = currentUser?.role?.uppercase() == "TRANSPORT_PROVIDER" || currentUser?.role?.uppercase() == "CARRIER"
+    LaunchedEffect(requestId) {
+        val remote = LogiSyncRepository.getShipmentById(requestId)
+        if (remote != null) {
+            shipment = remote
+        }
+    }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(ObsidianDeep)
-    ) {
-        if (request == null) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(24.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+    val s = shipment
+    val origCity = s.pickup_location.split(",")[0].trim().ifEmpty { "Nagpur" }
+    val destCity = s.delivery_location.split(",")[0].trim().ifEmpty { "Mumbai" }
+    val trackingNo = s.tracking_number.ifEmpty { "LS-782341" }
+    val orderId = if (s.notes?.contains("ORD-") == true) {
+        val idx = s.notes.indexOf("ORD-")
+        "#" + s.notes.substring(idx).split(" ", ".", ",")[0].trim()
+    } else {
+        "#ORD-44521"
+    }
+    val customerName = s.requester_name?.takeIf { it.isNotBlank() } ?: "Rohit Deshmukh"
+    val items = s.cargo_type.ifEmpty { "Electronics (3)" }
+    val weight = s.weight.ifEmpty { "12.5 kg" }
+    val expectedDelivery = s.requested_date ?: "Today, 4:30 PM"
+
+    val statusUpper = s.status.uppercase()
+    val isPickedUp = statusUpper in listOf("ACCEPTED", "IN_TRANSIT", "OUT_FOR_DELIVERY", "DELIVERED")
+    val isInTransit = statusUpper in listOf("IN_TRANSIT", "OUT_FOR_DELIVERY", "DELIVERED")
+    val isOutForDelivery = statusUpper in listOf("OUT_FOR_DELIVERY", "DELIVERED")
+    val isDelivered = statusUpper == "DELIVERED"
+
+    Scaffold(
+        containerColor = Color(0xFF060E1A)
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp, vertical = 12.dp)
+        ) {
+            // Top Bar
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = "Shipment not found", color = TextMuted)
-                Spacer(modifier = Modifier.height(12.dp))
-                Button(onClick = onNavigateBack) {
-                    Text("Return to Dashboard")
-                }
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(horizontal = 20.dp, vertical = 24.dp)
-            ) {
-                // Header Bar
-                item {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        IconButton(
-                            onClick = onNavigateBack,
-                            modifier = Modifier
-                                .size(36.dp)
-                                .clip(CircleShape)
-                                .background(ObsidianCard)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.ArrowBack,
-                                contentDescription = "Back",
-                                tint = TextPrimary,
-                                modifier = Modifier.size(18.dp)
-                            )
-                        }
-
-                        Column(horizontalAlignment = Alignment.End) {
-                            Text(
-                                text = request.tracking_number.ifEmpty { "LSP-${request.id}" },
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = TextPrimary
-                            )
-                            StatusBadge(status = request.status)
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(20.dp))
-
-                    // Route Card
-                    GlassCard(modifier = Modifier.fillMaxWidth()) {
-                        Text(
-                            text = "TRANSIT ROUTE",
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = TextMuted,
-                            modifier = Modifier.padding(bottom = 12.dp)
-                        )
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(10.dp)
-                                    .clip(CircleShape)
-                                    .background(EmeraldPrimary)
-                            )
-                            Spacer(modifier = Modifier.width(10.dp))
-                            Column {
-                                Text(text = "ORIGIN PICKUP", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = TextMuted)
-                                Text(text = request.pickup_location, fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = TextPrimary)
-                            }
-                        }
-
-                        Box(
-                            modifier = Modifier
-                                .padding(start = 4.dp, top = 4.dp, bottom = 4.dp)
-                                .width(2.dp)
-                                .height(24.dp)
-                                .background(ObsidianCardBorder)
-                        )
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(10.dp)
-                                    .clip(CircleShape)
-                                    .background(SafetyOrange)
-                            )
-                            Spacer(modifier = Modifier.width(10.dp))
-                            Column {
-                                Text(text = "DESTINATION DELIVERY", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = TextMuted)
-                                Text(text = request.delivery_location, fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = TextPrimary)
-                            }
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // Freight & Cargo Specs
-                    GlassCard(modifier = Modifier.fillMaxWidth()) {
-                        Text(
-                            text = "FREIGHT SPECIFICATIONS",
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = TextMuted,
-                            modifier = Modifier.padding(bottom = 10.dp)
-                        )
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Column {
-                                Text(text = "Cargo Type", fontSize = 11.sp, color = TextMuted)
-                                Text(text = request.cargo_type, fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = TextPrimary)
-                            }
-                            Column(horizontalAlignment = Alignment.End) {
-                                Text(text = "Gross Weight", fontSize = 11.sp, color = TextMuted)
-                                Text(text = request.weight, fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = TextPrimary)
-                            }
-                        }
-
-                        if (!request.notes.isNullOrEmpty()) {
-                            Spacer(modifier = Modifier.height(12.dp))
-                            Text(text = "Special Instructions", fontSize = 11.sp, color = TextMuted)
-                            Text(text = request.notes, fontSize = 12.sp, color = TextPrimary)
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // Participants Details (Shipper & Carrier)
-                    GlassCard(modifier = Modifier.fillMaxWidth()) {
-                        Text(
-                            text = "NETWORK PARTICIPANTS",
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = TextMuted,
-                            modifier = Modifier.padding(bottom = 10.dp)
-                        )
-
-                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Column {
-                                Text(text = "Shipper / Requester", fontSize = 11.sp, color = TextMuted)
-                                Text(text = request.requester_name ?: "Shipper", fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = TextPrimary)
-                                Text(text = request.requester_email ?: "", fontSize = 10.sp, color = TextMuted)
-                            }
-
-                            Column(horizontalAlignment = Alignment.End) {
-                                Text(text = "Assigned Carrier", fontSize = 11.sp, color = TextMuted)
-                                Text(
-                                    text = request.provider_name ?: "Unassigned",
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = if (request.provider_name != null) SafetyOrange else TextMuted
-                                )
-                                if (request.provider_email != null) {
-                                    Text(text = request.provider_email, fontSize = 10.sp, color = TextMuted)
-                                }
-                            }
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(20.dp))
-
-                    // Carrier Workflow Progression Actions
-                    if (isCarrier) {
-                        when (request.status.uppercase()) {
-                            "PENDING" -> {
-                                PrimaryButton(
-                                    text = "Accept Freight Load",
-                                    isLoading = isLoading,
-                                    onClick = {
-                                        coroutineScope.launch {
-                                            LogiSyncRepository.acceptRequest(request.id)
-                                            events = LogiSyncRepository.getShipmentEvents(request.id)
-                                        }
-                                    }
-                                )
-                            }
-                            "ACCEPTED" -> {
-                                PrimaryButton(
-                                    text = "Confirm Cargo Pickup",
-                                    isLoading = isLoading,
-                                    onClick = {
-                                        coroutineScope.launch {
-                                            LogiSyncRepository.updateStatus(request.id, "PICKUP_CONFIRMED", "Cargo verified and loaded onto carrier transport")
-                                            events = LogiSyncRepository.getShipmentEvents(request.id)
-                                        }
-                                    }
-                                )
-                            }
-                            "PICKUP_CONFIRMED" -> {
-                                PrimaryButton(
-                                    text = "Dispatch & Start Transit",
-                                    isLoading = isLoading,
-                                    onClick = {
-                                        coroutineScope.launch {
-                                            LogiSyncRepository.updateStatus(request.id, "IN_TRANSIT", "Vehicle in transit along highway corridor")
-                                            events = LogiSyncRepository.getShipmentEvents(request.id)
-                                        }
-                                    }
-                                )
-                            }
-                            "IN_TRANSIT" -> {
-                                Button(
-                                    onClick = {
-                                        coroutineScope.launch {
-                                            LogiSyncRepository.updateStatus(request.id, "DELIVERED", "Shipment safely delivered and signed for at destination")
-                                            events = LogiSyncRepository.getShipmentEvents(request.id)
-                                        }
-                                    },
-                                    enabled = !isLoading,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(50.dp),
-                                    shape = RoundedCornerShape(12.dp),
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = SafetyOrange,
-                                        contentColor = ObsidianDeep
-                                    )
-                                ) {
-                                    Text(text = "Confirm Final Delivery", fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                                }
-                            }
-                            "DELIVERED" -> {
-                                Surface(
-                                    shape = RoundedCornerShape(12.dp),
-                                    color = StatusDeliveredBg,
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Text(
-                                        text = "✓ Completed & Delivered",
-                                        color = StatusDeliveredText,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 14.sp,
-                                        modifier = Modifier.padding(14.dp),
-                                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
-                                    )
-                                }
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.height(24.dp))
-                    }
-
-                    // Audit Ledger Timeline Header
-                    Text(
-                        text = "SHIPMENT AUDIT TRAIL (NEON LEDGER)",
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = TextMuted,
-                        modifier = Modifier.padding(bottom = 12.dp)
+                IconButton(
+                    onClick = onNavigateBack,
+                    modifier = Modifier
+                        .size(38.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFF0F172A))
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = Color.White,
+                        modifier = Modifier.size(20.dp)
                     )
                 }
 
-                // Events Timeline List
-                if (events.isEmpty()) {
-                    item {
-                        Text(
-                            text = "No event entries recorded yet.",
-                            fontSize = 12.sp,
-                            color = TextMuted
+                Text(
+                    text = "Shipment Details",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+
+                IconButton(
+                    onClick = {
+                        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                            type = "text/plain"
+                            putExtra(Intent.EXTRA_SUBJECT, "Track Shipment $trackingNo")
+                            putExtra(
+                                Intent.EXTRA_TEXT,
+                                "Track your LogiSync shipment $trackingNo ($origCity to $destCity) live: https://logisync.app/track/$trackingNo"
+                            )
+                        }
+                        context.startActivity(Intent.createChooser(shareIntent, "Share Tracking Link"))
+                    },
+                    modifier = Modifier
+                        .size(38.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFF0F172A))
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Share,
+                        contentDescription = "Share",
+                        tint = Color(0xFF38BDF8),
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(18.dp))
+
+            // Consignment Number & Status Header Card
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column {
+                    Text(
+                        text = trackingNo,
+                        fontSize = 26.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = Color.White
+                    )
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = "$origCity → $destCity",
+                        fontSize = 14.sp,
+                        color = Color(0xFF94A3B8)
+                    )
+                }
+
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(20.dp))
+                        .background(if (isInTransit) Color(0x3310B981) else Color(0x333B82F6))
+                        .padding(horizontal = 14.dp, vertical = 6.dp)
+                ) {
+                    Text(
+                        text = if (isDelivered) "Delivered" else if (isInTransit) "In Transit" else "Pending",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = if (isInTransit) Color(0xFF34D399) else Color(0xFF60A5FA)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // 4-Stage Horizontal Progress Tracker (Picked Up -> In Transit -> Out for Delivery -> Delivered)
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                color = Color(0xFF0F172A),
+                border = BorderStroke(1.dp, Color(0xFF1E293B))
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    // Progress Nodes & Lines Row
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        // Stage 1: Picked Up
+                        Box(
+                            modifier = Modifier
+                                .size(16.dp)
+                                .clip(CircleShape)
+                                .background(if (isPickedUp) Color(0xFF10B981) else Color(0xFF334155))
+                        )
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(3.dp)
+                                .background(if (isInTransit) Color(0xFF10B981) else Color(0xFF334155))
+                        )
+
+                        // Stage 2: In Transit
+                        Box(
+                            modifier = Modifier
+                                .size(16.dp)
+                                .clip(CircleShape)
+                                .background(if (isInTransit) Color(0xFF38BDF8) else Color(0xFF334155))
+                        )
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(3.dp)
+                                .background(if (isOutForDelivery) Color(0xFF10B981) else Color(0xFF334155))
+                        )
+
+                        // Stage 3: Out for Delivery
+                        Box(
+                            modifier = Modifier
+                                .size(16.dp)
+                                .clip(CircleShape)
+                                .background(if (isOutForDelivery) Color(0xFF10B981) else Color(0xFF334155))
+                        )
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(3.dp)
+                                .background(if (isDelivered) Color(0xFF10B981) else Color(0xFF334155))
+                        )
+
+                        // Stage 4: Delivered
+                        Box(
+                            modifier = Modifier
+                                .size(16.dp)
+                                .clip(CircleShape)
+                                .background(if (isDelivered) Color(0xFF10B981) else Color(0xFF334155))
                         )
                     }
-                } else {
-                    items(events) { event ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 6.dp),
-                            verticalAlignment = Alignment.Top
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(8.dp)
-                                    .padding(top = 4.dp)
-                                    .clip(CircleShape)
-                                    .background(EmeraldPrimary)
-                            )
-                            Spacer(modifier = Modifier.width(10.dp))
-                            Column {
-                                Text(
-                                    text = event.description.ifEmpty { event.event_type },
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = TextPrimary
-                                )
-                                Text(
-                                    text = "By ${event.actor_name ?: "System"} • ${event.created_at}",
-                                    fontSize = 10.sp,
-                                    color = TextMuted
-                                )
-                            }
-                        }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    // Labels Row
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = "Picked Up",
+                            fontSize = 11.sp,
+                            fontWeight = if (isPickedUp) FontWeight.Bold else FontWeight.Normal,
+                            color = if (isPickedUp) Color.White else Color(0xFF64748B)
+                        )
+                        Text(
+                            text = "In Transit",
+                            fontSize = 11.sp,
+                            fontWeight = if (isInTransit) FontWeight.Bold else FontWeight.Normal,
+                            color = if (isInTransit) Color(0xFF38BDF8) else Color(0xFF64748B)
+                        )
+                        Text(
+                            text = "Out for Delivery",
+                            fontSize = 11.sp,
+                            fontWeight = if (isOutForDelivery) FontWeight.Bold else FontWeight.Normal,
+                            color = if (isOutForDelivery) Color.White else Color(0xFF64748B)
+                        )
+                        Text(
+                            text = "Delivered",
+                            fontSize = 11.sp,
+                            fontWeight = if (isDelivered) FontWeight.Bold else FontWeight.Normal,
+                            color = if (isDelivered) Color(0xFF10B981) else Color(0xFF64748B)
+                        )
                     }
                 }
             }
+
+            Spacer(modifier = Modifier.height(18.dp))
+
+            // Shipment Information Card
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                color = Color(0xFF0F172A),
+                border = BorderStroke(1.dp, Color(0xFF1E293B))
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(18.dp)
+                ) {
+                    Text(
+                        text = "Shipment Information",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+
+                    Spacer(modifier = Modifier.height(14.dp))
+
+                    InfoRow(label = "Order ID", value = orderId)
+                    HorizontalDivider(color = Color(0xFF1E293B), thickness = 1.dp, modifier = Modifier.padding(vertical = 10.dp))
+
+                    InfoRow(label = "Consignment No.", value = trackingNo)
+                    HorizontalDivider(color = Color(0xFF1E293B), thickness = 1.dp, modifier = Modifier.padding(vertical = 10.dp))
+
+                    InfoRow(label = "Customer", value = customerName)
+                    HorizontalDivider(color = Color(0xFF1E293B), thickness = 1.dp, modifier = Modifier.padding(vertical = 10.dp))
+
+                    InfoRow(label = "Items", value = items)
+                    HorizontalDivider(color = Color(0xFF1E293B), thickness = 1.dp, modifier = Modifier.padding(vertical = 10.dp))
+
+                    InfoRow(label = "Weight", value = weight)
+                    HorizontalDivider(color = Color(0xFF1E293B), thickness = 1.dp, modifier = Modifier.padding(vertical = 10.dp))
+
+                    InfoRow(label = "Expected Delivery", value = expectedDelivery)
+                }
+            }
+
+            Spacer(modifier = Modifier.height(18.dp))
+
+            // Quick Navigation Hub (Live Tracking, Route, Timeline, Delivery Proof, Invoice)
+            Text(
+                text = "Tracking Actions",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF94A3B8),
+                modifier = Modifier.padding(start = 4.dp, bottom = 10.dp)
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                QuickActionCard(
+                    title = "Live Tracking",
+                    icon = Icons.Filled.MyLocation,
+                    color = Color(0xFF38BDF8),
+                    modifier = Modifier.weight(1f),
+                    onClick = { onNavigateToTracking(s.id) }
+                )
+                QuickActionCard(
+                    title = "Route Details",
+                    icon = Icons.Filled.Route,
+                    color = Color(0xFF34D399),
+                    modifier = Modifier.weight(1f),
+                    onClick = { onNavigateToRoute(s.id) }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                QuickActionCard(
+                    title = "Timeline",
+                    icon = Icons.Filled.AccessTime,
+                    color = Color(0xFFF59E0B),
+                    modifier = Modifier.weight(1f),
+                    onClick = { onNavigateToTimeline(s.id) }
+                )
+                QuickActionCard(
+                    title = "Delivery Proof",
+                    icon = Icons.Filled.AssignmentTurnedIn,
+                    color = Color(0xFF818CF8),
+                    modifier = Modifier.weight(1f),
+                    onClick = { onNavigateToProof(s.id) }
+                )
+                QuickActionCard(
+                    title = "Invoice",
+                    icon = Icons.Filled.Receipt,
+                    color = Color(0xFFEC4899),
+                    modifier = Modifier.weight(1f),
+                    onClick = { onNavigateToInvoice(s.id) }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(22.dp))
+
+            // Primary Button: "Share Tracking Link"
+            Button(
+                onClick = {
+                    val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                        type = "text/plain"
+                        putExtra(Intent.EXTRA_SUBJECT, "LogiSync Tracking - $trackingNo")
+                        putExtra(
+                            Intent.EXTRA_TEXT,
+                            "Track consignment $trackingNo live with real-time GPS telemetry: https://logisync.app/track/$trackingNo"
+                        )
+                    }
+                    context.startActivity(Intent.createChooser(shareIntent, "Share Tracking Link"))
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF2563EB)
+                )
+            ) {
+                Icon(Icons.Filled.Share, contentDescription = "Share", modifier = Modifier.size(18.dp))
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Share Tracking Link",
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+        }
+    }
+}
+
+@Composable
+private fun InfoRow(label: String, value: String) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = label,
+            fontSize = 13.sp,
+            color = Color(0xFF64748B)
+        )
+        Text(
+            text = value,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = Color.White
+        )
+    }
+}
+
+@Composable
+private fun QuickActionCard(
+    title: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    color: Color,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    Surface(
+        modifier = modifier
+            .clip(RoundedCornerShape(12.dp))
+            .clickable { onClick() },
+        shape = RoundedCornerShape(12.dp),
+        color = Color(0xFF0F172A),
+        border = BorderStroke(1.dp, Color(0xFF1E293B))
+    ) {
+        Column(
+            modifier = Modifier.padding(vertical = 12.dp, horizontal = 8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(36.dp)
+                    .clip(CircleShape)
+                    .background(color.copy(alpha = 0.15f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = title,
+                    tint = color,
+                    modifier = Modifier.size(18.dp)
+                )
+            }
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                text = title,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Medium,
+                color = Color.White
+            )
         }
     }
 }

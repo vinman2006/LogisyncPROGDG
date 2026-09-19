@@ -1,538 +1,571 @@
 package com.example.logisyncpro.ui.screens
 
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.logisyncpro.data.model.TransportRequest
 import com.example.logisyncpro.data.repository.LogiSyncRepository
+import com.example.logisyncpro.service.RealLocationTracker
 import com.example.logisyncpro.theme.*
-import com.example.logisyncpro.ui.components.GlassCard
+import com.example.logisyncpro.ui.components.BottomNavTab
+import com.example.logisyncpro.ui.components.LogiSyncBottomNav
 import com.example.logisyncpro.ui.components.LogiSyncBrandHeader
 import com.example.logisyncpro.ui.components.StatusBadge
+import com.example.logisyncpro.ui.components.WireframeCube
 import kotlinx.coroutines.launch
+import java.util.*
 
 @Composable
 fun DashboardScreen(
     onNavigateToCreateShipment: () -> Unit,
     onNavigateToShipmentDetail: (Int) -> Unit,
-    onNavigateToSettings: () -> Unit,
+    onNavigateToTracking: (Int) -> Unit,
+    onNavigateToAvailableRequests: () -> Unit,
+    onTabSelected: (BottomNavTab) -> Unit,
     onSignOut: () -> Unit = {}
 ) {
     val coroutineScope = rememberCoroutineScope()
     val currentUser by LogiSyncRepository.currentUser.collectAsState()
     val requests by LogiSyncRepository.requests.collectAsState()
-    val isLoading by LogiSyncRepository.isLoading.collectAsState()
 
-    var selectedFilter by remember { mutableStateOf("ALL") }
+    val isTrackingActive by RealLocationTracker.isTrackingActive.collectAsState()
+    val activeShipmentId by RealLocationTracker.activeShipmentId.collectAsState()
+    val uploadedFixesCount by RealLocationTracker.uploadedFixesCount.collectAsState()
 
-    // Fetch live requests on screen launch
+    var showRoleMenu by remember { mutableStateOf(false) }
+    var showNotificationsDialog by remember { mutableStateOf(false) }
+
     LaunchedEffect(Unit) {
         LogiSyncRepository.refreshRequests()
     }
 
     val isCarrier = currentUser?.role?.uppercase() == "TRANSPORT_PROVIDER" || currentUser?.role?.uppercase() == "CARRIER"
-    val userName = currentUser?.name ?: "User"
-    val userRoleLabel = if (isCarrier) "CARRIER / FLEET OPERATOR" else "SHIPPER / REQUESTER"
+    val roleLabel = if (isCarrier) "Transport Provider" else "Requester"
 
-    // Computed KPIs
+    val activeCount = requests.count { it.status.uppercase() in listOf("ACCEPTED", "IN_TRANSIT", "PICKUP_CONFIRMED", "OUT_FOR_DELIVERY") }
     val pendingCount = requests.count { it.status.uppercase() == "PENDING" }
-    val inTransitCount = requests.count { it.status.uppercase() in listOf("ACCEPTED", "PICKUP_CONFIRMED", "IN_TRANSIT", "OUT_FOR_DELIVERY") }
-    val deliveredCount = requests.count { it.status.uppercase() == "DELIVERED" }
 
-    val filteredRequests = remember(requests, selectedFilter) {
-        when (selectedFilter) {
-            "PENDING" -> requests.filter { it.status.uppercase() == "PENDING" }
-            "IN_TRANSIT" -> requests.filter { it.status.uppercase() in listOf("ACCEPTED", "PICKUP_CONFIRMED", "IN_TRANSIT", "OUT_FOR_DELIVERY") }
-            "DELIVERED" -> requests.filter { it.status.uppercase() == "DELIVERED" }
-            else -> requests
-        }
+    val recentShipment = remember(requests) {
+        requests.find { it.status.uppercase() in listOf("IN_TRANSIT", "ACCEPTED", "ASSIGNED") } ?: requests.firstOrNull()
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(ObsidianDeep)
-    ) {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(horizontal = 20.dp, vertical = 24.dp)
+    val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+    val greeting = when {
+        hour < 12 -> "Good morning,"
+        hour < 17 -> "Good afternoon,"
+        else -> "Good evening,"
+    }
+
+    // Pulsing transition for LIVE badge
+    val infiniteTransition = rememberInfiniteTransition(label = "DashLivePulse")
+    val pulseAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.4f,
+        targetValue = 1.0f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(800, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "DashPulseAlpha"
+    )
+
+    Scaffold(
+        bottomBar = {
+            LogiSyncBottomNav(
+                currentTab = BottomNavTab.HOME,
+                secondTabLabel = if (isCarrier) "Deliveries" else "Shipments",
+                onTabSelected = onTabSelected
+            )
+        },
+        containerColor = Color(0xFF071411)
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(horizontal = 20.dp)
+                .verticalScroll(rememberScrollState())
         ) {
-            // Header Bar
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+            Spacer(modifier = Modifier.height(14.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                LogiSyncBrandHeader()
+
+                IconButton(
+                    onClick = { coroutineScope.launch { LogiSyncRepository.refreshRequests() } },
+                    modifier = Modifier.size(36.dp)
                 ) {
-                    LogiSyncBrandHeader()
-
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        IconButton(
-                            onClick = {
-                                coroutineScope.launch { LogiSyncRepository.refreshRequests() }
-                            },
-                            modifier = Modifier
-                                .size(36.dp)
-                                .clip(CircleShape)
-                                .background(ObsidianCard)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Refresh,
-                                contentDescription = "Refresh",
-                                tint = EmeraldPrimary,
-                                modifier = Modifier.size(18.dp)
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.width(8.dp))
-
-                        IconButton(
-                            onClick = onNavigateToSettings,
-                            modifier = Modifier
-                                .size(36.dp)
-                                .clip(CircleShape)
-                                .background(ObsidianCard)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Settings,
-                                contentDescription = "Settings",
-                                tint = TextMuted,
-                                modifier = Modifier.size(18.dp)
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.width(8.dp))
-
-                        IconButton(
-                            onClick = {
-                                LogiSyncRepository.signOut()
-                                onSignOut()
-                            },
-                            modifier = Modifier
-                                .size(36.dp)
-                                .clip(CircleShape)
-                                .background(ObsidianCard)
-                        ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ExitToApp,
-                                contentDescription = "Sign Out",
-                                tint = StatusCancelledText,
-                                modifier = Modifier.size(18.dp)
-                            )
-                        }
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                // Welcome & Role Badge
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column {
-                        Text(
-                            text = "Welcome back,",
-                            fontSize = 12.sp,
-                            color = TextMuted
-                        )
-                        Text(
-                            text = userName,
-                            fontSize = 22.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = TextPrimary
-                        )
-                    }
-
-                    Surface(
-                        shape = RoundedCornerShape(100.dp),
-                        color = if (isCarrier) SafetyOrange.copy(alpha = 0.15f) else EmeraldPrimary.copy(alpha = 0.15f),
-                        border = androidx.compose.foundation.BorderStroke(
-                            1.dp,
-                            if (isCarrier) SafetyOrange else EmeraldPrimary
-                        )
-                    ) {
-                        Text(
-                            text = userRoleLabel,
-                            fontSize = 9.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = if (isCarrier) SafetyOrange else EmeraldPrimary,
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                // KPI Stat Cards Grid
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    MetricCard(
-                        modifier = Modifier.weight(1f),
-                        label = if (isCarrier) "Loads Open" else "Pending",
-                        count = pendingCount.toString(),
-                        icon = Icons.Default.PendingActions,
-                        accentColor = StatusPendingText
-                    )
-                    MetricCard(
-                        modifier = Modifier.weight(1f),
-                        label = "In Transit",
-                        count = inTransitCount.toString(),
-                        icon = Icons.Default.LocalShipping,
-                        accentColor = EmeraldPrimary
-                    )
-                    MetricCard(
-                        modifier = Modifier.weight(1f),
-                        label = "Delivered",
-                        count = deliveredCount.toString(),
-                        icon = Icons.Default.CheckCircle,
-                        accentColor = StatusDeliveredText
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = "Refresh",
+                        tint = EmeraldPrimary,
+                        modifier = Modifier.size(22.dp)
                     )
                 }
+            }
 
-                Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-                // Primary Action Button (Shipper creates request, Carrier explores marketplace)
-                if (!isCarrier) {
-                    Button(
-                        onClick = onNavigateToCreateShipment,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(48.dp),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = EmeraldPrimary,
-                            contentColor = ObsidianDeep
-                        )
+            // LIVE GPS BROADCAST BANNER ON DASHBOARD (if actively tracking)
+            if (isTrackingActive) {
+                Surface(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp)
+                        .clickable { onNavigateToTracking(activeShipmentId ?: recentShipment?.id ?: 1) },
+                    shape = RoundedCornerShape(14.dp),
+                    color = Color(0xFF0F382A),
+                    border = BorderStroke(1.dp, EmeraldPrimary)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(14.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "New Transport Request",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp
-                        )
-                    }
-                } else {
-                    Surface(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(12.dp),
-                        color = ObsidianSurfaceElevated,
-                        border = androidx.compose.foundation.BorderStroke(1.dp, SafetyOrange.copy(alpha = 0.4f))
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(14.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Explore,
-                                contentDescription = null,
-                                tint = SafetyOrange,
-                                modifier = Modifier.size(24.dp)
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(
+                                modifier = Modifier
+                                    .size(10.dp)
+                                    .clip(CircleShape)
+                                    .background(EmeraldPrimary.copy(alpha = pulseAlpha))
                             )
-                            Spacer(modifier = Modifier.width(12.dp))
-                            Column(modifier = Modifier.weight(1f)) {
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Column {
                                 Text(
-                                    text = "Freight Marketplace Active",
+                                    text = "LIVE GPS BROADCAST ACTIVE",
+                                    fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold,
-                                    fontSize = 13.sp,
-                                    color = TextPrimary
+                                    color = EmeraldPrimary
                                 )
                                 Text(
-                                    text = "Select any open load below to claim and dispatch.",
+                                    text = "Synced $uploadedFixesCount fixes to Neon PostgreSQL",
                                     fontSize = 11.sp,
-                                    color = TextMuted
+                                    color = Color(0xFF9EBFB2)
                                 )
                             }
                         }
+
+                        Icon(
+                            imageVector = Icons.Default.Navigation,
+                            contentDescription = "View",
+                            tint = EmeraldPrimary,
+                            modifier = Modifier.size(20.dp)
+                        )
                     }
                 }
+            }
 
-                Spacer(modifier = Modifier.height(24.dp))
-
-                // Filter Tabs Header
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+            // User Greeting and Role Row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column {
                     Text(
-                        text = if (isCarrier) "ACTIVE MARKETPLACE & DISPATCHES" else "LIVE SHIPMENTS PIPELINE",
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = TextMuted
+                        text = greeting,
+                        fontSize = 13.sp,
+                        color = Color(0xFF7A9E91)
                     )
+                    Text(
+                        text = currentUser?.name?.ifEmpty { "Logistics Lead" } ?: "Logistics Lead",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                }
 
-                    if (isLoading) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(14.dp),
-                            color = EmeraldPrimary,
-                            strokeWidth = 2.dp
+                Box {
+                    Surface(
+                        shape = RoundedCornerShape(100.dp),
+                        color = Color(0xFF0C221B),
+                        border = BorderStroke(1.dp, Color(0xFF14352B)),
+                        modifier = Modifier.clickable { showRoleMenu = true }
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = roleLabel,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = EmeraldPrimary
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Icon(
+                                imageVector = Icons.Default.ArrowDropDown,
+                                contentDescription = null,
+                                tint = EmeraldPrimary,
+                                modifier = Modifier.size(16.dp)
+                            )
+                        }
+                    }
+
+                    DropdownMenu(
+                        expanded = showRoleMenu,
+                        onDismissRequest = { showRoleMenu = false },
+                        modifier = Modifier.background(Color(0xFF0C221B))
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text("Requester", color = Color.White) },
+                            onClick = {
+                                coroutineScope.launch {
+                                    LogiSyncRepository.updateUserRole("REQUESTER")
+                                    showRoleMenu = false
+                                }
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Transport Provider", color = Color.White) },
+                            onClick = {
+                                coroutineScope.launch {
+                                    LogiSyncRepository.updateUserRole("TRANSPORT_PROVIDER")
+                                    showRoleMenu = false
+                                }
+                            }
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // Two Quick Action Cards: Create Shipment & Browse Requests
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(14.dp)
+            ) {
+                Surface(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(115.dp)
+                        .clickable { onNavigateToCreateShipment() },
+                    shape = RoundedCornerShape(16.dp),
+                    color = Color(0xFF0C221B),
+                    border = BorderStroke(1.dp, Color(0xFF14352B))
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(38.dp)
+                                .clip(CircleShape)
+                                .border(1.5.dp, EmeraldPrimary, CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = "Create",
+                                tint = EmeraldPrimary,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Create\nShipment",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                            lineHeight = 16.sp
                         )
                     }
                 }
 
-                Spacer(modifier = Modifier.height(10.dp))
-
-                // Filter Pill Row
-                val filters = listOf("ALL", "PENDING", "IN_TRANSIT", "DELIVERED")
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.fillMaxWidth()
+                Surface(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(115.dp)
+                        .clickable { onNavigateToAvailableRequests() },
+                    shape = RoundedCornerShape(16.dp),
+                    color = Color(0xFF0C221B),
+                    border = BorderStroke(1.dp, Color(0xFF14352B))
                 ) {
-                    items(filters) { filter ->
-                        val isSelected = selectedFilter == filter
-                        Surface(
-                            modifier = Modifier.clickable { selectedFilter = filter },
-                            shape = RoundedCornerShape(100.dp),
-                            color = if (isSelected) EmeraldPrimary else ObsidianCard,
-                            border = androidx.compose.foundation.BorderStroke(
-                                1.dp,
-                                if (isSelected) EmeraldPrimary else ObsidianCardBorder
-                            )
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(38.dp)
+                                .clip(CircleShape)
+                                .border(1.5.dp, EmeraldPrimary, CircleShape),
+                            contentAlignment = Alignment.Center
                         ) {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = "Browse",
+                                tint = EmeraldPrimary,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Browse\nRequests",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                            lineHeight = 16.sp
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            // Stats Count Cards
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(14.dp)
+            ) {
+                Surface(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable { onTabSelected(BottomNavTab.SHIPMENTS) },
+                    shape = RoundedCornerShape(12.dp),
+                    color = Color(0xFF0C221B),
+                    border = BorderStroke(1.dp, Color(0xFF14352B))
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Inventory2,
+                            contentDescription = null,
+                            tint = EmeraldPrimary,
+                            modifier = Modifier.size(22.dp)
+                        )
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Column {
                             Text(
-                                text = filter.replace("_", " "),
+                                text = "Active Shipments",
                                 fontSize = 11.sp,
+                                color = Color(0xFF7A9E91)
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = if (activeCount > 0) "$activeCount" else "0",
+                                fontSize = 15.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = if (isSelected) ObsidianDeep else TextMuted,
-                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                                color = Color.White
                             )
                         }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Surface(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable { onNavigateToAvailableRequests() },
+                    shape = RoundedCornerShape(12.dp),
+                    color = Color(0xFF0C221B),
+                    border = BorderStroke(1.dp, Color(0xFF14352B))
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Description,
+                            contentDescription = null,
+                            tint = SafetyOrange,
+                            modifier = Modifier.size(22.dp)
+                        )
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Column {
+                            Text(
+                                text = "Pending Requests",
+                                fontSize = 11.sp,
+                                color = Color(0xFF7A9E91)
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = if (pendingCount > 0) "$pendingCount" else "0",
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                        }
+                    }
+                }
             }
 
-            // Shipments List
-            if (filteredRequests.isEmpty() && !isLoading) {
-                item {
-                    GlassCard(
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 32.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                text = "Recent Activity",
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            if (recentShipment != null) {
+                // Real recent activity card from Neon Database
+                Surface(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onNavigateToShipmentDetail(recentShipment.id) },
+                    shape = RoundedCornerShape(14.dp),
+                    color = Color(0xFF0C221B),
+                    border = BorderStroke(1.dp, Color(0xFF14352B))
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.Inbox,
-                                contentDescription = null,
-                                tint = TextMuted,
-                                modifier = Modifier.size(40.dp)
-                            )
-                            Spacer(modifier = Modifier.height(10.dp))
                             Text(
-                                text = "No shipments found in this category",
+                                text = recentShipment.tracking_number.ifEmpty { "SHP-${recentShipment.id}" },
                                 fontSize = 13.sp,
-                                color = TextMuted
+                                fontWeight = FontWeight.Bold,
+                                color = EmeraldPrimary
                             )
+                            StatusBadge(status = recentShipment.status)
+                        }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Text(
+                            text = "${recentShipment.pickup_location} → ${recentShipment.delivery_location}",
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.White
+                        )
+
+                        Spacer(modifier = Modifier.height(4.dp))
+
+                        Text(
+                            text = "${recentShipment.weight} · ${recentShipment.cargo_type}",
+                            fontSize = 12.sp,
+                            color = Color(0xFF7A9E91)
+                        )
+
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "View Details",
+                                fontSize = 12.sp,
+                                color = Color(0xFF7A9E91),
+                                modifier = Modifier.clickable { onNavigateToShipmentDetail(recentShipment.id) }
+                            )
+
+                            Button(
+                                onClick = { onNavigateToTracking(recentShipment.id) },
+                                shape = RoundedCornerShape(8.dp),
+                                colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary),
+                                contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp)
+                            ) {
+                                Icon(Icons.Default.GpsFixed, contentDescription = null, tint = ObsidianDeep, modifier = Modifier.size(14.dp))
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(
+                                    text = "Track GPS",
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = ObsidianDeep
+                                )
+                            }
                         }
                     }
                 }
             } else {
-                items(filteredRequests) { request ->
-                    ShipmentCard(
-                        request = request,
-                        isCarrier = isCarrier,
-                        onItemClick = { onNavigateToShipmentDetail(request.id) },
-                        onAccept = {
-                            coroutineScope.launch {
-                                LogiSyncRepository.acceptRequest(request.id)
-                            }
-                        }
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(14.dp),
+                    color = Color(0xFF0C221B),
+                    border = BorderStroke(1.dp, Color(0xFF14352B))
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 30.dp, horizontal = 20.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        WireframeCube(
+                            modifier = Modifier.size(52.dp),
+                            color = Color(0xFF2C4A3E)
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Text(
+                            text = "No recent shipments",
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.White
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "Create a shipment or browse requests to begin.",
+                            fontSize = 12.sp,
+                            color = Color(0xFF7A9E91)
+                        )
+                    }
                 }
             }
+
+            Spacer(modifier = Modifier.height(20.dp))
         }
     }
-}
 
-@Composable
-fun MetricCard(
-    modifier: Modifier = Modifier,
-    label: String,
-    count: String,
-    icon: ImageVector,
-    accentColor: androidx.compose.ui.graphics.Color
-) {
-    GlassCard(modifier = modifier) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = label,
-                fontSize = 11.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = TextMuted
-            )
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = accentColor,
-                modifier = Modifier.size(16.dp)
-            )
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = count,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            color = TextPrimary
+    if (showNotificationsDialog) {
+        AlertDialog(
+            onDismissRequest = { showNotificationsDialog = false },
+            containerColor = Color(0xFF0C221B),
+            title = { Text("Operational Notifications", color = Color.White, fontWeight = FontWeight.Bold) },
+            text = {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    Text("Live System Alerts", color = EmeraldLight, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text("• Neon Cloud Database: Connected & Operational", color = Color.White, fontSize = 12.sp)
+                    Text("• Google Fused Location: Real GPS Telemetry active", color = Color.White, fontSize = 12.sp)
+                    Text("• Active Shipments: " + requests.size + " dispatches verified", color = Color.White, fontSize = 12.sp)
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        coroutineScope.launch { LogiSyncRepository.refreshRequests() }
+                        showNotificationsDialog = false
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary)
+                ) {
+                    Text("Refresh & Dismiss", color = ObsidianDeep, fontWeight = FontWeight.Bold)
+                }
+            }
         )
-    }
-}
-
-@Composable
-fun ShipmentCard(
-    request: TransportRequest,
-    isCarrier: Boolean,
-    onItemClick: () -> Unit,
-    onAccept: () -> Unit
-) {
-    val isPending = request.status.uppercase() == "PENDING"
-
-    GlassCard(
-        modifier = Modifier.fillMaxWidth(),
-        onClick = onItemClick
-    ) {
-        // Top row: Tracking number & Status badge
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = request.tracking_number.ifEmpty { "LSP-${request.id}" },
-                fontWeight = FontWeight.Bold,
-                fontSize = 14.sp,
-                color = TextPrimary
-            )
-            StatusBadge(status = request.status)
-        }
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // Route row
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = "ORIGIN",
-                    fontSize = 9.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = TextMuted
-                )
-                Text(
-                    text = request.pickup_location,
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = TextPrimary
-                )
-            }
-
-            Icon(
-                imageVector = Icons.Default.ArrowForward,
-                contentDescription = null,
-                tint = EmeraldPrimary,
-                modifier = Modifier
-                    .padding(horizontal = 8.dp)
-                    .size(16.dp)
-            )
-
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = "DESTINATION",
-                    fontSize = 9.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = TextMuted
-                )
-                Text(
-                    text = request.delivery_location,
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = TextPrimary
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        // Cargo info & Weight
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "${request.cargo_type} • ${request.weight}",
-                fontSize = 11.sp,
-                color = TextMuted
-            )
-
-            val partnerName = if (isCarrier) request.requester_name else request.provider_name
-            if (!partnerName.isNullOrEmpty()) {
-                Text(
-                    text = if (isCarrier) "Shipper: $partnerName" else "Carrier: $partnerName",
-                    fontSize = 10.sp,
-                    color = EmeraldLight
-                )
-            }
-        }
-
-        // Carrier quick-accept button on pending marketplace loads
-        if (isCarrier && isPending) {
-            Spacer(modifier = Modifier.height(12.dp))
-            Button(
-                onClick = onAccept,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(36.dp),
-                shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = SafetyOrange,
-                    contentColor = ObsidianDeep
-                )
-            ) {
-                Text(
-                    text = "Claim & Accept Load",
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-        }
     }
 }

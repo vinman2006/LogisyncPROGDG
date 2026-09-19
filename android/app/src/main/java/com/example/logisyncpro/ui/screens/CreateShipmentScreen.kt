@@ -1,237 +1,297 @@
 package com.example.logisyncpro.ui.screens
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.logisyncpro.data.repository.LogiSyncRepository
 import com.example.logisyncpro.theme.*
-import com.example.logisyncpro.ui.components.GlassCard
-import com.example.logisyncpro.ui.components.PrimaryButton
+import com.example.logisyncpro.ui.components.BottomNavTab
+import com.example.logisyncpro.ui.components.LogiSyncBottomNav
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateShipmentScreen(
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    onTabSelected: (BottomNavTab) -> Unit = {}
 ) {
     val coroutineScope = rememberCoroutineScope()
     val isLoading by LogiSyncRepository.isLoading.collectAsState()
-    val errorMessage by LogiSyncRepository.errorMessage.collectAsState()
 
-    var pickupLocation by remember { mutableStateOf("Nagpur, Maharashtra") }
-    var deliveryLocation by remember { mutableStateOf("Mumbai, Maharashtra") }
-    var cargoType by remember { mutableStateOf("Industrial Equipment") }
-    var weight by remember { mutableStateOf("12,500 kg") }
-    var notes by remember { mutableStateOf("Fragile electronic sensors. Keep upright and climate-controlled.") }
+    var pickupLocation by remember { mutableStateOf("") }
+    var deliveryLocation by remember { mutableStateOf("") }
+    var cargoType by remember { mutableStateOf("") }
+    var weight by remember { mutableStateOf("") }
+    var requestedDate by remember { mutableStateOf("") }
+    var notes by remember { mutableStateOf("") }
 
-    val scrollState = rememberScrollState()
+    var cargoDropdownExpanded by remember { mutableStateOf(false) }
+    var submitError by remember { mutableStateOf<String?>(null) }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(ObsidianDeep)
-            .padding(horizontal = 20.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(scrollState)
-                .padding(vertical = 24.dp)
-        ) {
-            // Header Bar
+    val cargoOptions = listOf("Industrial Equipment", "Electronics", "Pharmaceuticals", "Agricultural Produce", "Auto Parts", "General Freight")
+
+    Scaffold(
+        topBar = {
             Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color(0xFF071411))
+                    .statusBarsPadding()
+                    .padding(horizontal = 16.dp, vertical = 14.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(
                     onClick = onNavigateBack,
-                    modifier = Modifier
-                        .size(36.dp)
-                        .clip(CircleShape)
-                        .background(ObsidianCard)
+                    modifier = Modifier.size(36.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.ArrowBack,
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back",
-                        tint = TextPrimary,
-                        modifier = Modifier.size(18.dp)
+                        tint = Color.White
                     )
                 }
 
-                Spacer(modifier = Modifier.width(12.dp))
+                Spacer(modifier = Modifier.width(8.dp))
 
                 Text(
-                    text = "New Transport Request",
+                    text = "Create Transport Request",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextPrimary
+                    color = Color.White
                 )
             }
+        },
+        bottomBar = {
+            LogiSyncBottomNav(
+                currentTab = BottomNavTab.HOME,
+                onTabSelected = onTabSelected
+            )
+        },
+        containerColor = Color(0xFF071411)
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(horizontal = 20.dp)
+                .verticalScroll(rememberScrollState())
+        ) {
+            Spacer(modifier = Modifier.height(10.dp))
 
-            Spacer(modifier = Modifier.height(24.dp))
-
-            GlassCard(modifier = Modifier.fillMaxWidth()) {
-                Text(
-                    text = "FREIGHT ROUTE DETAILS",
-                    fontSize = 10.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = TextMuted,
-                    modifier = Modifier.padding(bottom = 12.dp)
-                )
-
-                OutlinedTextField(
-                    value = pickupLocation,
-                    onValueChange = { pickupLocation = it },
-                    label = { Text("Pickup Origin Location", color = TextMuted, fontSize = 12.sp) },
-                    placeholder = { Text("e.g. Nagpur Terminal Hub", color = TextMuted.copy(alpha = 0.5f), fontSize = 12.sp) },
-                    singleLine = true,
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = TextPrimary,
-                        unfocusedTextColor = TextPrimary,
-                        focusedBorderColor = EmeraldPrimary,
-                        unfocusedBorderColor = ObsidianCardBorder,
-                        focusedContainerColor = ObsidianSurfaceElevated,
-                        unfocusedContainerColor = ObsidianSurfaceElevated
-                    ),
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp)
-                )
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                OutlinedTextField(
-                    value = deliveryLocation,
-                    onValueChange = { deliveryLocation = it },
-                    label = { Text("Delivery Destination Location", color = TextMuted, fontSize = 12.sp) },
-                    placeholder = { Text("e.g. Mumbai Port Warehouse", color = TextMuted.copy(alpha = 0.5f), fontSize = 12.sp) },
-                    singleLine = true,
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = TextPrimary,
-                        unfocusedTextColor = TextPrimary,
-                        focusedBorderColor = EmeraldPrimary,
-                        unfocusedBorderColor = ObsidianCardBorder,
-                        focusedContainerColor = ObsidianSurfaceElevated,
-                        unfocusedContainerColor = ObsidianSurfaceElevated
-                    ),
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            GlassCard(modifier = Modifier.fillMaxWidth()) {
-                Text(
-                    text = "CARGO SPECIFICATIONS",
-                    fontSize = 10.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = TextMuted,
-                    modifier = Modifier.padding(bottom = 12.dp)
-                )
-
-                OutlinedTextField(
-                    value = cargoType,
-                    onValueChange = { cargoType = it },
-                    label = { Text("Cargo Type", color = TextMuted, fontSize = 12.sp) },
-                    placeholder = { Text("e.g. Electronics, Steel, FMCG", color = TextMuted.copy(alpha = 0.5f), fontSize = 12.sp) },
-                    singleLine = true,
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = TextPrimary,
-                        unfocusedTextColor = TextPrimary,
-                        focusedBorderColor = EmeraldPrimary,
-                        unfocusedBorderColor = ObsidianCardBorder,
-                        focusedContainerColor = ObsidianSurfaceElevated,
-                        unfocusedContainerColor = ObsidianSurfaceElevated
-                    ),
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp)
-                )
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                OutlinedTextField(
-                    value = weight,
-                    onValueChange = { weight = it },
-                    label = { Text("Payload Weight", color = TextMuted, fontSize = 12.sp) },
-                    placeholder = { Text("e.g. 18,000 kg", color = TextMuted.copy(alpha = 0.5f), fontSize = 12.sp) },
-                    singleLine = true,
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = TextPrimary,
-                        unfocusedTextColor = TextPrimary,
-                        focusedBorderColor = EmeraldPrimary,
-                        unfocusedBorderColor = ObsidianCardBorder,
-                        focusedContainerColor = ObsidianSurfaceElevated,
-                        unfocusedContainerColor = ObsidianSurfaceElevated
-                    ),
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp)
-                )
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                OutlinedTextField(
-                    value = notes,
-                    onValueChange = { notes = it },
-                    label = { Text("Handling Notes / Instructions", color = TextMuted, fontSize = 12.sp) },
-                    placeholder = { Text("Specific transport conditions", color = TextMuted.copy(alpha = 0.5f), fontSize = 12.sp) },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = TextPrimary,
-                        unfocusedTextColor = TextPrimary,
-                        focusedBorderColor = EmeraldPrimary,
-                        unfocusedBorderColor = ObsidianCardBorder,
-                        focusedContainerColor = ObsidianSurfaceElevated,
-                        unfocusedContainerColor = ObsidianSurfaceElevated
-                    ),
-                    modifier = Modifier.fillMaxWidth(),
-                    minLines = 3,
-                    maxLines = 5,
-                    shape = RoundedCornerShape(12.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            PrimaryButton(
-                text = "Publish to Freight Marketplace",
-                isLoading = isLoading,
-                onClick = {
-                    if (pickupLocation.isNotBlank() && deliveryLocation.isNotBlank() && cargoType.isNotBlank()) {
-                        coroutineScope.launch {
-                            val success = LogiSyncRepository.createRequest(
-                                pickup = pickupLocation.trim(),
-                                delivery = deliveryLocation.trim(),
-                                cargoType = cargoType.trim(),
-                                weight = weight.trim().ifEmpty { "N/A" },
-                                notes = notes.trim()
-                            )
-                            if (success) {
-                                onNavigateBack()
-                            }
-                        }
-                    }
-                }
+            Text(text = "Pickup Location", fontSize = 13.sp, fontWeight = FontWeight.Medium, color = Color(0xFF7A9E91))
+            Spacer(modifier = Modifier.height(6.dp))
+            OutlinedTextField(
+                value = pickupLocation,
+                onValueChange = { pickupLocation = it },
+                placeholder = { Text("Enter pickup location", color = Color(0xFF4C6E61), fontSize = 14.sp) },
+                leadingIcon = { Icon(Icons.Default.Place, contentDescription = null, tint = EmeraldPrimary, modifier = Modifier.size(18.dp)) },
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = EmeraldPrimary,
+                    unfocusedBorderColor = Color(0xFF14352B),
+                    focusedContainerColor = Color(0xFF0C221B),
+                    unfocusedContainerColor = Color(0xFF0C221B),
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White
+                ),
+                shape = RoundedCornerShape(10.dp),
+                singleLine = true
             )
 
-            if (errorMessage != null) {
-                Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(14.dp))
+
+            Text(text = "Destination", fontSize = 13.sp, fontWeight = FontWeight.Medium, color = Color(0xFF7A9E91))
+            Spacer(modifier = Modifier.height(6.dp))
+            OutlinedTextField(
+                value = deliveryLocation,
+                onValueChange = { deliveryLocation = it },
+                placeholder = { Text("Enter destination", color = Color(0xFF4C6E61), fontSize = 14.sp) },
+                leadingIcon = { Icon(Icons.Default.Place, contentDescription = null, tint = SafetyOrange, modifier = Modifier.size(18.dp)) },
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = EmeraldPrimary,
+                    unfocusedBorderColor = Color(0xFF14352B),
+                    focusedContainerColor = Color(0xFF0C221B),
+                    unfocusedContainerColor = Color(0xFF0C221B),
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White
+                ),
+                shape = RoundedCornerShape(10.dp),
+                singleLine = true
+            )
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            Text(text = "Cargo Type", fontSize = 13.sp, fontWeight = FontWeight.Medium, color = Color(0xFF7A9E91))
+            Spacer(modifier = Modifier.height(6.dp))
+            Box {
+                OutlinedTextField(
+                    value = cargoType,
+                    onValueChange = {},
+                    readOnly = true,
+                    placeholder = { Text("Select cargo type", color = Color(0xFF4C6E61), fontSize = 14.sp) },
+                    leadingIcon = { Icon(Icons.Default.Inventory2, contentDescription = null, tint = EmeraldPrimary, modifier = Modifier.size(18.dp)) },
+                    trailingIcon = {
+                        IconButton(onClick = { cargoDropdownExpanded = true }) {
+                            Icon(Icons.Default.KeyboardArrowDown, contentDescription = null, tint = Color(0xFF7A9E91))
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { cargoDropdownExpanded = true },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = EmeraldPrimary,
+                        unfocusedBorderColor = Color(0xFF14352B),
+                        focusedContainerColor = Color(0xFF0C221B),
+                        unfocusedContainerColor = Color(0xFF0C221B),
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White
+                    ),
+                    shape = RoundedCornerShape(10.dp)
+                )
+
+                DropdownMenu(
+                    expanded = cargoDropdownExpanded,
+                    onDismissRequest = { cargoDropdownExpanded = false },
+                    modifier = Modifier.background(Color(0xFF0C221B))
+                ) {
+                    cargoOptions.forEach { opt ->
+                        DropdownMenuItem(
+                            text = { Text(opt, color = Color.White) },
+                            onClick = {
+                                cargoType = opt
+                                cargoDropdownExpanded = false
+                            }
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            Text(text = "Weight (kg)", fontSize = 13.sp, fontWeight = FontWeight.Medium, color = Color(0xFF7A9E91))
+            Spacer(modifier = Modifier.height(6.dp))
+            OutlinedTextField(
+                value = weight,
+                onValueChange = { weight = it },
+                placeholder = { Text("Enter weight", color = Color(0xFF4C6E61), fontSize = 14.sp) },
+                leadingIcon = { Icon(Icons.Default.FitnessCenter, contentDescription = null, tint = EmeraldPrimary, modifier = Modifier.size(18.dp)) },
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = EmeraldPrimary,
+                    unfocusedBorderColor = Color(0xFF14352B),
+                    focusedContainerColor = Color(0xFF0C221B),
+                    unfocusedContainerColor = Color(0xFF0C221B),
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White
+                ),
+                shape = RoundedCornerShape(10.dp),
+                singleLine = true
+            )
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            Text(text = "Requested Date", fontSize = 13.sp, fontWeight = FontWeight.Medium, color = Color(0xFF7A9E91))
+            Spacer(modifier = Modifier.height(6.dp))
+            OutlinedTextField(
+                value = requestedDate,
+                onValueChange = { requestedDate = it },
+                placeholder = { Text("Select date", color = Color(0xFF4C6E61), fontSize = 14.sp) },
+                leadingIcon = { Icon(Icons.Default.CalendarToday, contentDescription = null, tint = EmeraldPrimary, modifier = Modifier.size(18.dp)) },
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = EmeraldPrimary,
+                    unfocusedBorderColor = Color(0xFF14352B),
+                    focusedContainerColor = Color(0xFF0C221B),
+                    unfocusedContainerColor = Color(0xFF0C221B),
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White
+                ),
+                shape = RoundedCornerShape(10.dp),
+                singleLine = true
+            )
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            Text(text = "Additional Notes (Optional)", fontSize = 13.sp, fontWeight = FontWeight.Medium, color = Color(0xFF7A9E91))
+            Spacer(modifier = Modifier.height(6.dp))
+            OutlinedTextField(
+                value = notes,
+                onValueChange = { notes = it },
+                placeholder = { Text("Any special handling instructions...", color = Color(0xFF4C6E61), fontSize = 14.sp) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(90.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = EmeraldPrimary,
+                    unfocusedBorderColor = Color(0xFF14352B),
+                    focusedContainerColor = Color(0xFF0C221B),
+                    unfocusedContainerColor = Color(0xFF0C221B),
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White
+                ),
+                shape = RoundedCornerShape(10.dp)
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            submitError?.let {
+                Text(text = it, color = StatusCancelledText, fontSize = 12.sp, modifier = Modifier.padding(bottom = 8.dp))
+            }
+
+            Button(
+                onClick = {
+                    if (pickupLocation.isBlank() || deliveryLocation.isBlank()) {
+                        submitError = "Please enter pickup and destination locations."
+                        return@Button
+                    }
+                    coroutineScope.launch {
+                        submitError = null
+                        val success = LogiSyncRepository.createRequest(
+                            pickup = pickupLocation,
+                            delivery = deliveryLocation,
+                            cargoType = cargoType.ifBlank { "General Freight" },
+                            weight = weight.ifBlank { "500 kg" },
+                            notes = notes
+                        )
+                        if (success) {
+                            onNavigateBack()
+                        } else {
+                            submitError = "Failed to create shipment. Please check database connection."
+                        }
+                    }
+                },
+                enabled = !isLoading,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+                shape = RoundedCornerShape(10.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary)
+            ) {
                 Text(
-                    text = errorMessage ?: "",
-                    color = StatusCancelledText,
-                    fontSize = 12.sp
+                    text = if (isLoading) "Submitting..." else "Submit Request",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = ObsidianDeep
                 )
             }
+
+            Spacer(modifier = Modifier.height(20.dp))
         }
     }
 }
