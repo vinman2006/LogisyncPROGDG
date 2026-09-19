@@ -198,130 +198,71 @@ export default function HeroShipmentStream({
         <div className="hero-track-container w-full lg:w-[54%] h-[420px] sm:h-[500px] lg:h-[620px] relative overflow-hidden flex items-center">
 
           {/* ═════════════════════════════════════════════════════════════════ */}
-          {/* TRACK 1 (TOP): Medium Cardboard Box traveling Left → Right        */}
+          {/* TRACK 1 (TOP): Medium Cardboard Box with Trailing Speed Beams     */}
           {/* ═════════════════════════════════════════════════════════════════ */}
-          
-          {/* Track 1 Instance A */}
           <div 
-            className="absolute left-0 flex items-center will-change-transform pointer-events-none z-10 track1-box-a"
-            style={{ top: '22%' }}
+            className="absolute right-0 flex items-center w-full justify-end z-10 pointer-events-none anim-track1-float"
+            style={{ top: '18%' }}
           >
-            {/* Speed motion trail behind the box */}
-            <div className="flex flex-col items-end gap-1.5 mr-[-14px] z-0">
-              {/* Orange motion beam */}
+            {/* Speed motion trail behind the box extending to the left */}
+            <div className="flex flex-col items-end gap-1.5 mr-[-14px] z-10 flex-1 max-w-[560px]">
+              {/* Orange motion beam with continuous shimmer */}
               <div 
-                className="h-3.5 sm:h-4 rounded-full anim-shimmer-orange"
+                className="h-3.5 sm:h-4 rounded-full w-[78%] anim-shimmer-orange"
                 style={{
-                  width: 'clamp(170px, 22vw, 340px)',
-                  background: 'linear-gradient(90deg, transparent 0%, #ff7700 25%, #ffb347 50%, #ff7700 75%, #ff5500 100%)',
+                  background: 'linear-gradient(90deg, transparent 0%, rgba(255, 119, 0, 0.3) 20%, #ff7700 45%, #ffb347 65%, #ff7700 85%, #ff5500 100%)',
                   boxShadow: '0 0 18px rgba(255, 119, 0, 0.6)',
                 }}
               />
               {/* Purple motion beam underneath, offset to the left */}
               <div 
-                className="h-3 sm:h-3.5 rounded-full mr-5 anim-shimmer-purple"
+                className="h-3 sm:h-3.5 rounded-full w-[92%] mr-5 anim-shimmer-purple"
                 style={{
-                  width: 'clamp(220px, 28vw, 420px)',
-                  background: 'linear-gradient(90deg, transparent 0%, #7c3aed 20%, #a78bfa 50%, #7c3aed 80%, #6d28d9 100%)',
+                  background: 'linear-gradient(90deg, transparent 0%, rgba(124, 58, 237, 0.3) 15%, #7c3aed 40%, #a78bfa 60%, #7c3aed 80%, #6d28d9 100%)',
                   boxShadow: '0 0 16px rgba(124, 58, 237, 0.45)',
                 }}
               />
             </div>
             {/* 3D Isometric Cardboard Box */}
-            <div className="relative z-10">
-              <CardboardBox id="boxTrack1A" size={135} className="origin-left" />
+            <div 
+              className="relative z-20 flex-shrink-0"
+              style={{ marginRight: '60px' }}
+            >
+              <CardboardBox id="boxTrack1" size={135} className="origin-left" />
             </div>
           </div>
 
-          {/* Track 1 Instance B (Staggered by exactly 50% for seamless looping) */}
-          <div 
-            className="absolute left-0 flex items-center will-change-transform pointer-events-none z-10 track1-box-b"
-            style={{ top: '22%' }}
-          >
-            <div className="flex flex-col items-end gap-1.5 mr-[-14px] z-0">
-              <div 
-                className="h-3.5 sm:h-4 rounded-full anim-shimmer-orange"
-                style={{
-                  width: 'clamp(170px, 22vw, 340px)',
-                  background: 'linear-gradient(90deg, transparent 0%, #ff7700 25%, #ffb347 50%, #ff7700 75%, #ff5500 100%)',
-                  boxShadow: '0 0 18px rgba(255, 119, 0, 0.6)',
-                }}
-              />
-              <div 
-                className="h-3 sm:h-3.5 rounded-full mr-5 anim-shimmer-purple"
-                style={{
-                  width: 'clamp(220px, 28vw, 420px)',
-                  background: 'linear-gradient(90deg, transparent 0%, #7c3aed 20%, #a78bfa 50%, #7c3aed 80%, #6d28d9 100%)',
-                  boxShadow: '0 0 16px rgba(124, 58, 237, 0.45)',
-                }}
-              />
-            </div>
-            <div className="relative z-10">
-              <CardboardBox id="boxTrack1B" size={135} className="origin-left" />
-            </div>
-          </div>
-
-
           {/* ═════════════════════════════════════════════════════════════════ */}
-          {/* TRACK 2 (MIDDLE): Smaller Cardboard Box traveling Left → Right    */}
+          {/* TRACK 2 (MIDDLE): Smaller Cardboard Box with Trailing Speed Beams  */}
           {/* ═════════════════════════════════════════════════════════════════ */}
-          
-          {/* Track 2 Instance A */}
           <div 
-            className="absolute left-0 flex items-center will-change-transform pointer-events-none z-10 track2-box-a"
+            className="absolute right-0 flex items-center w-full justify-end z-10 pointer-events-none anim-track2-float"
             style={{ top: '44%' }}
           >
-            <div className="flex flex-col items-end gap-1.5 mr-[-10px] z-0">
+            <div className="flex flex-col items-end gap-1.5 mr-[-10px] z-10 flex-1 max-w-[420px]">
               {/* Orange motion beam */}
               <div 
-                className="h-2.5 sm:h-3 rounded-full anim-shimmer-orange"
+                className="h-2.5 sm:h-3 rounded-full w-[72%] anim-shimmer-orange"
                 style={{
-                  width: 'clamp(130px, 18vw, 260px)',
-                  background: 'linear-gradient(90deg, transparent 0%, #ff8800 30%, #ffc060 50%, #ff8800 80%, #ff6600 100%)',
+                  background: 'linear-gradient(90deg, transparent 0%, rgba(255, 136, 0, 0.3) 20%, #ff8800 45%, #ffc060 65%, #ff8800 85%, #ff6600 100%)',
                   boxShadow: '0 0 14px rgba(255, 136, 0, 0.5)',
                 }}
               />
               {/* Purple motion beam underneath */}
               <div 
-                className="h-2 sm:h-2.5 rounded-full mr-4 anim-shimmer-purple"
+                className="h-2 sm:h-2.5 rounded-full w-[88%] mr-4 anim-shimmer-purple"
                 style={{
-                  width: 'clamp(180px, 24vw, 340px)',
-                  background: 'linear-gradient(90deg, transparent 0%, #8b5cf6 25%, #c4b5fd 50%, #8b5cf6 80%, #7c3aed 100%)',
+                  background: 'linear-gradient(90deg, transparent 0%, rgba(139, 92, 246, 0.3) 15%, #8b5cf6 40%, #c4b5fd 60%, #8b5cf6 80%, #7c3aed 100%)',
                   boxShadow: '0 0 12px rgba(139, 92, 246, 0.4)',
                 }}
               />
             </div>
             {/* Smaller 3D Isometric Cardboard Box */}
-            <div className="relative z-10">
-              <CardboardBox id="boxTrack2A" size={90} className="origin-left" />
-            </div>
-          </div>
-
-          {/* Track 2 Instance B (Staggered by 50% for seamless looping) */}
-          <div 
-            className="absolute left-0 flex items-center will-change-transform pointer-events-none z-10 track2-box-b"
-            style={{ top: '44%' }}
-          >
-            <div className="flex flex-col items-end gap-1.5 mr-[-10px] z-0">
-              <div 
-                className="h-2.5 sm:h-3 rounded-full anim-shimmer-orange"
-                style={{
-                  width: 'clamp(130px, 18vw, 260px)',
-                  background: 'linear-gradient(90deg, transparent 0%, #ff8800 30%, #ffc060 50%, #ff8800 80%, #ff6600 100%)',
-                  boxShadow: '0 0 14px rgba(255, 136, 0, 0.5)',
-                }}
-              />
-              <div 
-                className="h-2 sm:h-2.5 rounded-full mr-4 anim-shimmer-purple"
-                style={{
-                  width: 'clamp(180px, 24vw, 340px)',
-                  background: 'linear-gradient(90deg, transparent 0%, #8b5cf6 25%, #c4b5fd 50%, #8b5cf6 80%, #7c3aed 100%)',
-                  boxShadow: '0 0 12px rgba(139, 92, 246, 0.4)',
-                }}
-              />
-            </div>
-            <div className="relative z-10">
-              <CardboardBox id="boxTrack2B" size={90} className="origin-left" />
+            <div 
+              className="relative z-20 flex-shrink-0"
+              style={{ marginRight: '185px' }}
+            >
+              <CardboardBox id="boxTrack2" size={95} className="origin-left" />
             </div>
           </div>
 

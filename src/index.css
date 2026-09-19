@@ -172,76 +172,33 @@ body {
   animation: lineShimmerPurple 4.8s linear infinite, softPulsePurple 5.2s ease-in-out infinite;
 }
 
-/* ── Track 1: Medium Box Left → Right Smooth Travel across Full Track ───────── */
-@keyframes travelTrack1 {
-  0% {
-    transform: translate3d(-480px, 0, 0);
-    opacity: 0;
+/* ── Track 1: Top Box gentle aerodynamic suspension & subtle thrust ───────── */
+@keyframes track1Float {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
   }
-  4% {
-    opacity: 1;
-  }
-  96% {
-    opacity: 1;
-  }
-  100% {
-    transform: translate3d(calc(100cqw + 80px), 0, 0);
-    opacity: 0;
+  50% {
+    transform: translate3d(8px, -5px, 0);
   }
 }
 
-/* ── Track 2: Small Box Left → Right Smooth Travel (Different Speed) ────────── */
-@keyframes travelTrack2 {
-  0% {
-    transform: translate3d(-380px, 0, 0);
-    opacity: 0;
+.anim-track1-float {
+  animation: track1Float 6s ease-in-out infinite;
+}
+
+/* ── Track 2: Middle Box gentle aerodynamic suspension (counter-phase) ─────── */
+@keyframes track2Float {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
   }
-  4% {
-    opacity: 1;
-  }
-  96% {
-    opacity: 1;
-  }
-  100% {
-    transform: translate3d(calc(100cqw + 80px), 0, 0);
-    opacity: 0;
+  50% {
+    transform: translate3d(6px, 4px, 0);
   }
 }
 
-/* Fallback if cqw is not supported */
-@supports not (width: 100cqw) {
-  @keyframes travelTrack1 {
-    0% {
-      transform: translate3d(-480px, 0, 0);
-      opacity: 0;
-    }
-    4% {
-      opacity: 1;
-    }
-    96% {
-      opacity: 1;
-    }
-    100% {
-      transform: translate3d(calc(55vw + 80px), 0, 0);
-      opacity: 0;
-    }
-  }
-  @keyframes travelTrack2 {
-    0% {
-      transform: translate3d(-380px, 0, 0);
-      opacity: 0;
-    }
-    4% {
-      opacity: 1;
-    }
-    96% {
-      opacity: 1;
-    }
-    100% {
-      transform: translate3d(calc(55vw + 80px), 0, 0);
-      opacity: 0;
-    }
-  }
+.anim-track2-float {
+  animation: track2Float 5.2s ease-in-out infinite;
+  animation-delay: -2.6s;
 }
 
 /* ── Large Box on Far Right: Subtle gentle idle drift, remaining partially cropped */
@@ -250,33 +207,12 @@ body {
     transform: translate3d(0, 0, 0);
   }
   50% {
-    transform: translate3d(6px, 0, 0);
+    transform: translate3d(6px, -3px, 0);
   }
 }
 
 .anim-large-box {
-  animation: largeBoxSubtleDrift 8s ease-in-out infinite;
-}
-
-/* Staggered delays: Box A is immediately in the reference screenshot position on load */
-.track1-box-a {
-  animation: travelTrack1 8.8s linear infinite;
-  animation-delay: -6.3s; /* ~72% along the track on initial load */
-}
-
-.track1-box-b {
-  animation: travelTrack1 8.8s linear infinite;
-  animation-delay: -1.9s; /* Enters seamlessly from left */
-}
-
-.track2-box-a {
-  animation: travelTrack2 7.2s linear infinite;
-  animation-delay: -4.6s; /* ~64% along the track on initial load */
-}
-
-.track2-box-b {
-  animation: travelTrack2 7.2s linear infinite;
-  animation-delay: -1.0s; /* Enters seamlessly from left */
+  animation: largeBoxSubtleDrift 7.5s ease-in-out infinite;
 }
 
 /* Stable headline entrance opacity */
