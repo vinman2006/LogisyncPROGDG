@@ -1,6 +1,3 @@
-import dns from 'node:dns/promises';
-dns.setServers(['8.8.8.8', '1.1.1.1']);
-
 import pg from 'pg';
 const { Pool } = pg;
 
@@ -10,14 +7,18 @@ let poolInstance = null;
 export async function getPool() {
   if (poolInstance) return poolInstance;
 
+  // Try DNS resolution to get IP directly (helps in some environments)
+  // Falls back to hostname if unavailable (e.g. Vercel serverless)
   let hostToUse = HOSTNAME;
   try {
+    const dns = await import('node:dns/promises');
     const addresses = await dns.resolve4(HOSTNAME);
     if (addresses && addresses.length > 0) {
       hostToUse = addresses[0];
     }
   } catch (dnsErr) {
-    console.warn('[NeonDB] DNS resolution note:', dnsErr.message);
+    // DNS resolution not available or hostname resolves fine — use hostname directly
+    hostToUse = HOSTNAME;
   }
 
   poolInstance = new Pool({
@@ -26,8 +27,9 @@ export async function getPool() {
     user: 'neondb_owner',
     password: 'npg_qoNFpJ2zm3Hj',
     database: 'neondb',
-    max: 10,
-    idleTimeoutMillis: 30000,
+    max: 3,
+    idleTimeoutMillis: 10000,
+    connectionTimeoutMillis: 10000,
     ssl: {
       rejectUnauthorized: false,
       servername: HOSTNAME,
@@ -35,7 +37,8 @@ export async function getPool() {
   });
 
   poolInstance.on('error', (err) => {
-    console.warn('[NeonDB] Idle client pool connection error caught:', err.message);
+    console.warn('[NeonDB] Pool error:', err.message);
+    poolInstance = null; // Reset so next request gets a fresh pool
   });
 
   return poolInstance;

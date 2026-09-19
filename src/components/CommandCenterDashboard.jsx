@@ -191,7 +191,14 @@ export default function CommandCenterDashboard({
 
   // Load Transport Requests from NeonDB with real-time polling
   const loadRequests = useCallback(async (isSilent = false) => {
-    if (!user) return;
+    if (!user) {
+      // No user — clear loading state and empty list
+      if (!isSilent) {
+        setIsLoadingRequests(false);
+        setRequests([]);
+      }
+      return;
+    }
     if (!isSilent) setIsLoadingRequests(true);
 
     try {
@@ -200,13 +207,15 @@ export default function CommandCenterDashboard({
       setActionError(null);
     } catch (err) {
       if (!isSilent) {
-        console.error('[Dashboard] Error fetching transport requests:', err);
-        setActionError('Unable to sync live transport records from NeonDB');
+        console.warn('[Dashboard] Could not fetch transport requests:', err);
+        // Don't block the dashboard — show empty state instead
+        setRequests([]);
       }
     } finally {
       if (!isSilent) setIsLoadingRequests(false);
     }
   }, [user]);
+
 
   // Initial load + 3.5s silent background polling for multi-user sync
   useEffect(() => {

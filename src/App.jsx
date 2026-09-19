@@ -49,15 +49,9 @@ function AppContent() {
 
   const handleOpenLogin = async () => {
     if (user) {
-      // Check if user has an existing NeonDB profile
-      const neonCheck = await checkUserExistsInNeon(user.uid);
-      if (neonCheck.exists && neonCheck.user) {
-        // Returning user with NeonDB profile -> directly navigate to command center
-        setCurrentView('dashboard');
-      } else {
-        // First-time user without NeonDB profile -> open welcoming onboarding
-        setCurrentView('onboarding');
-      }
+      // User already authenticated — go straight to dashboard
+      // NeonDB profile is loaded asynchronously inside the dashboard itself
+      setCurrentView('dashboard');
     } else {
       setCurrentView('login');
     }
@@ -65,23 +59,28 @@ function AppContent() {
   };
 
   const handleLoginSuccess = async (authenticatedUser) => {
+    // After Google sign-in succeeds, always go to dashboard.
+    // The dashboard loads the NeonDB profile internally and shows
+    // onboarding/profile setup if needed without blocking navigation.
+    // (Previously: a failed NeonDB cold-start would trap users in onboarding)
+    setCurrentView('dashboard');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Silently check if first-time user; if no profile found, show onboarding after a beat
     const uidToCheck = authenticatedUser?.uid || user?.uid;
     if (uidToCheck) {
       try {
         const neonCheck = await checkUserExistsInNeon(uidToCheck);
-        if (neonCheck.exists && neonCheck.user) {
-          // Returning user: profile exists in NeonDB -> direct to Command Center
-          setCurrentView('dashboard');
-          return;
+        if (!neonCheck.exists || !neonCheck.user) {
+          // First-time user — redirect to onboarding
+          setCurrentView('onboarding');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         }
       } catch (err) {
-        console.warn('[App] Error during post-login NeonDB lookup:', err);
+        // NeonDB unavailable — stay on dashboard, profile will load later
+        console.warn('[App] NeonDB profile check skipped (will retry in dashboard):', err.message);
       }
     }
-
-    // First-time user detected: launch welcoming onboarding experience
-    setCurrentView('onboarding');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleOnboardingComplete = () => {
