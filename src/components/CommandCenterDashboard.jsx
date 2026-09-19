@@ -26,7 +26,14 @@ import {
   RefreshCw,
   Eye,
   Network,
-  Sparkles
+  Sparkles,
+  User,
+  Pencil,
+  ChevronRight,
+  Database,
+  Shield,
+  Link2,
+  X
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import {
@@ -69,11 +76,17 @@ export default function CommandCenterDashboard({
   // NeonDB User Profile state
   const [neonUser, setNeonUser] = useState(() => onboardingProfile || null);
 
-  // Inline Profile Name Editing state
+  // Inline & Modal Profile Editing state
   const [isEditingName, setIsEditingName] = useState(false);
   const [editedNameInput, setEditedNameInput] = useState('');
   const [isSavingName, setIsSavingName] = useState(false);
   const [nameSaveSuccess, setNameSaveSuccess] = useState(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [profileNameInput, setProfileNameInput] = useState('');
+  const [profileCityInput, setProfileCityInput] = useState('');
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
+  const [isDbDetailsModalOpen, setIsDbDetailsModalOpen] = useState(false);
+  const [activeSettingModal, setActiveSettingModal] = useState(null);
 
   useEffect(() => {
     if (onboardingProfile) {
@@ -377,12 +390,12 @@ export default function CommandCenterDashboard({
   return (
     <div className="flex h-screen w-full bg-[#f8fafc] text-slate-800 font-sans overflow-hidden select-none">
       {/* ========================================================================= */}
-      {/* LEFT SIDEBAR: Deep Forest Emerald Sleek Brand Nav                          */}
+      {/* LEFT SIDEBAR: Sleek Dark Navy Brand Nav                                    */}
       {/* ========================================================================= */}
-      <aside className="w-64 bg-[#051612] text-[#86a89c] border-r border-[#0d2e25] flex flex-col justify-between shrink-0 z-30">
+      <aside className="w-64 bg-[#080f24] text-[#8da2c0] border-r border-[#151f38] flex flex-col justify-between shrink-0 z-30">
         <div>
           {/* Top Brand Logo */}
-          <div className="h-18 px-6 flex items-center gap-3 border-b border-[#0b241d]">
+          <div className="h-18 px-6 flex items-center gap-3 border-b border-[#151f38]">
             <LogiSyncMark />
             <div className="flex items-baseline text-lg font-black tracking-tight text-white">
               <span>LogiSync</span>
@@ -391,23 +404,23 @@ export default function CommandCenterDashboard({
           </div>
 
           {/* User Role Badge Callout */}
-          <div className="mx-4 my-3 p-3 rounded-2xl bg-[#08241d] border border-[#124234] flex items-center justify-between">
+          <div className="mx-4 my-3 p-3.5 rounded-2xl bg-[#111a36] border border-[#1a264a] flex items-center justify-between shadow-sm">
             <div className="min-w-0">
-              <div className="text-[10px] font-mono uppercase tracking-wider text-[#10b981] font-bold">
+              <div className="text-[10px] font-mono uppercase tracking-wider text-[#64748b] font-bold">
                 Operating Role
               </div>
               <div className="text-xs font-bold text-white truncate mt-0.5">
-                {currentRole === 'TRANSPORT_PROVIDER' ? 'Carrier / Fleet' : 'Requester / Shipper'}
+                {currentRole === 'TRANSPORT_PROVIDER' ? 'Transport Provider / Carrier' : 'Requester / Shipper'}
               </div>
             </div>
-            <span className="w-2 h-2 rounded-full bg-[#10b981] animate-pulse shrink-0" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#00d68f] shadow-[0_0_8px_#00d68f] shrink-0" />
           </div>
 
           {/* Navigation Links */}
           <nav className="p-4 pt-1 space-y-1.5">
             {[
               { id: 'command-center', label: 'Command Center', icon: LayoutDashboard },
-              { id: 'ai-assistant', label: 'Gemini Logistics AI', icon: Sparkles, isAi: true },
+              { id: 'ai-assistant', label: 'Gemini Logistics AI', icon: Sparkles, isAi: true, badge: 'BETA' },
               { id: 'api-hub', label: 'API & Interop Hub', icon: Network },
               { id: 'public-transit-map', label: 'Public Map', icon: MapPin },
               { id: 'shipments', label: currentRole === 'TRANSPORT_PROVIDER' ? 'All Loads & Shipments' : 'My Shipments', icon: Package },
@@ -433,23 +446,21 @@ export default function CommandCenterDashboard({
                     }
                   }}
                   className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-                    item.isAi
-                      ? 'bg-[#ff5500]/15 text-[#ff7733] border border-[#ff5500]/30 hover:bg-[#ff5500]/25 hover:text-white'
-                      : isActive
-                        ? 'bg-[#0b2e24] text-white border border-[#14533e] shadow-[0_2px_10px_rgba(0,0,0,0.3)]'
-                        : 'text-[#86a89c] hover:text-white hover:bg-white/5'
+                    isActive
+                      ? 'bg-[#0066ff] text-white shadow-[0_4px_14px_rgba(0,102,255,0.4)]'
+                      : 'text-[#8da2c0] hover:text-white hover:bg-white/5'
                   }`}
                 >
                   <div className="flex items-center gap-3">
                     <Icon
                       size={16}
-                      className={item.isAi ? 'text-[#ff5500]' : isActive ? 'text-[#10b981]' : 'text-[#709587]'}
+                      className={isActive ? 'text-white' : item.isAi ? 'text-[#f97316]' : 'text-[#8da2c0]'}
                     />
                     <span>{item.label}</span>
                   </div>
-                  {item.isAi && (
-                    <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#ff5500]/20 text-[#ff5500] font-bold">
-                      GEMINI
+                  {item.badge && (
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#ff5500] text-white tracking-wider shadow-sm">
+                      {item.badge}
                     </span>
                   )}
                 </button>
@@ -459,29 +470,29 @@ export default function CommandCenterDashboard({
         </div>
 
         {/* Bottom Sidebar Tools & Support */}
-        <div className="p-4 border-t border-[#0b241d] space-y-2">
+        <div className="p-4 border-t border-[#151f38] space-y-2">
           {/* Quick Return to Landing Page */}
           {onExitToLanding && (
             <button
               type="button"
               onClick={onExitToLanding}
-              className="w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs text-[#8ab3a4] hover:text-white bg-[#08221b] hover:bg-[#0c2f25] border border-[#123e31] transition-all cursor-pointer"
+              className="w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs text-[#8da2c0] hover:text-white bg-[#0f1733] hover:bg-[#162145] border border-[#1a274e] transition-all cursor-pointer"
             >
               <div className="flex items-center gap-2">
                 <Home size={14} />
                 <span>Landing Page</span>
               </div>
-              <ExternalLink size={12} className="text-[#658b7e]" />
+              <ExternalLink size={12} className="text-[#64748b]" />
             </button>
           )}
 
           {/* Database Live Connectivity Indicator */}
-          <div className="px-3.5 py-2 rounded-xl bg-[#03110e] border border-[#0d2a21] flex items-center justify-between text-[11px]">
+          <div className="px-3.5 py-2 rounded-xl bg-[#0b132b] border border-[#162248] flex items-center justify-between text-[11px]">
             <div className="flex items-center gap-2 truncate">
-              <span className="w-2 h-2 rounded-full bg-[#10b981] animate-pulse shrink-0" />
-              <span className="text-[#a4ccc0] truncate font-medium">NeonDB Postgres</span>
+              <span className="w-2 h-2 rounded-full bg-[#00d68f] animate-pulse shrink-0" />
+              <span className="text-[#a5b4fc] truncate font-medium">NeonDB Postgres</span>
             </div>
-            <span className="text-[9px] font-mono uppercase text-[#10b981] font-bold">Synced</span>
+            <span className="text-[9px] font-mono uppercase text-[#00d68f] font-bold">Synced</span>
           </div>
         </div>
       </aside>
@@ -489,23 +500,23 @@ export default function CommandCenterDashboard({
       {/* ========================================================================= */}
       {/* MAIN CONTENT AREA                                                         */}
       {/* ========================================================================= */}
-      <div className="flex-1 flex flex-col h-full overflow-hidden bg-[#030e0b]">
+      <div className="flex-1 flex flex-col h-full overflow-hidden bg-[#080f24]">
         {/* ─── TOP NAVBAR ──────────────────────────────────────────────────────── */}
-        <header className="h-18 bg-[#041410] border-b border-[#0c3227] px-8 flex items-center justify-between shrink-0 z-20">
+        <header className="h-18 bg-[#080f24] border-b border-[#151f38] px-8 flex items-center justify-between shrink-0 z-20">
           {/* Search Input Bar with Ctrl K badge */}
           <div className="relative w-80 sm:w-96">
             <Search
               size={15}
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#7da395]"
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#64748b]"
             />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search tracking ID, city, cargo, nodes..."
-              className="w-full pl-10 pr-16 py-2.5 text-xs rounded-xl bg-[#07241d] border border-[#114033] text-white placeholder-[#689182] focus:outline-none focus:border-[#10b981] transition-all"
+              className="w-full pl-10 pr-16 py-2.5 text-xs rounded-xl bg-[#101935] border border-[#1d284a] text-white placeholder-[#607290] focus:outline-none focus:border-[#0066ff] transition-all"
             />
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-mono text-[#689182] bg-[#041611] px-1.5 py-0.5 rounded border border-[#0d3429]">
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-mono text-[#64748b] bg-[#0c1329] px-1.5 py-0.5 rounded border border-[#1d284a]">
               Ctrl K
             </span>
           </div>
@@ -517,11 +528,11 @@ export default function CommandCenterDashboard({
               <button
                 type="button"
                 onClick={onOpenAiAssistant}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#ff5500]/15 hover:bg-[#ff5500]/25 text-[#ff7733] hover:text-white text-xs font-bold border border-[#ff5500]/30 transition-all hover:scale-105 active:scale-95 cursor-pointer shadow-sm"
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#ff7a00] hover:bg-[#ff8800] text-slate-950 text-xs font-black transition-all hover:scale-105 active:scale-95 cursor-pointer shadow-md"
                 title="Launch LogiSyncPRO Gemini AI Assistant"
               >
-                <Sparkles size={13} className="text-[#ff5500] animate-pulse" />
-                <span className="hidden sm:inline">Ask Gemini AI</span>
+                <Sparkles size={14} className="text-slate-950 fill-slate-950" />
+                <span className="font-extrabold">Ask Gemini AI</span>
               </button>
             )}
 
@@ -530,10 +541,10 @@ export default function CommandCenterDashboard({
               type="button"
               onClick={() => loadRequests(false)}
               disabled={isLoadingRequests}
-              className="p-2 rounded-xl text-[#7ea798] hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
+              className="p-2 rounded-xl text-[#8da2c0] hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
               title="Refresh live data from NeonDB"
             >
-              <RefreshCw size={16} className={isLoadingRequests ? 'animate-spin text-[#10b981]' : ''} />
+              <RefreshCw size={16} className={isLoadingRequests ? 'animate-spin text-[#0066ff]' : ''} />
             </button>
 
             {/* Notification Bell */}
@@ -541,22 +552,22 @@ export default function CommandCenterDashboard({
               <button
                 type="button"
                 onClick={() => setNotificationOpen(!notificationOpen)}
-                className="relative p-2.5 rounded-xl text-[#7ea798] hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
+                className="relative p-2.5 rounded-xl text-[#8da2c0] hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
               >
                 <Bell size={18} />
                 {requests.some(r => r.status === 'PENDING') && (
-                  <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-rose-500 ring-2 ring-[#041410]" />
+                  <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-rose-500 ring-2 ring-[#080f24]" />
                 )}
               </button>
 
               {notificationOpen && (
-                <div className="absolute right-0 mt-2 w-72 bg-[#06211a] rounded-2xl border border-[#13493b] shadow-2xl p-3 z-50 text-white animate-in fade-in zoom-in-95">
-                  <div className="text-xs font-bold text-white pb-2 border-b border-[#0f3a2f]">
+                <div className="absolute right-0 mt-2 w-72 bg-[#0d1633] rounded-2xl border border-[#1e2d58] shadow-2xl p-3 z-50 text-white animate-in fade-in zoom-in-95">
+                  <div className="text-xs font-bold text-white pb-2 border-b border-[#18264d]">
                     Live Logistics Telemetry
                   </div>
-                  <div className="py-2 text-xs text-[#a0cdbe] space-y-2">
+                  <div className="py-2 text-xs text-[#94a3b8] space-y-2">
                     <div>Connected to NeonDB primary branch.</div>
-                    <div className="text-[11px] text-[#6d9688]">
+                    <div className="text-[11px] text-[#64748b]">
                       Total requests: {requests.length} | Pending: {requests.filter(r => r.status === 'PENDING').length}
                     </div>
                   </div>
@@ -571,33 +582,36 @@ export default function CommandCenterDashboard({
                 onClick={() => setUserDropdownOpen(!userDropdownOpen)}
                 className="flex items-center gap-3 pl-2 pr-3 py-1.5 rounded-full hover:bg-white/5 transition-all cursor-pointer"
               >
-                <div className="w-8 h-8 rounded-full bg-[#334155] border border-[#64748b] flex items-center justify-center text-xs font-bold text-white shrink-0 overflow-hidden">
-                  {avatarUrl && avatarUrl !== '/assets/avatar_profile.jpg' ? (
-                    <img src={avatarUrl} alt={displayName} className="w-full h-full object-cover" />
-                  ) : (
-                    <span>{displayName.slice(0, 2).toUpperCase()}</span>
-                  )}
+                <div className="w-8 h-8 rounded-full bg-[#1e293b] border border-[#334155] flex items-center justify-center text-xs font-bold text-white shrink-0 overflow-hidden">
+                  <img
+                    src={avatarUrl}
+                    alt={displayName}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.src = '/assets/avatar_profile.jpg';
+                    }}
+                  />
                 </div>
                 <div className="text-left hidden sm:block">
                   <div className="text-xs font-bold text-white leading-tight">{displayName}</div>
-                  <div className="text-[10px] text-[#7ea798]">{userRoleLabel}</div>
+                  <div className="text-[10px] text-[#8da2c0]">{userRoleLabel}</div>
                 </div>
-                <ChevronDown size={14} className="text-[#7ea798]" />
+                <ChevronDown size={14} className="text-[#8da2c0]" />
               </button>
 
               {userDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-64 bg-[#07221b] rounded-2xl border border-[#13493b] shadow-2xl p-2 z-50 text-white animate-in fade-in zoom-in-95">
-                  <div className="px-3 py-2 border-b border-[#0f382e] mb-1">
+                <div className="absolute right-0 mt-2 w-64 bg-[#0d1633] rounded-2xl border border-[#1e2d58] shadow-2xl p-2 z-50 text-white animate-in fade-in zoom-in-95">
+                  <div className="px-3 py-2 border-b border-[#18264d] mb-1">
                     <div className="text-xs font-bold text-white truncate">{displayName}</div>
-                    <div className="text-[11px] text-[#7fa798] truncate">{user?.email || 'Authenticated'}</div>
+                    <div className="text-[11px] text-[#94a3b8] truncate">{user?.email || neonUser?.email || 'Authenticated'}</div>
                     <div className="mt-1 flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#10b981]" />
-                      <span className="text-[10px] text-[#10b981] font-semibold">{userRoleLabel}</span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#00d68f]" />
+                      <span className="text-[10px] text-[#00d68f] font-semibold">{userRoleLabel}</span>
                     </div>
                   </div>
 
                   {/* Switch Role Option (for testing multi-user flow on single device) */}
-                  <div className="px-3 py-1.5 text-[10px] font-mono uppercase text-[#6d9688]">
+                  <div className="px-3 py-1.5 text-[10px] font-mono uppercase text-[#64748b]">
                     Switch Perspective (Testing)
                   </div>
                   <button
@@ -606,10 +620,10 @@ export default function CommandCenterDashboard({
                       setUserDropdownOpen(false);
                       handleRoleSwitch(currentRole === 'TRANSPORT_PROVIDER' ? 'REQUESTER' : 'TRANSPORT_PROVIDER');
                     }}
-                    className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs text-[#a0cdbe] hover:bg-white/5 text-left transition-colors cursor-pointer"
+                    className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs text-[#94a3b8] hover:bg-white/5 text-left transition-colors cursor-pointer"
                   >
                     <span>Switch to {currentRole === 'TRANSPORT_PROVIDER' ? 'Requester / Shipper' : 'Transport Provider'}</span>
-                    <RefreshCw size={12} className="text-[#10b981]" />
+                    <RefreshCw size={12} className="text-[#0066ff]" />
                   </button>
 
                   <button
@@ -618,7 +632,7 @@ export default function CommandCenterDashboard({
                       setUserDropdownOpen(false);
                       setActiveTab('settings');
                     }}
-                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-[#a0cdbe] hover:bg-white/5 text-left transition-colors cursor-pointer"
+                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-[#94a3b8] hover:bg-white/5 text-left transition-colors cursor-pointer"
                   >
                     <Settings size={14} />
                     <span>Workspace Settings</span>
@@ -676,7 +690,17 @@ export default function CommandCenterDashboard({
         )}
 
         {/* ─── TAB CONTENT ROUTER ─────────────────────────────────────────────── */}
-        <main className={`flex-1 overflow-hidden ${activeTab === 'public-transit-map' ? 'p-0 bg-[#030e0b]' : activeTab === 'api-hub' ? 'p-0 bg-[#030e0b] overflow-y-auto' : activeTab === 'transport-system' ? 'overflow-y-auto p-6 sm:p-8 bg-[#030e0b]' : 'overflow-y-auto p-6 sm:p-8 bg-[#04120e]'}`}>
+        <main className={`flex-1 overflow-hidden ${
+          activeTab === 'settings'
+            ? 'overflow-y-auto p-6 sm:p-8 bg-[#f0f4f9] text-slate-800'
+            : activeTab === 'public-transit-map'
+              ? 'p-0 bg-[#030e0b]'
+              : activeTab === 'api-hub'
+                ? 'p-0 bg-[#030e0b] overflow-y-auto'
+                : activeTab === 'transport-system'
+                  ? 'overflow-y-auto p-6 sm:p-8 bg-[#030e0b]'
+                  : 'overflow-y-auto p-6 sm:p-8 bg-[#04120e]'
+        }`}>
           {activeTab === 'command-center' && renderRoleAwareCommandCenter()}
           {activeTab === 'api-hub' && (
             <ApiHubDashboard onBack={() => setActiveTab('command-center')} />
@@ -1737,146 +1761,541 @@ export default function CommandCenterDashboard({
   }
 
   // ===========================================================================
-  // SCREEN: SETTINGS VIEW
+  // SCREEN: SETTINGS VIEW (EXACT MATCH TO DESIGN SPECIFICATION)
   // ===========================================================================
   function renderSettingsView() {
     return (
-      <div className="max-w-4xl mx-auto space-y-6 text-white animate-in fade-in duration-200">
+      <div className="max-w-6xl mx-auto space-y-6 animate-in fade-in duration-200">
+        {/* Breadcrumb & Header */}
         <div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Workspace & Account Settings</h1>
-          <p className="mt-0.5 text-xs text-[#7ea597]">Manage user profile, database links, and operational roles.</p>
+          <div className="text-xs font-semibold text-[#2563eb] mb-1">Settings</div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+            Workspace & Account Settings
+          </h1>
+          <p className="mt-1 text-xs sm:text-sm text-slate-500 font-medium">
+            Manage your profile, database links, and operational roles.
+          </p>
         </div>
 
-        <div className="bg-[#061b15] rounded-3xl border border-[#0f382e] p-6 shadow-xl space-y-6">
-          {/* Profile Overview */}
-          <div className="flex items-center gap-4 pb-6 border-b border-[#0d2a21]">
-            <div className="w-16 h-16 rounded-2xl overflow-hidden border-2 border-[#10b981] shrink-0">
-              <img src={avatarUrl} alt={displayName} className="w-full h-full object-cover" />
+        {/* ─── CARD 1: USER PROFILE ────────────────────────────────────────── */}
+        <div className="bg-white rounded-2xl p-6 sm:p-7 border border-slate-100 shadow-sm flex flex-col sm:flex-row sm:items-center gap-6">
+          {/* Avatar in soft cyan rounded container */}
+          <div className="w-24 h-24 rounded-2xl bg-[#e0f2fe] border border-[#bae6fd] flex items-center justify-center overflow-hidden shrink-0 shadow-inner">
+            <img
+              src={avatarUrl}
+              alt={displayName}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                e.currentTarget.src = '/assets/avatar_profile.jpg';
+              }}
+            />
+          </div>
+
+          {/* Profile Details */}
+          <div className="flex-1 min-w-0">
+            <div className="flex flex-wrap items-center gap-3">
+              <h2 className="text-xl font-bold text-slate-900 tracking-tight">{displayName}</h2>
+              <button
+                type="button"
+                onClick={() => {
+                  setProfileNameInput(displayName);
+                  setProfileCityInput(neonUser?.city || 'Nagpur');
+                  setIsProfileModalOpen(true);
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#eff6ff] text-[#2563eb] text-xs font-semibold border border-[#bfdbfe] hover:bg-[#dbeafe] transition-colors cursor-pointer shadow-xs"
+              >
+                <Pencil size={12} className="text-[#2563eb]" />
+                <span>Edit Profile</span>
+              </button>
             </div>
-            <div className="flex-1">
-              {isEditingName ? (
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 mb-1">
+
+            <div className="text-xs sm:text-sm text-slate-500 mt-1 font-medium truncate">
+              {neonUser?.email || user?.email || 'vineet.mandhalkar@gmail.com'}
+            </div>
+
+            {/* Badges Row */}
+            <div className="flex flex-wrap items-center gap-4 mt-3">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#dcfce7] text-[#15803d] text-xs font-semibold border border-[#bbf7d0]">
+                <User size={13} className="text-[#15803d]" />
+                <span>{currentRole === 'TRANSPORT_PROVIDER' ? 'Transport Provider / Carrier' : 'Requester / Shipper'}</span>
+              </div>
+
+              <div className="inline-flex items-center gap-1.5 text-xs text-slate-500 font-medium">
+                <MapPin size={14} className="text-slate-400" />
+                <span>{neonUser?.city || 'Nagpur'}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ─── MIDDLE ROW: OPERATIONAL ROLE & NEON DATABASE ─────────────────── */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* LEFT: Operational Role in NeonDB */}
+          <div className="bg-[#f0f6ff] border border-blue-100 rounded-2xl p-6 flex flex-col justify-between shadow-sm">
+            <div>
+              <div className="flex items-start gap-3.5">
+                <div className="w-11 h-11 bg-[#0066ff] text-white rounded-xl flex items-center justify-center shadow-sm shrink-0">
+                  <Database size={22} />
+                </div>
+                <div>
+                  <h3 className="text-sm sm:text-base font-bold text-slate-900 leading-tight">
+                    Operational Role in NeonDB
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                    You can test the application from either perspective using your account:
+                  </p>
+                </div>
+              </div>
+
+              {/* 2 Big Choice Tiles */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-5">
+                {/* Tile 1: Requester / Shipper */}
+                <button
+                  type="button"
+                  disabled={isProcessingAction}
+                  onClick={() => handleRoleSwitch('REQUESTER')}
+                  className={`p-4 rounded-2xl flex items-center gap-3 text-left transition-all cursor-pointer ${
+                    currentRole === 'REQUESTER'
+                      ? 'bg-[#0066ff] text-white shadow-md border border-transparent'
+                      : 'bg-white text-slate-800 border border-slate-200 hover:border-slate-300 shadow-sm'
+                  }`}
+                >
+                  <div
+                    className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
+                      currentRole === 'REQUESTER' ? 'bg-white/20 text-white' : 'bg-blue-50 text-blue-600'
+                    }`}
+                  >
+                    <User size={18} />
+                  </div>
+                  <div className="min-w-0">
+                    <div
+                      className={`text-xs font-bold truncate ${
+                        currentRole === 'REQUESTER' ? 'text-white' : 'text-slate-900'
+                      }`}
+                    >
+                      Requester / Shipper
+                    </div>
+                    <div
+                      className={`text-[11px] truncate mt-0.5 ${
+                        currentRole === 'REQUESTER' ? 'text-blue-100' : 'text-slate-500'
+                      }`}
+                    >
+                      Create & manage shipments
+                    </div>
+                  </div>
+                </button>
+
+                {/* Tile 2: Transport Provider / Carrier */}
+                <button
+                  type="button"
+                  disabled={isProcessingAction}
+                  onClick={() => handleRoleSwitch('TRANSPORT_PROVIDER')}
+                  className={`p-4 rounded-2xl flex items-center gap-3 text-left transition-all cursor-pointer ${
+                    currentRole === 'TRANSPORT_PROVIDER'
+                      ? 'bg-[#0066ff] text-white shadow-md border border-transparent'
+                      : 'bg-white text-slate-800 border border-slate-200 hover:border-slate-300 shadow-sm'
+                  }`}
+                >
+                  <div
+                    className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
+                      currentRole === 'TRANSPORT_PROVIDER' ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700'
+                    }`}
+                  >
+                    <Truck size={18} />
+                  </div>
+                  <div className="min-w-0">
+                    <div
+                      className={`text-xs font-bold truncate ${
+                        currentRole === 'TRANSPORT_PROVIDER' ? 'text-white' : 'text-slate-900'
+                      }`}
+                    >
+                      Transport Provider / Carrier
+                    </div>
+                    <div
+                      className={`text-[11px] truncate mt-0.5 ${
+                        currentRole === 'TRANSPORT_PROVIDER' ? 'text-blue-100' : 'text-slate-500'
+                      }`}
+                    >
+                      Manage fleet & operations
+                    </div>
+                  </div>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* RIGHT: Neon PostgreSQL Primary Database */}
+          <div className="bg-[#eefcf5] border border-emerald-100 rounded-2xl p-6 flex flex-col justify-between shadow-sm">
+            <div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-11 h-11 bg-[#00c569] text-white rounded-xl flex items-center justify-center shadow-sm shrink-0">
+                    <Database size={22} />
+                  </div>
+                  <h3 className="text-sm sm:text-base font-bold text-slate-900 leading-tight">
+                    Neon PostgreSQL Primary Database
+                  </h3>
+                </div>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#dcfce7] text-[#15803d] border border-[#bbf7d0] text-xs font-semibold shrink-0">
+                  <span className="w-2 h-2 rounded-full bg-[#15803d] animate-pulse" />
+                  <span>Connected</span>
+                </span>
+              </div>
+
+              {/* Hostname Code Pill */}
+              <div className="font-mono text-xs text-slate-700 bg-white/70 py-2.5 px-3.5 rounded-xl border border-emerald-100/80 my-4 select-all break-all">
+                ep-restless-moon-b4nzb2ae-pooler.c-6.us-east-2.aws.neon.tech
+              </div>
+            </div>
+
+            <div>
+              <button
+                type="button"
+                onClick={() => setIsDbDetailsModalOpen(true)}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-800 text-xs font-bold border border-emerald-200/80 shadow-sm transition-all cursor-pointer w-fit"
+              >
+                <span>View Database Details</span>
+                <ExternalLink size={13} className="text-slate-500" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* ─── BOTTOM SECTION: ACCOUNT SETTINGS ─────────────────────────────── */}
+        <div>
+          <h2 className="text-lg sm:text-xl font-bold text-slate-900 mt-8 mb-4">
+            Account Settings
+          </h2>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+            {/* Tile 1: Profile */}
+            <div
+              onClick={() => {
+                setProfileNameInput(displayName);
+                setProfileCityInput(neonUser?.city || 'Nagpur');
+                setIsProfileModalOpen(true);
+              }}
+              className="bg-[#eff6ff] border border-blue-100/80 rounded-2xl p-4 flex items-center justify-between hover:shadow-md transition-all cursor-pointer group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-xl bg-[#dbeafe] text-[#2563eb] flex items-center justify-center shrink-0">
+                  <User size={20} />
+                </div>
+                <div>
+                  <div className="text-sm font-bold text-slate-900">Profile</div>
+                  <div className="text-[11px] text-slate-500">Name, email, and personal info</div>
+                </div>
+              </div>
+              <ChevronRight size={16} className="text-[#2563eb] transition-transform group-hover:translate-x-0.5 shrink-0" />
+            </div>
+
+            {/* Tile 2: Security */}
+            <div
+              onClick={() => setActiveSettingModal('security')}
+              className="bg-[#fff7ed] border border-orange-100/80 rounded-2xl p-4 flex items-center justify-between hover:shadow-md transition-all cursor-pointer group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-xl bg-[#ffedd5] text-[#ea580c] flex items-center justify-center shrink-0">
+                  <Shield size={20} />
+                </div>
+                <div>
+                  <div className="text-sm font-bold text-slate-900">Security</div>
+                  <div className="text-[11px] text-slate-500">Password and access</div>
+                </div>
+              </div>
+              <ChevronRight size={16} className="text-[#ea580c] transition-transform group-hover:translate-x-0.5 shrink-0" />
+            </div>
+
+            {/* Tile 3: Integrations */}
+            <div
+              onClick={() => setActiveSettingModal('integrations')}
+              className="bg-[#ecfdf5] border border-emerald-100/80 rounded-2xl p-4 flex items-center justify-between hover:shadow-md transition-all cursor-pointer group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-xl bg-[#d1fae5] text-[#059669] flex items-center justify-center shrink-0">
+                  <Link2 size={20} />
+                </div>
+                <div>
+                  <div className="text-sm font-bold text-slate-900">Integrations</div>
+                  <div className="text-[11px] text-slate-500">Connected services</div>
+                </div>
+              </div>
+              <ChevronRight size={16} className="text-[#059669] transition-transform group-hover:translate-x-0.5 shrink-0" />
+            </div>
+
+            {/* Tile 4: Notifications */}
+            <div
+              onClick={() => setActiveSettingModal('notifications')}
+              className="bg-[#faf5ff] border border-purple-100/80 rounded-2xl p-4 flex items-center justify-between hover:shadow-md transition-all cursor-pointer group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-xl bg-[#f3e8ff] text-[#9333ea] flex items-center justify-center shrink-0">
+                  <Bell size={20} />
+                </div>
+                <div>
+                  <div className="text-sm font-bold text-slate-900">Notifications</div>
+                  <div className="text-[11px] text-slate-500">Email and in-app alerts</div>
+                </div>
+              </div>
+              <ChevronRight size={16} className="text-[#9333ea] transition-transform group-hover:translate-x-0.5 shrink-0" />
+            </div>
+          </div>
+        </div>
+
+        {/* ─── MODAL: EDIT PROFILE ─────────────────────────────────────────── */}
+        {isProfileModalOpen && (
+          <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in">
+            <div className="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl border border-slate-100 text-slate-800">
+              <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                    <User size={16} />
+                  </div>
+                  <h3 className="font-bold text-base text-slate-900">Edit Profile</h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsProfileModalOpen(false)}
+                  className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  if (!profileNameInput.trim()) return;
+                  setIsSavingProfile(true);
+                  try {
+                    const updated = await updateUserProfile({
+                      name: profileNameInput.trim(),
+                      city: profileCityInput.trim() || 'Nagpur',
+                    });
+                    if (updated) {
+                      setNeonUser(updated);
+                      setActionSuccess('Profile updated successfully in NeonDB.');
+                    }
+                    setIsProfileModalOpen(false);
+                  } catch (err) {
+                    console.error('Error updating profile:', err);
+                    setActionError('Could not save profile to NeonDB.');
+                  } finally {
+                    setIsSavingProfile(false);
+                  }
+                }}
+                className="mt-4 space-y-4"
+              >
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                    Full Name
+                  </label>
                   <input
                     type="text"
-                    value={editedNameInput}
-                    onChange={(e) => setEditedNameInput(e.target.value)}
-                    placeholder="Enter your full name"
-                    className="px-3 py-1.5 text-xs rounded-xl bg-[#03110d] border border-[#10b981] text-white focus:outline-none focus:ring-1 focus:ring-[#10b981]"
-                    autoFocus
+                    value={profileNameInput}
+                    onChange={(e) => setProfileNameInput(e.target.value)}
+                    className="w-full px-3.5 py-2 text-xs rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:border-blue-500 font-medium"
+                    required
                   />
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      disabled={isSavingName}
-                      onClick={async () => {
-                        if (!editedNameInput.trim()) return;
-                        setIsSavingName(true);
-                        try {
-                          const updated = await updateUserProfile({ name: editedNameInput.trim() });
-                          if (updated) {
-                            setNeonUser(updated);
-                            setNameSaveSuccess(true);
-                            setTimeout(() => setNameSaveSuccess(false), 3000);
-                          }
-                          setIsEditingName(false);
-                        } catch (err) {
-                          console.error('Failed to update name:', err);
-                        } finally {
-                          setIsSavingName(false);
-                        }
-                      }}
-                      className="px-3 py-1.5 rounded-xl bg-[#10b981] hover:bg-[#059669] text-[#030e0b] text-xs font-bold transition-all cursor-pointer"
-                    >
-                      {isSavingName ? 'Saving to NeonDB...' : 'Save Name'}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setIsEditingName(false)}
-                      className="px-2.5 py-1.5 rounded-xl bg-[#061e18] border border-[#123e31] text-[#7ea597] text-xs hover:text-white"
-                    >
-                      Cancel
-                    </button>
-                  </div>
                 </div>
-              ) : (
-                <div className="flex items-center gap-2 mb-1">
-                  <div className="text-base font-bold text-white">{displayName}</div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                    City / Operational Hub
+                  </label>
+                  <input
+                    type="text"
+                    value={profileCityInput}
+                    onChange={(e) => setProfileCityInput(e.target.value)}
+                    className="w-full px-3.5 py-2 text-xs rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:border-blue-500 font-medium"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                    Email Address
+                  </label>
+                  <input
+                    type="text"
+                    disabled
+                    value={neonUser?.email || user?.email || ''}
+                    className="w-full px-3.5 py-2 text-xs rounded-xl bg-slate-100 border border-slate-200 text-slate-500 cursor-not-allowed"
+                  />
+                </div>
+
+                <div className="pt-2 flex items-center justify-end gap-2">
                   <button
                     type="button"
-                    onClick={() => {
-                      setEditedNameInput(displayName);
-                      setIsEditingName(true);
-                    }}
-                    className="text-[10px] px-2 py-0.5 rounded-md bg-[#0e3328] hover:bg-[#124233] text-[#34d399] border border-[#10b981]/30 font-medium transition-all cursor-pointer"
+                    onClick={() => setIsProfileModalOpen(false)}
+                    className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100"
                   >
-                    Edit Name
+                    Cancel
                   </button>
-                  {nameSaveSuccess && (
-                    <span className="text-[10px] text-emerald-400 font-bold">✓ Saved to NeonDB!</span>
-                  )}
+                  <button
+                    type="submit"
+                    disabled={isSavingProfile}
+                    className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md transition-all cursor-pointer"
+                  >
+                    {isSavingProfile ? 'Saving...' : 'Save Profile'}
+                  </button>
                 </div>
-              )}
-              <div className="text-xs text-[#7ea597]">{user?.email || 'Logged in user'}</div>
-              <div className="mt-1 flex items-center gap-2">
-                <span className="px-2.5 py-0.5 rounded-full bg-[#07241d] text-[#34d399] text-[10px] font-bold border border-[#0e3a2e]">
-                  {userRoleLabel}
-                </span>
-                <span className="text-[#6d9487] text-xs">• {neonUser?.city || 'India'}</span>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* ─── MODAL: VIEW DATABASE DETAILS ────────────────────────────────── */}
+        {isDbDetailsModalOpen && (
+          <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in">
+            <div className="bg-white rounded-3xl p-6 max-w-lg w-full shadow-2xl border border-slate-100 text-slate-800">
+              <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                    <Database size={16} />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-base text-slate-900">Neon PostgreSQL Primary</h3>
+                    <div className="text-[11px] text-slate-500">Live Branch: main | Region: us-east-2</div>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsDbDetailsModalOpen(false)}
+                  className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              <div className="mt-4 space-y-3 text-xs">
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                  <div className="text-[10px] font-bold uppercase text-slate-400 tracking-wider">
+                    Connection Pooler Endpoint
+                  </div>
+                  <div className="font-mono text-slate-800 mt-1 break-all select-all font-semibold">
+                    ep-restless-moon-b4nzb2ae-pooler.c-6.us-east-2.aws.neon.tech
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="p-3 rounded-xl bg-emerald-50/70 border border-emerald-100">
+                    <div className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider">Status</div>
+                    <div className="font-bold text-emerald-700 text-sm mt-0.5 flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse" />
+                      Connected & Ready
+                    </div>
+                  </div>
+                  <div className="p-3 rounded-xl bg-blue-50/70 border border-blue-100">
+                    <div className="text-[10px] font-bold text-blue-800 uppercase tracking-wider">SSL Security</div>
+                    <div className="font-bold text-blue-700 text-sm mt-0.5">TLSv1.3 (Required)</div>
+                  </div>
+                </div>
+
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
+                  <div className="text-[10px] font-bold uppercase text-slate-400 tracking-wider">
+                    Active Tables Monitored
+                  </div>
+                  <div className="flex flex-wrap gap-1.5 pt-1">
+                    {['users', 'transport_requests', 'shipment_events', 'fleet_vehicles'].map((table) => (
+                      <span key={table} className="px-2 py-0.5 rounded-md bg-white border border-slate-200 font-mono text-[11px] text-slate-700 font-medium">
+                        {table}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-4 flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => setIsDbDetailsModalOpen(false)}
+                  className="px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition-all cursor-pointer"
+                >
+                  Close
+                </button>
               </div>
             </div>
           </div>
+        )}
 
-          {/* Role Switching Section for Pitch / Demonstration */}
-          <div className="p-4 rounded-2xl bg-[#03110d] border border-[#0d2a21] space-y-3">
-            <div className="text-xs font-bold text-white flex items-center justify-between">
-              <span>Operational Role in NeonDB</span>
-              <span className="text-[10px] text-[#10b981] font-mono uppercase">Live Setting</span>
-            </div>
-            <p className="text-xs text-[#7ea597]">
-              You can test the application from either perspective using your account:
-            </p>
-            <div className="flex items-center gap-3 pt-1">
-              <button
-                type="button"
-                onClick={() => handleRoleSwitch('REQUESTER')}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                  currentRole === 'REQUESTER'
-                    ? 'bg-[#059669] text-white shadow-md'
-                    : 'bg-[#061e18] text-[#8ab2a3] border border-[#0f382e] hover:text-white'
-                }`}
-              >
-                Requester / Shipper
-              </button>
-              <button
-                type="button"
-                onClick={() => handleRoleSwitch('TRANSPORT_PROVIDER')}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                  currentRole === 'TRANSPORT_PROVIDER'
-                    ? 'bg-[#059669] text-white shadow-md'
-                    : 'bg-[#061e18] text-[#8ab2a3] border border-[#0f382e] hover:text-white'
-                }`}
-              >
-                Transport Provider / Carrier
-              </button>
-            </div>
-          </div>
+        {/* ─── MODAL: ACCOUNT SETTING DETAILS (SECURITY / INTEGRATIONS / NOTIFICATIONS) */}
+        {activeSettingModal && (
+          <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in">
+            <div className="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl border border-slate-100 text-slate-800">
+              <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+                <h3 className="font-bold text-base text-slate-900 capitalize">
+                  {activeSettingModal} Settings
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => setActiveSettingModal(null)}
+                  className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100"
+                >
+                  <X size={18} />
+                </button>
+              </div>
 
-          {/* Database Info */}
-          <div className="p-4 rounded-2xl bg-[#03110d] border border-[#0d2a21] flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <ShieldCheck size={20} className="text-[#10b981]" />
-              <div>
-                <div className="text-xs font-bold text-white">Neon PostgreSQL Primary Database</div>
-                <div className="text-[11px] text-[#6d9487]">
-                  ep-restless-moon-b4nzb2ae-pooler.c-6.us-east-2.aws.neon.tech
-                </div>
+              <div className="py-4 text-xs text-slate-600 space-y-3">
+                {activeSettingModal === 'security' && (
+                  <>
+                    <p>Security protocol: Multi-factor authentication & session encryption are active.</p>
+                    <div className="p-3 bg-orange-50 border border-orange-100 rounded-xl text-orange-900">
+                      <strong>Current Authentication:</strong> Firebase OAuth with NeonDB Postgres identity syncing.
+                    </div>
+                  </>
+                )}
+                {activeSettingModal === 'integrations' && (
+                  <>
+                    <p>Connected third-party logistics API endpoints & gateways:</p>
+                    <ul className="space-y-2">
+                      <li className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-900 flex items-center justify-between">
+                        <span>OpenStreetMap & Nominatim Geocoding</span>
+                        <span className="font-bold text-[10px] text-emerald-700 uppercase">Active</span>
+                      </li>
+                      <li className="p-2.5 rounded-xl bg-blue-50 border border-blue-100 text-blue-900 flex items-center justify-between">
+                        <span>Gemini 1.5 Flash AI Optimizer</span>
+                        <span className="font-bold text-[10px] text-blue-700 uppercase">Active</span>
+                      </li>
+                      <li className="p-2.5 rounded-xl bg-purple-50 border border-purple-100 text-purple-900 flex items-center justify-between">
+                        <span>Neon Serverless Driver (@neondatabase/serverless)</span>
+                        <span className="font-bold text-[10px] text-purple-700 uppercase">Active</span>
+                      </li>
+                    </ul>
+                  </>
+                )}
+                {activeSettingModal === 'notifications' && (
+                  <>
+                    <p>Configure alerts for shipment state changes and dispatch updates:</p>
+                    <div className="space-y-2">
+                      <label className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                        <span>SMS & In-App Driver Dispatch Alerts</span>
+                        <input type="checkbox" defaultChecked className="rounded text-blue-600" />
+                      </label>
+                      <label className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                        <span>Delivery Milestone Confirmations</span>
+                        <input type="checkbox" defaultChecked className="rounded text-blue-600" />
+                      </label>
+                      <label className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                        <span>Gemini AI Route Congestion Warnings</span>
+                        <input type="checkbox" defaultChecked className="rounded text-blue-600" />
+                      </label>
+                    </div>
+                  </>
+                )}
+              </div>
+
+              <div className="pt-2 flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => setActiveSettingModal(null)}
+                  className="px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition-all cursor-pointer"
+                >
+                  Done
+                </button>
               </div>
             </div>
-            <span className="px-2.5 py-1 rounded-full bg-emerald-950 text-[#34d399] border border-emerald-800 text-[10px] font-bold">
-              Connected
-            </span>
           </div>
-        </div>
+        )}
       </div>
     );
   }
