@@ -3,7 +3,8 @@ import {
   Building2, Truck, MapPin, Package, Home, BarChart3, FileText, Search, Bell, 
   Globe, Clock, Calendar, AlertTriangle, ArrowRight, Plus, Minus, Crosshair, 
   ChevronDown, LogOut, Leaf, Coins, Train, Sparkles, Map, Network, LayoutGrid, 
-  ChevronRight, User, Anchor, Shield, Radio, Activity, Layers, Users, TrendingUp, Settings, Plane, Ship
+  ChevronRight, User, Anchor, Shield, Radio, Activity, Layers, Users, TrendingUp, Settings, Plane, Ship,
+  Navigation, Check
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -527,50 +528,78 @@ export default function FeatureGridSection({
               {/* CARD 05: ONE COMMAND CENTER. EVERY MOVEMENT. */}
               <div 
                 style={getCardTransition(4)}
-                className="absolute inset-0 rounded-[32px] sm:rounded-[36px] bg-[#f39770] text-[#1b110b] p-7 sm:p-9 flex flex-col justify-start shadow-2xl overflow-hidden will-change-transform"
+                className="absolute inset-0 rounded-[32px] sm:rounded-[36px] overflow-hidden shadow-2xl flex flex-col justify-between p-7 sm:p-9 will-change-transform select-none"
               >
-                <h3 className="font-display font-black text-3xl sm:text-4xl lg:text-[40px] uppercase tracking-tight leading-[0.92] text-[#1b110b]">
-                  ONE <br />
-                  COMMAND <br />
-                  CENTER. <br />
-                  EVERY MOVEMENT.
-                </h3>
+                {/* Background Photo */}
+                <div 
+                  className="absolute inset-0 bg-cover bg-center pointer-events-none transition-transform duration-700 hover:scale-105"
+                  style={{
+                    backgroundImage: 'url(/assets/end_to_end_supply_chain_sunset.jpg)',
+                  }}
+                />
 
-                {/* Enlarged 3D Stacked Containers + Connected Workflow at Lower Right */}
-                <div className="absolute -bottom-2 -right-2 sm:bottom-0 sm:right-0 w-[270px] sm:w-[320px] h-[220px] sm:h-[260px] flex items-end justify-end pointer-events-none">
-                  <div className="relative w-full h-full flex items-end justify-end">
-                    {/* Floating Connected Workflow Status Pills */}
-                    <div className="absolute top-2 left-2 flex flex-col gap-1.5">
-                      <div className="flex items-center gap-1.5 bg-[#ffede6]/95 px-2.5 py-1 rounded-full shadow-md border border-white/70 text-[#1b110b]">
-                        <span className="text-[10px]">🔀</span>
-                        <span className="text-[8px] font-display font-black tracking-wider uppercase">PLAN</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 bg-[#ffede6]/95 px-2.5 py-1 rounded-full shadow-md border border-white/70 text-[#1b110b]">
-                        <span className="text-[10px]">🎯</span>
-                        <span className="text-[8px] font-display font-black tracking-wider uppercase">TRACK</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 bg-[#ffede6]/95 px-2.5 py-1 rounded-full shadow-md border border-white/70 text-[#1b110b]">
-                        <span className="text-[10px] text-emerald-600 font-bold">✓</span>
-                        <span className="text-[8px] font-display font-black tracking-wider uppercase">DELIVER</span>
-                      </div>
+                {/* Ambient warm peach / amber gradient overlay for text readability */}
+                <div 
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    background: 'linear-gradient(180deg, rgba(255, 243, 235, 0.94) 0%, rgba(254, 233, 218, 0.82) 32%, rgba(249, 115, 22, 0.12) 58%, rgba(25, 12, 6, 0.72) 100%)',
+                  }}
+                />
+
+                {/* Top Section: Brand Logo + Bold Headlines */}
+                <div className="relative z-10">
+                  {/* Top-left Brand Mark */}
+                  <div className="flex items-center gap-2 mb-4">
+                    <svg viewBox="0 0 24 24" className="w-5 h-5 text-[#ea580c]" fill="currentColor">
+                      <polygon points="2,4 12,9 7,14 2,9" />
+                      <polygon points="12,10 22,15 17,20 12,15" />
+                    </svg>
+                    <span className="font-display font-black text-xs tracking-wider text-[#1a0f08]">LOGISYNC</span>
+                  </div>
+
+                  <h3 className="font-display font-black text-3xl sm:text-4xl lg:text-[42px] uppercase tracking-tight leading-[0.92] text-[#1a0f08]">
+                    <span className="block text-[#1a0f08]">ONE</span>
+                    <span className="block text-[#1a0f08]">COMMAND</span>
+                    <span className="block text-[#1a0f08]">CENTER.</span>
+                    <span className="block text-[#ea580c] drop-shadow-sm">EVERY</span>
+                    <span className="block text-[#ea580c] drop-shadow-sm">MOVEMENT.</span>
+                  </h3>
+
+                  {/* Horizontal Divider Line */}
+                  <div className="w-12 h-[1.5px] bg-[#1a0f08]/30 mt-4 mb-3.5" />
+
+                  {/* Stepper / Status Row: PLAN / TRACK / DELIVER beside 3 floating icons */}
+                  <div className="flex items-center gap-4">
+                    <div className="space-y-1.5 text-[9px] sm:text-[9.5px] font-mono font-bold tracking-[0.24em] text-[#3e2316] uppercase">
+                      <div>PLAN</div>
+                      <div>TRACK</div>
+                      <div>DELIVER</div>
                     </div>
 
-                    {/* Enlarged 3D Stacked Containers SVG */}
-                    <svg viewBox="0 0 140 140" className="w-[180px] sm:w-[220px] h-[180px] sm:h-[220px] drop-shadow-2xl" fill="none">
-                      <ellipse cx="65" cy="115" rx="45" ry="14" fill="#6d2b0e" opacity="0.4" />
-                      <polygon points="60,60 100,78 60,96 20,78" fill="#fda481" />
-                      <polygon points="20,78 60,96 60,126 20,108" fill="#ea7a53" />
-                      <polygon points="60,96 100,78 100,108 60,126" fill="#cf5c35" />
+                    {/* 3 Floating Icon Badges */}
+                    <div className="flex flex-col gap-1.5">
+                      {/* Box badge */}
+                      <div className="w-7 h-7 rounded-xl bg-white/75 backdrop-blur-md border border-white/80 shadow-sm flex items-center justify-center text-[#1a0f08]">
+                        <Package className="w-3.5 h-3.5" />
+                      </div>
+                      {/* Navigation badge */}
+                      <div className="w-7 h-7 rounded-xl bg-[#fed7aa]/90 backdrop-blur-md border border-[#fdba74] shadow-sm flex items-center justify-center text-[#ea580c]">
+                        <Navigation className="w-3.5 h-3.5 fill-[#ea580c]" />
+                      </div>
+                      {/* Checkmark badge */}
+                      <div className="w-7 h-7 rounded-xl bg-[#dcfce7]/90 backdrop-blur-md border border-[#86efac] shadow-sm flex items-center justify-center text-[#16a34a]">
+                        <Check className="w-4 h-4 stroke-[3]" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
-                      <polygon points="75,35 110,50 75,65 40,50" fill="#fed0be" />
-                      <polygon points="40,50 75,65 75,90 40,75" fill="#f98d68" />
-                      <polygon points="75,65 110,50 110,75 75,90" fill="#e06941" />
-
-                      <g transform="translate(68, 8)">
-                        <path d="M8 0 C3.58 0 0 3.58 0 8 C0 13 8 22 8 22 C8 22 16 13 16 8 C16 3.58 12.42 0 8 0 Z" fill="#65a30d" />
-                        <circle cx="8" cy="7.5" r="3" fill="#ffffff" />
-                      </g>
-                    </svg>
+                {/* Bottom Left: A CLEANER MORE CONNECTED TOMORROW */}
+                <div className="relative z-10 mt-auto">
+                  <div className="text-[9px] sm:text-[9.5px] font-mono font-bold tracking-[0.26em] text-[#3e2316] uppercase leading-tight">
+                    <div>A CLEANER</div>
+                    <div>MORE CONNECTED</div>
+                    <div>TOMORROW</div>
                   </div>
                 </div>
               </div>
@@ -596,12 +625,12 @@ export default function FeatureGridSection({
             <div className="relative rounded-[32px] sm:rounded-[38px] bg-[#071916] text-[#c2ebfa] border border-[#1b3e34] shadow-[0_25px_65px_rgba(7,31,28,0.3)] overflow-hidden flex flex-col h-[520px] sm:h-[560px] lg:h-[590px]">
 
               {/* ── DASHBOARD TOP OPERATING BAR ─────────────────────────── */}
-              {activeStage === 1 || activeStage === 2 || activeStage === 3 ? (
+              {activeStage === 1 || activeStage === 2 || activeStage === 3 || activeStage === 4 ? (
                 <div className="px-5 py-3 bg-[#080d14] border-b border-white/10 flex items-center justify-between">
                   <div className="flex items-center gap-6">
                     {/* Brand Logo: polygon mark + LOGISYNC */}
                     <div className="flex items-center gap-2 font-display font-black text-sm tracking-wider text-white">
-                      <svg viewBox="0 0 24 24" className={`w-4 h-4 ${activeStage === 3 ? 'text-[#22c55e]' : 'text-[#fbbf24]'}`} fill="currentColor">
+                      <svg viewBox="0 0 24 24" className={`w-4 h-4 ${activeStage === 3 ? 'text-[#22c55e]' : activeStage === 4 ? 'text-[#ea580c]' : 'text-[#fbbf24]'}`} fill="currentColor">
                         <polygon points="2,4 12,9 7,14 2,9" />
                         <polygon points="12,10 22,15 17,20 12,15" />
                       </svg>
@@ -626,13 +655,25 @@ export default function FeatureGridSection({
                         <span className="hover:text-white cursor-pointer transition-colors">AGENTS</span>
                       </div>
                     )}
+
+                    {/* Nav Items (for stage 4: End-to-End Supply Chain Sync) */}
+                    {activeStage === 4 && (
+                      <div className="hidden sm:flex items-center gap-4 text-xs font-medium">
+                        <span className="px-3.5 py-1 rounded-full border border-[#f59e0b]/40 bg-[#1c140c] text-[#f59e0b] font-semibold cursor-pointer shadow-sm">
+                          Overview
+                        </span>
+                        <span className="text-[#71859c] hover:text-white cursor-pointer transition-colors">Shipments</span>
+                        <span className="text-[#71859c] hover:text-white cursor-pointer transition-colors">Infrastructure</span>
+                        <span className="text-[#71859c] hover:text-white cursor-pointer transition-colors">Agents</span>
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex items-center gap-3">
                     {/* SYSTEM ONLINE Pill */}
                     <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#071d17] border border-[#10b981]/30 text-[#10b981] text-[11px] font-semibold">
                       <span className="w-1.5 h-1.5 rounded-full bg-[#10b981] animate-pulse" />
-                      <span>SYSTEM ONLINE</span>
+                      <span>System Online</span>
                     </div>
 
                     {/* User Profile Avatar */}
@@ -1900,54 +1941,311 @@ export default function FeatureGridSection({
 
                 {/* ── STATE 4: Unified Command Center. Complete Sync ─────── */}
                 {activeStage === 4 && (
-                  <div className="relative z-10 flex-1 flex flex-col justify-between animate-in fade-in duration-300">
-                    <div className="flex items-center justify-between pb-3 border-b border-[#1b3e34]">
+                  <div className="relative z-10 flex-1 flex flex-col justify-between animate-in fade-in duration-300 gap-2">
+                    {/* Header: UNIFIED PIPELINE OS + END-TO-END SUPPLY CHAIN SYNC */}
+                    <div className="flex items-center justify-between pb-1">
                       <div>
-                        <span className="text-[10px] font-mono text-emerald-400 uppercase">UNIFIED PIPELINE OS</span>
-                        <div className="font-display font-black text-lg text-white">END-TO-END SUPPLY CHAIN SYNC</div>
+                        <div className="text-[9.5px] font-mono tracking-widest text-[#71859c] uppercase font-bold">
+                          UNIFIED PIPELINE OS
+                        </div>
+                        <h4 className="font-display font-black text-base sm:text-xl text-white tracking-tight leading-tight">
+                          END-TO-END <span className="text-[#ea580c]">SUPPLY CHAIN SYNC</span>
+                        </h4>
                       </div>
-                      <div className="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-mono font-bold">
-                        99.98% OPERATIONAL
+
+                      {/* Operational Status Pill */}
+                      <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#07241c] border border-[#10b981]/40 text-[#10b981] text-[11px] font-bold shadow-sm">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#10b981] animate-pulse" />
+                        <span>OPERATIONAL</span>
+                        <ArrowRight size={12} className="text-[#10b981] stroke-[2.5]" />
                       </div>
                     </div>
 
-                    {/* 3-Step Lifecycle Pipeline */}
-                    <div className="grid grid-cols-3 gap-2.5 my-auto">
-                      <div className="bg-[#09221b] p-3.5 rounded-2xl border border-[#1b3e34] text-center">
-                        <div className="w-7 h-7 mx-auto rounded-full bg-white/10 flex items-center justify-center text-xs mb-2">🔀</div>
-                        <div className="text-[10px] font-mono text-[#a8e63d] uppercase font-bold">1. PLAN</div>
-                        <div className="text-xs font-bold text-white mt-1">Autonomous Allocation</div>
-                        <div className="text-[9px] font-mono text-[#7ca69a] mt-0.5">Zero Human Delay</div>
+                    {/* Middle Section: Global Curved Arc Pipeline Visualization */}
+                    <div className="relative flex-1 rounded-2xl bg-[#060c12] border border-white/10 overflow-hidden flex items-center justify-center min-h-[140px] sm:min-h-[160px]">
+                      <svg viewBox="0 0 680 200" className="w-full h-full object-cover" fill="none">
+                        <defs>
+                          <radialGradient id="globeCurveGrad" cx="50%" cy="100%" r="80%">
+                            <stop offset="0%" stopColor="#1e2c3a" stopOpacity="0.75" />
+                            <stop offset="50%" stopColor="#0a141e" stopOpacity="0.9" />
+                            <stop offset="100%" stopColor="#03080d" stopOpacity="0.98" />
+                          </radialGradient>
+                          <linearGradient id="warmArcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stopColor="#f59e0b" />
+                            <stop offset="40%" stopColor="#ea580c" />
+                            <stop offset="80%" stopColor="#f59e0b" />
+                            <stop offset="100%" stopColor="#ea580c" />
+                          </linearGradient>
+                          <filter id="warmNeonGlow" x="-50%" y="-50%" width="200%" height="200%">
+                            <feGaussianBlur stdDeviation="4" result="glow" />
+                            <feMerge>
+                              <feMergeNode in="glow" />
+                              <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                          </filter>
+                        </defs>
+
+                        {/* Curved Earth Horizon Body */}
+                        <path d="M -40 240 Q 340 70 720 240 Z" fill="url(#globeCurveGrad)" />
+
+                        {/* Coordinate Grid Curved Rings */}
+                        <path d="M 0 210 Q 340 85 680 210" stroke="#334155" strokeWidth="0.8" strokeDasharray="3 3" opacity="0.4" />
+                        <path d="M 40 225 Q 340 115 640 225" stroke="#334155" strokeWidth="0.8" opacity="0.3" />
+                        <path d="M 120 235 Q 340 150 560 235" stroke="#334155" strokeWidth="0.8" opacity="0.2" />
+
+                        {/* Longitude Arcs */}
+                        <path d="M 140 180 Q 200 130 260 210" stroke="#334155" strokeWidth="0.6" opacity="0.25" />
+                        <path d="M 280 140 Q 340 100 400 200" stroke="#334155" strokeWidth="0.6" opacity="0.25" />
+                        <path d="M 420 135 Q 480 110 540 210" stroke="#334155" strokeWidth="0.6" opacity="0.25" />
+
+                        {/* Dotted Continental City Matrix */}
+                        <g opacity="0.75">
+                          <circle cx="120" cy="180" r="1.3" fill="#cbd5e1" />
+                          <circle cx="160" cy="165" r="1.5" fill="#fcd34d" />
+                          <circle cx="210" cy="150" r="1.2" fill="#cbd5e1" />
+                          <circle cx="270" cy="140" r="1.6" fill="#fcd34d" />
+                          <circle cx="310" cy="125" r="1.3" fill="#cbd5e1" />
+                          <circle cx="355" cy="115" r="1.8" fill="#ffffff" />
+                          <circle cx="410" cy="120" r="1.4" fill="#fcd34d" />
+                          <circle cx="460" cy="130" r="1.6" fill="#ffffff" />
+                          <circle cx="510" cy="155" r="1.2" fill="#fcd34d" />
+                          <circle cx="560" cy="175" r="1.5" fill="#cbd5e1" />
+                          <circle cx="610" cy="190" r="1.3" fill="#ffffff" />
+                        </g>
+
+                        {/* Primary Intermodal Supply Pipeline Arc */}
+                        <path 
+                          d="M 90 170 Q 230 45 420 70 T 600 165" 
+                          stroke="url(#warmArcGrad)" 
+                          strokeWidth="2.4" 
+                          strokeLinecap="round" 
+                          filter="url(#warmNeonGlow)"
+                        />
+                        <path 
+                          d="M 90 170 Q 230 45 420 70 T 600 165" 
+                          stroke="#ffffff" 
+                          strokeWidth="1.2" 
+                          strokeDasharray="5 5" 
+                          strokeLinecap="round" 
+                          opacity="0.8"
+                        />
+
+                        {/* Node 1: Warehouse / Production (Origin) */}
+                        <g transform="translate(130, 155)">
+                          <circle cx="0" cy="0" r="15" fill="#ea580c" opacity="0.2" className="animate-ping" />
+                          <circle cx="0" cy="0" r="10" fill="#171109" stroke="#ea580c" strokeWidth="2" />
+                          <circle cx="0" cy="0" r="3" fill="#ffffff" />
+                          {/* Floating Modal Icon: Warehouse */}
+                          <g transform="translate(-10, -32)">
+                            <rect x="0" y="0" width="20" height="20" rx="6" fill="#0d151c" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
+                            <path d="M 4 14 L 4 9 L 10 5 L 16 9 L 16 14 Z" fill="none" stroke="#fcd34d" strokeWidth="1.2" />
+                            <rect x="8" y="11" width="4" height="4" fill="#fcd34d" />
+                          </g>
+                        </g>
+
+                        {/* Node 2: Maritime Container Vessel */}
+                        <g transform="translate(265, 95)">
+                          <circle cx="0" cy="0" r="15" fill="#ea580c" opacity="0.2" className="animate-ping" />
+                          <circle cx="0" cy="0" r="10" fill="#171109" stroke="#ea580c" strokeWidth="2" />
+                          <circle cx="0" cy="0" r="3" fill="#ffffff" />
+                          {/* Floating Modal Icon: Cargo Ship */}
+                          <g transform="translate(-10, -32)">
+                            <rect x="0" y="0" width="20" height="20" rx="6" fill="#0d151c" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
+                            <path d="M 4 11 L 16 11 L 14 15 L 6 15 Z" fill="#fcd34d" />
+                            <rect x="8" y="7" width="4" height="4" fill="#ffffff" />
+                          </g>
+                        </g>
+
+                        {/* Node 3: Air Freight Skyhub */}
+                        <g transform="translate(425, 75)">
+                          <circle cx="0" cy="0" r="18" fill="#ea580c" opacity="0.25" className="animate-ping" />
+                          <circle cx="0" cy="0" r="11" fill="#171109" stroke="#ea580c" strokeWidth="2.5" />
+                          <circle cx="0" cy="0" r="3.5" fill="#ffffff" />
+                          {/* Floating Modal Icon: Airplane */}
+                          <g transform="translate(-10, -32)">
+                            <rect x="0" y="0" width="20" height="20" rx="6" fill="#0d151c" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
+                            <path d="M 6 13 L 10 7 L 14 13 L 11 12 L 10 15 L 9 12 Z" fill="#ffffff" />
+                          </g>
+                        </g>
+
+                        {/* Node 4: Land Linehaul Semi-Truck (Destination) */}
+                        <g transform="translate(565, 140)">
+                          <circle cx="0" cy="0" r="15" fill="#ea580c" opacity="0.2" className="animate-ping" />
+                          <circle cx="0" cy="0" r="10" fill="#171109" stroke="#ea580c" strokeWidth="2" />
+                          <circle cx="0" cy="0" r="3" fill="#ffffff" />
+                          {/* Floating Modal Icon: Semi-Truck */}
+                          <g transform="translate(-10, -32)">
+                            <rect x="0" y="0" width="20" height="20" rx="6" fill="#0d151c" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
+                            <rect x="4" y="8" width="8" height="6" rx="1" fill="#fcd34d" />
+                            <rect x="12" y="10" width="4" height="4" rx="0.5" fill="#ffffff" />
+                          </g>
+                        </g>
+                      </svg>
+                    </div>
+
+                    {/* 3 Sequential Step Action Cards */}
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                      {/* Step 1: PLAN */}
+                      <div className="bg-[#091518]/95 hover:bg-[#0e1d22] border border-white/10 hover:border-white/20 rounded-2xl p-2.5 sm:p-3 flex items-center justify-between shadow-lg cursor-pointer transition-all hover:scale-[1.02]">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center text-white shrink-0">
+                            <Package className="w-4 h-4 text-white" />
+                          </div>
+                          <span className="font-display font-black text-xs sm:text-sm text-white tracking-wide">
+                            1. PLAN
+                          </span>
+                        </div>
+                        <ArrowRight size={14} className="text-white/60" />
                       </div>
 
-                      <div className="bg-[#09221b] p-3.5 rounded-2xl border border-[#1b3e34] text-center">
-                        <div className="w-7 h-7 mx-auto rounded-full bg-white/10 flex items-center justify-center text-xs mb-2">🎯</div>
-                        <div className="text-[10px] font-mono text-[#a8e63d] uppercase font-bold">2. TRACK</div>
-                        <div className="text-xs font-bold text-white mt-1">Satellite Telemetry</div>
-                        <div className="text-[9px] font-mono text-[#7ca69a] mt-0.5">Sub-Second Refresh</div>
+                      {/* Step 2: TRACK */}
+                      <div className="bg-[#091518]/95 hover:bg-[#0e1d22] border border-white/10 hover:border-white/20 rounded-2xl p-2.5 sm:p-3 flex items-center justify-between shadow-lg cursor-pointer transition-all hover:scale-[1.02]">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center text-white shrink-0">
+                            <Navigation className="w-4 h-4 text-white fill-white" />
+                          </div>
+                          <span className="font-display font-black text-xs sm:text-sm text-white tracking-wide">
+                            2. TRACK
+                          </span>
+                        </div>
+                        <ArrowRight size={14} className="text-white/60" />
                       </div>
 
-                      <div className="bg-[#09221b] p-3.5 rounded-2xl border border-[#1b3e34] text-center">
-                        <div className="w-7 h-7 mx-auto rounded-full bg-white/10 flex items-center justify-center text-xs mb-2 text-emerald-400">✓</div>
-                        <div className="text-[10px] font-mono text-[#a8e63d] uppercase font-bold">3. DELIVER</div>
-                        <div className="text-xs font-bold text-white mt-1">Smart Custody Proof</div>
-                        <div className="text-[9px] font-mono text-[#7ca69a] mt-0.5">Instant Settlement</div>
+                      {/* Step 3: DELIVER */}
+                      <div className="bg-[#091518]/95 hover:bg-[#121915] border border-[#ea580c]/30 hover:border-[#ea580c]/60 rounded-2xl p-2.5 sm:p-3 flex items-center justify-between shadow-lg cursor-pointer transition-all hover:scale-[1.02]">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-8 h-8 rounded-xl bg-[#ea580c]/20 border border-[#ea580c]/40 flex items-center justify-center text-[#ea580c] shrink-0">
+                            <Check className="w-4 h-4 stroke-[3] text-[#ea580c]" />
+                          </div>
+                          <span className="font-display font-black text-xs sm:text-sm text-[#f97316] tracking-wide">
+                            3. DELIVER
+                          </span>
+                        </div>
+                        <ArrowRight size={14} className="text-[#f97316]" />
                       </div>
                     </div>
 
-                    {/* Enterprise Impact Scoreboard */}
-                    <div className="grid grid-cols-3 gap-2 pt-2">
-                      <div className="bg-[#0b211c] p-2.5 rounded-xl text-center border border-[#1b3e34]">
-                        <div className="text-[9px] font-mono text-[#7ca69a]">RESILIENCE INDEX</div>
-                        <div className="text-base font-display font-black text-emerald-400">99.8%</div>
+                    {/* 3 Enterprise Impact Scorecard Metrics */}
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                      {/* 1. RESILIENCE INDEX */}
+                      <div className="bg-[#091518]/95 rounded-2xl border border-white/10 p-2.5 sm:p-3 flex items-center justify-between shadow-lg">
+                        <div className="flex items-center gap-2">
+                          <div className="w-7 h-7 rounded-xl bg-[#f59e0b]/15 border border-[#f59e0b]/30 flex items-center justify-center text-[#f59e0b] shrink-0">
+                            <Shield className="w-3.5 h-3.5 text-[#f59e0b]" />
+                          </div>
+                          <div>
+                            <div className="text-[7.5px] font-mono tracking-wider text-[#71859c] uppercase">
+                              RESILIENCE INDEX
+                            </div>
+                            <div className="text-base sm:text-lg font-display font-black text-white leading-tight">
+                              99.8%
+                            </div>
+                          </div>
+                        </div>
+                        {/* 5-bar rising chart */}
+                        <div className="flex items-end gap-0.5 h-4">
+                          <div className="w-0.5 bg-[#10b981]/40 h-1 rounded-t" />
+                          <div className="w-0.5 bg-[#10b981]/55 h-1.5 rounded-t" />
+                          <div className="w-0.5 bg-[#10b981]/70 h-2.5 rounded-t" />
+                          <div className="w-0.5 bg-[#10b981]/85 h-3 rounded-t" />
+                          <div className="w-0.5 bg-[#10b981] h-4 rounded-t" />
+                        </div>
                       </div>
-                      <div className="bg-[#0b211c] p-2.5 rounded-xl text-center border border-[#1b3e34]">
-                        <div className="text-[9px] font-mono text-[#7ca69a]">COST AVOIDED</div>
-                        <div className="text-base font-display font-black text-white">$4.8M YTD</div>
+
+                      {/* 2. COST AVOIDED */}
+                      <div className="bg-[#091518]/95 rounded-2xl border border-white/10 p-2.5 sm:p-3 flex items-center justify-between shadow-lg">
+                        <div className="flex items-center gap-2">
+                          <div className="w-7 h-7 rounded-xl bg-[#10b981]/15 border border-[#10b981]/30 flex items-center justify-center text-[#10b981] shrink-0">
+                            <Leaf className="w-3.5 h-3.5 text-[#10b981]" />
+                          </div>
+                          <div>
+                            <div className="text-[7.5px] font-mono tracking-wider text-[#71859c] uppercase">
+                              COST AVOIDED
+                            </div>
+                            <div className="text-base sm:text-lg font-display font-black text-white leading-tight">
+                              $4.8M YTD
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex items-end gap-0.5 h-4">
+                          <div className="w-0.5 bg-[#10b981]/40 h-1.5 rounded-t" />
+                          <div className="w-0.5 bg-[#10b981]/60 h-2 rounded-t" />
+                          <div className="w-0.5 bg-[#10b981]/75 h-2.5 rounded-t" />
+                          <div className="w-0.5 bg-[#10b981]/90 h-3 rounded-t" />
+                          <div className="w-0.5 bg-[#10b981] h-4 rounded-t" />
+                        </div>
                       </div>
-                      <div className="bg-[#0b211c] p-2.5 rounded-xl text-center border border-[#1b3e34]">
-                        <div className="text-[9px] font-mono text-[#7ca69a]">CARBON OFFSET</div>
-                        <div className="text-base font-display font-black text-[#a8e63d]">-412 TONS</div>
+
+                      {/* 3. CARBON OFFSET */}
+                      <div className="bg-[#091518]/95 rounded-2xl border border-white/10 p-2.5 sm:p-3 flex items-center justify-between shadow-lg">
+                        <div className="flex items-center gap-2">
+                          <div className="w-7 h-7 rounded-xl bg-[#10b981]/15 border border-[#10b981]/30 flex items-center justify-center text-[#10b981] shrink-0">
+                            <Leaf className="w-3.5 h-3.5 text-[#10b981]" />
+                          </div>
+                          <div>
+                            <div className="text-[7.5px] font-mono tracking-wider text-[#71859c] uppercase">
+                              CARBON OFFSET
+                            </div>
+                            <div className="text-base sm:text-lg font-display font-black text-white leading-tight">
+                              -412 TONS
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex items-end gap-0.5 h-4">
+                          <div className="w-0.5 bg-[#10b981]/35 h-1 rounded-t" />
+                          <div className="w-0.5 bg-[#10b981]/50 h-2 rounded-t" />
+                          <div className="w-0.5 bg-[#10b981]/70 h-2.5 rounded-t" />
+                          <div className="w-0.5 bg-[#10b981]/85 h-3 rounded-t" />
+                          <div className="w-0.5 bg-[#10b981] h-4 rounded-t" />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Bottom Action Toolbar */}
+                    <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-white/10">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <button
+                          type="button"
+                          onClick={onOpenPublicMap}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#121924] hover:bg-[#1a2332] border border-white/10 hover:border-white/20 text-white/90 text-[11px] font-medium cursor-pointer transition-all hover:scale-105 active:scale-95"
+                        >
+                          <Map size={12} className="text-white/70" />
+                          <span>Map</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={onOpenApiHub}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#121924] hover:bg-[#1a2332] border border-white/10 hover:border-white/20 text-white/90 text-[11px] font-medium cursor-pointer transition-all hover:scale-105 active:scale-95"
+                        >
+                          <Network size={12} className="text-white/70" />
+                          <span>API Hub</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => onOpenDashboard && onOpenDashboard('command-center')}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#121924] hover:bg-[#1a2332] border border-white/10 hover:border-white/20 text-white/90 text-[11px] font-medium cursor-pointer transition-all hover:scale-105 active:scale-95"
+                        >
+                          <LayoutGrid size={12} className="text-white/70" />
+                          <span>Open Dashboard</span>
+                        </button>
+                      </div>
+
+                      <div className="flex items-center gap-3 ml-auto">
+                        <button
+                          type="button"
+                          onClick={() => onOpenDashboard && onOpenDashboard('command-center')}
+                          className="flex items-center gap-1.5 px-4 sm:px-5 py-1.5 sm:py-2 rounded-full bg-gradient-to-r from-[#f97316] to-[#fba754] hover:from-[#ea580c] hover:to-[#f97316] text-[#140b05] text-[11px] sm:text-xs font-bold font-display uppercase tracking-wider shadow-[0_0_25px_rgba(249,115,22,0.4)] transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                        >
+                          <span>Launch Live Console</span>
+                          <ArrowRight size={13} className="stroke-[2.5]" />
+                        </button>
+
+                        <div className="hidden lg:flex items-center gap-2 text-[8px] font-mono tracking-[0.24em] text-[#71859c] uppercase">
+                          <span className="w-4 h-px bg-[#71859c]/50" />
+                          <span>INTELLIGENCE IN MOTION</span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -1955,57 +2253,59 @@ export default function FeatureGridSection({
 
               </div>
 
-              {/* ── DASHBOARD BOTTOM ACTION BAR: REAL FUNCTIONAL TRIGGERS ── */}
-              <div className="px-5 py-3 bg-[#051412] border-t border-[#1b3e34]/80 flex flex-wrap items-center justify-between gap-3 text-xs">
-                <div className="flex items-center gap-2 text-[10px] font-mono text-[#7ca69a]">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#10b981] animate-ping" />
-                  <span>AI MESH: CONNECTED</span>
-                  <span className="opacity-40">•</span>
-                  <span>NEONDB SYNCED</span>
+              {/* ── DASHBOARD BOTTOM ACTION BAR: REAL FUNCTIONAL TRIGGERS (for stage 0) ── */}
+              {activeStage === 0 && (
+                <div className="px-5 py-3 bg-[#051412] border-t border-[#1b3e34]/80 flex flex-wrap items-center justify-between gap-3 text-xs">
+                  <div className="flex items-center gap-2 text-[10px] font-mono text-[#7ca69a]">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#10b981] animate-ping" />
+                    <span>AI MESH: CONNECTED</span>
+                    <span className="opacity-40">•</span>
+                    <span>NEONDB SYNCED</span>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => onOpenAiAssistant && onOpenAiAssistant('Analyze real-time bottlenecks and predict transit delays for current shipments')}
+                      className="px-3 py-1.5 rounded-full bg-[#ff5500]/15 hover:bg-[#ff5500]/25 border border-[#ff5500]/40 text-[#ff7733] hover:text-white font-display font-black text-[10px] tracking-wider uppercase transition-all hover:scale-105 cursor-pointer flex items-center gap-1.5"
+                    >
+                      <span>✦ Ask Gemini AI</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => onOpenPublicMap && onOpenPublicMap()}
+                      className="px-3 py-1.5 rounded-full bg-[#0e3328] hover:bg-[#124233] border border-[#10b981]/40 text-[#34d399] font-display font-black text-[10px] tracking-wider uppercase transition-all hover:scale-105 cursor-pointer"
+                    >
+                      Public Map
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => onOpenApiHub && onOpenApiHub()}
+                      className="px-3 py-1.5 rounded-full bg-[#1a0f0a] hover:bg-[#2e1810] border border-[#ff5500]/40 text-[#ff7733] font-display font-black text-[10px] tracking-wider uppercase transition-all hover:scale-105 cursor-pointer"
+                    >
+                      API Hub
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => onOpenDashboard && onOpenDashboard('command-center')}
+                      className="px-3 py-1.5 rounded-full bg-[#0d3429] hover:bg-[#124234] border border-[#1b5c47] text-white font-display font-black text-[10px] tracking-wider uppercase transition-all hover:scale-105 cursor-pointer"
+                    >
+                      Open Dashboard
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={onOpenDemo}
+                      className="px-3.5 py-1.5 rounded-full bg-[#a8e63d] hover:bg-[#bcf94f] text-black font-display font-black text-[10px] tracking-wider uppercase transition-transform hover:scale-105 cursor-pointer shadow-md"
+                    >
+                      Launch Live Console &rarr;
+                    </button>
+                  </div>
                 </div>
-
-                <div className="flex flex-wrap items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => onOpenAiAssistant && onOpenAiAssistant('Analyze real-time bottlenecks and predict transit delays for current shipments')}
-                    className="px-3 py-1.5 rounded-full bg-[#ff5500]/15 hover:bg-[#ff5500]/25 border border-[#ff5500]/40 text-[#ff7733] hover:text-white font-display font-black text-[10px] tracking-wider uppercase transition-all hover:scale-105 cursor-pointer flex items-center gap-1.5"
-                  >
-                    <span>✦ Ask Gemini AI</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => onOpenPublicMap && onOpenPublicMap()}
-                    className="px-3 py-1.5 rounded-full bg-[#0e3328] hover:bg-[#124233] border border-[#10b981]/40 text-[#34d399] font-display font-black text-[10px] tracking-wider uppercase transition-all hover:scale-105 cursor-pointer"
-                  >
-                    Public Map
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => onOpenApiHub && onOpenApiHub()}
-                    className="px-3 py-1.5 rounded-full bg-[#1a0f0a] hover:bg-[#2e1810] border border-[#ff5500]/40 text-[#ff7733] font-display font-black text-[10px] tracking-wider uppercase transition-all hover:scale-105 cursor-pointer"
-                  >
-                    API Hub
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => onOpenDashboard && onOpenDashboard('command-center')}
-                    className="px-3 py-1.5 rounded-full bg-[#0d3429] hover:bg-[#124234] border border-[#1b5c47] text-white font-display font-black text-[10px] tracking-wider uppercase transition-all hover:scale-105 cursor-pointer"
-                  >
-                    Open Dashboard
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={onOpenDemo}
-                    className="px-3.5 py-1.5 rounded-full bg-[#a8e63d] hover:bg-[#bcf94f] text-black font-display font-black text-[10px] tracking-wider uppercase transition-transform hover:scale-105 cursor-pointer shadow-md"
-                  >
-                    Launch Live Console &rarr;
-                  </button>
-                </div>
-              </div>
+              )}
 
             </div>
 
