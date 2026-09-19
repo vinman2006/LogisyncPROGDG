@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   Building2, Truck, MapPin, Package, Home, BarChart3, FileText, Search, Bell, 
   Globe, Clock, Calendar, AlertTriangle, ArrowRight, Plus, Minus, Crosshair, 
-  ChevronDown, LogOut 
+  ChevronDown, LogOut, Leaf, Coins, Train, Sparkles, Map, Network, LayoutGrid, 
+  ChevronRight, User
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -355,51 +356,47 @@ export default function FeatureGridSection({
               {/* CARD 02: AI-POWERED ROUTE OPTIMIZATION */}
               <div 
                 style={getCardTransition(1)}
-                className="absolute inset-0 rounded-[32px] sm:rounded-[36px] bg-[#f2ad38] text-[#17120a] p-7 sm:p-9 flex flex-col justify-start shadow-2xl overflow-hidden will-change-transform"
+                className="absolute inset-0 rounded-[32px] sm:rounded-[36px] overflow-hidden shadow-2xl flex flex-col justify-between p-7 sm:p-9 will-change-transform select-none"
               >
-                <h3 className="font-display font-black text-3xl sm:text-4xl lg:text-[42px] uppercase tracking-tight leading-[0.92] text-[#17120a]">
-                  AI-POWERED <br />
-                  ROUTE <br />
-                  OPTIMIZATION
-                </h3>
+                {/* Background Sunset Highway Photo */}
+                <div 
+                  className="absolute inset-0 bg-cover bg-center pointer-events-none transition-transform duration-700 hover:scale-105"
+                  style={{
+                    backgroundImage: 'url(/assets/route_optimization_sunset.jpg)',
+                  }}
+                />
 
-                {/* Enlarged 3D Road + Delivery Cargo Box Truck at Lower Right */}
-                <div className="absolute -bottom-2 -right-2 sm:bottom-0 sm:right-0 w-[270px] sm:w-[320px] h-[220px] sm:h-[260px] flex items-end justify-end pointer-events-none">
-                  <svg viewBox="0 0 240 180" className="w-full h-full drop-shadow-2xl" fill="none">
-                    <path d="M 10 130 Q 80 90 160 110 T 240 70" stroke="#d49428" strokeWidth="1.5" opacity="0.4" fill="none" />
-                    <path d="M 240 45 Q 175 70 135 110 T 35 180" stroke="#222222" strokeWidth="40" strokeLinecap="round" fill="none" />
-                    <path d="M 240 45 Q 175 70 135 110 T 35 180" stroke="#333333" strokeWidth="36" strokeLinecap="round" fill="none" />
-                    <path d="M 240 45 Q 175 70 135 110 T 35 180" stroke="#ffffff" strokeWidth="2" strokeDasharray="6 6" fill="none" opacity="0.85" />
+                {/* Warm golden gradient overlay for text legibility */}
+                <div 
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    background: 'linear-gradient(180deg, rgba(254, 215, 115, 0.96) 0%, rgba(252, 203, 85, 0.82) 28%, rgba(245, 158, 11, 0.2) 55%, rgba(10, 6, 2, 0.65) 100%)',
+                  }}
+                />
 
-                    <g transform="translate(85, 78)">
-                      <ellipse cx="32" cy="46" rx="34" ry="12" fill="#14100a" opacity="0.45" />
-                      <polygon points="12,8 48,0 66,12 30,20" fill="#ffffff" />
-                      <polygon points="12,8 30,20 30,44 12,32" fill="#e8eaec" />
-                      <line x1="21" y1="14" x2="21" y2="38" stroke="#cbd0d5" strokeWidth="1" />
-                      <polygon points="30,20 66,12 66,36 30,44" fill="#c4c9cd" />
+                {/* Top Section: Bold Editorial Headlines */}
+                <div className="relative z-10">
+                  <h3 className="font-display font-black text-3xl sm:text-4xl lg:text-[42px] uppercase tracking-tight leading-[0.92] text-[#140e07]">
+                    <span className="block text-[#140e07]">AI-POWERED</span>
+                    <span className="block text-[#b45309] drop-shadow-sm">ROUTE</span>
+                    <span className="block text-[#140e07]">OPTIMIZATION</span>
+                  </h3>
 
-                      <polygon points="2,25 12,22 17,28 7,31" fill="#ff7a29" />
-                      <polygon points="2,25 7,31 7,42 2,36" fill="#e65100" />
-                      <polygon points="7,31 17,28 17,39 7,42" fill="#ff5722" />
-                      <polygon points="4,26 8,30 15,28 11,24" fill="#0b1715" />
+                  <div className="mt-3.5 space-y-0.5 text-[10px] sm:text-[11px] font-mono font-bold tracking-[0.22em] text-[#332211] uppercase">
+                    <div>SMARTER ROUTES</div>
+                    <div>A CLEANER TOMORROW</div>
+                  </div>
 
-                      <circle cx="8" cy="42" r="4.5" fill="#1a1a1a" />
-                      <circle cx="8" cy="42" r="2" fill="#999999" />
-                      <circle cx="24" cy="44" r="4.5" fill="#1a1a1a" />
-                      <circle cx="24" cy="44" r="2" fill="#999999" />
-                      <circle cx="58" cy="38" r="4.5" fill="#1a1a1a" />
-                      <circle cx="58" cy="38" r="2" fill="#999999" />
-                    </g>
+                  {/* Clean Horizontal Divider */}
+                  <div className="w-14 h-[2px] bg-[#332211]/35 mt-3.5" />
+                </div>
 
-                    <g transform="translate(195, 26)">
-                      <path d="M8 0 C3.58 0 0 3.58 0 8 C0 13 8 22 8 22 C8 22 16 13 16 8 C16 3.58 12.42 0 8 0 Z" fill="#e65100" />
-                      <circle cx="8" cy="7.5" r="3.2" fill="#f2ad38" />
-                    </g>
-                    <g transform="translate(180, 108)">
-                      <path d="M10 0 C4.48 0 0 4.48 0 10 C0 16 10 26 10 26 C10 26 20 16 20 10 C20 4.48 15.52 0 10 0 Z" fill="#65a30d" />
-                      <circle cx="10" cy="9.5" r="4" fill="#f2ad38" />
-                    </g>
-                  </svg>
+                {/* Bottom Left: INTELLIGENCE IN MOTION */}
+                <div className="relative z-10 mt-auto">
+                  <div className="text-[9.5px] sm:text-[10px] font-mono font-bold tracking-[0.28em] text-[#241709] uppercase leading-tight">
+                    <div>INTELLIGENCE</div>
+                    <div>IN MOTION</div>
+                  </div>
                 </div>
               </div>
 
@@ -606,7 +603,44 @@ export default function FeatureGridSection({
             <div className="relative rounded-[32px] sm:rounded-[38px] bg-[#071916] text-[#c2ebfa] border border-[#1b3e34] shadow-[0_25px_65px_rgba(7,31,28,0.3)] overflow-hidden flex flex-col h-[520px] sm:h-[560px] lg:h-[590px]">
 
               {/* ── DASHBOARD TOP OPERATING BAR ─────────────────────────── */}
-              {activeStage === 0 ? (
+              {activeStage === 1 ? (
+                <div className="px-5 py-3 bg-[#080d14] border-b border-white/10 flex items-center justify-between">
+                  <div className="flex items-center gap-6">
+                    {/* Brand Logo: polygon mark + LOGISYNC */}
+                    <div className="flex items-center gap-2 font-display font-black text-sm tracking-wider text-white">
+                      <svg viewBox="0 0 24 24" className="w-4 h-4 text-[#fbbf24]" fill="currentColor">
+                        <polygon points="2,4 12,9 7,14 2,9" />
+                        <polygon points="12,10 22,15 17,20 12,15" />
+                      </svg>
+                      <span>LOGISYNC</span>
+                    </div>
+
+                    {/* Nav Items */}
+                    <div className="hidden sm:flex items-center gap-6 text-[11px] font-mono font-bold tracking-widest text-[#71859c]">
+                      <span className="text-white hover:text-[#fbbf24] cursor-pointer transition-colors">ROUTES</span>
+                      <span className="hover:text-white cursor-pointer transition-colors">FLEET</span>
+                      <span className="hover:text-white cursor-pointer transition-colors">ANALYTICS</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    {/* SYSTEM ONLINE Pill */}
+                    <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#071d17] border border-[#10b981]/30 text-[#10b981] text-[11px] font-semibold">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#10b981] animate-pulse" />
+                      <span>SYSTEM ONLINE</span>
+                    </div>
+
+                    {/* User Profile Avatar */}
+                    <div className="w-7 h-7 rounded-full bg-[#141e2b] border border-white/10 flex items-center justify-center text-white/80">
+                      {user?.photoURL ? (
+                        <img src={user.photoURL} alt="User" className="w-full h-full rounded-full object-cover" />
+                      ) : (
+                        <User className="w-3.5 h-3.5 text-white/70" />
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ) : activeStage === 0 ? (
                 <div className="px-4 py-2.5 bg-[#051612] border-b border-[#1b3e34] flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     {/* Brand Logo */}
@@ -1091,71 +1125,254 @@ export default function FeatureGridSection({
                   </div>
                 )}
 
-                {/* ── STATE 1: AI Route Optimization & Comparison ─────────── */}
+                {/* ── STATE 1: AI Route Optimization & Multi-Modal Routing Dashboard ── */}
                 {activeStage === 1 && (
-                  <div className="relative z-10 flex-1 flex flex-col justify-between animate-in fade-in duration-300">
-                    <div className="flex items-center justify-between pb-3 border-b border-[#1b3e34]">
+                  <div className="relative z-10 flex-1 flex flex-col justify-between animate-in fade-in duration-300 gap-2.5">
+                    {/* Header: Title + Real-time Dropdown */}
+                    <div className="flex items-center justify-between pb-1">
                       <div>
-                        <span className="text-[10px] font-mono text-amber-400 uppercase">NEURAL PATH SOLVER</span>
-                        <div className="font-display font-black text-lg text-white">AUTONOMOUS MULTIMODAL ROUTING</div>
+                        <div className="text-[9.5px] font-mono tracking-widest text-[#71859c] uppercase font-bold">
+                          GLOBAL LOGISTICS
+                        </div>
+                        <h4 className="font-display font-black text-base sm:text-xl text-white tracking-tight leading-tight">
+                          AUTONOMOUS MULTIMODAL <span className="text-[#fbbf24]">ROUTING</span>
+                        </h4>
                       </div>
-                      <div className="px-2.5 py-1 rounded-full bg-amber-400/15 text-amber-400 text-[10px] font-mono font-bold">
-                        AI CONFIDENCE: 99.4%
+
+                      <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#101722] border border-white/10 text-white/90 text-xs font-medium shadow-sm">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#10b981] animate-pulse" />
+                        <span>Real-time</span>
+                        <ChevronDown size={13} className="text-white/60 ml-0.5" />
                       </div>
                     </div>
 
-                    {/* Route Comparison Diagram */}
-                    <div className="space-y-2.5 my-auto">
-                      {/* Legacy Route */}
-                      <div className="bg-black/30 p-3 rounded-2xl border border-white/10 flex items-center justify-between">
-                        <div>
-                          <div className="text-[10px] font-mono text-[#86aab8]">CONVENTIONAL MARITIME PATH</div>
-                          <div className="text-xs font-bold text-white/70">Panama Canal Wait Zone</div>
-                        </div>
-                        <div className="flex items-center gap-6 text-right">
-                          <div>
-                            <div className="text-[10px] font-mono text-red-400">22.4 DAYS</div>
-                            <div className="text-[9px] font-mono text-[#7ca69a]">$44,200 COST</div>
-                          </div>
-                          <span className="text-xs text-red-400 font-mono">+18% CO₂</span>
-                        </div>
-                      </div>
+                    {/* Globe / Route Map Visual with Floating Intermodal Bypass Card */}
+                    <div className="relative flex-1 rounded-2xl bg-[#060b12] border border-white/10 overflow-hidden flex items-center justify-center min-h-[140px] sm:min-h-[170px]">
+                      {/* Night Globe Graphic SVG */}
+                      <svg viewBox="0 0 640 240" className="w-full h-full object-cover" fill="none">
+                        <defs>
+                          <radialGradient id="globeGrad" cx="50%" cy="50%" r="50%">
+                            <stop offset="0%" stopColor="#14283d" stopOpacity="0.8" />
+                            <stop offset="65%" stopColor="#0a1420" stopOpacity="0.9" />
+                            <stop offset="100%" stopColor="#04080e" stopOpacity="0" />
+                          </radialGradient>
+                          <linearGradient id="amberPathGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stopColor="#ffffff" />
+                            <stop offset="40%" stopColor="#fbbf24" />
+                            <stop offset="65%" stopColor="#f59e0b" />
+                            <stop offset="100%" stopColor="#ffffff" />
+                          </linearGradient>
+                          <filter id="goldenHalo" x="-50%" y="-50%" width="200%" height="200%">
+                            <feGaussianBlur stdDeviation="6" result="blur" />
+                            <feMerge>
+                              <feMergeNode in="blur" />
+                              <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                          </filter>
+                        </defs>
 
-                      {/* AI Optimized Route */}
-                      <div className="bg-[#112d26] p-3.5 rounded-2xl border border-emerald-400/40 shadow-lg flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-6 h-6 rounded-full bg-[#a8e63d] text-black flex items-center justify-center font-bold text-xs">
-                            ✓
+                        {/* Globe Atmosphere Glow */}
+                        <circle cx="320" cy="150" r="220" fill="url(#globeGrad)" />
+
+                        {/* Globe Latitude Lines */}
+                        <ellipse cx="320" cy="150" rx="220" ry="105" stroke="#1e3448" strokeWidth="1" strokeDasharray="3 3" opacity="0.4" />
+                        <ellipse cx="320" cy="150" rx="220" ry="60" stroke="#1e3448" strokeWidth="1" opacity="0.3" />
+                        <ellipse cx="320" cy="150" rx="220" ry="15" stroke="#1e3448" strokeWidth="1" opacity="0.25" />
+
+                        {/* Globe Longitude Arcs */}
+                        <path d="M 320 0 C 230 40 180 100 180 150 C 180 200 230 260 320 300" stroke="#1e3448" strokeWidth="1" opacity="0.3" />
+                        <path d="M 320 0 C 410 40 460 100 460 150 C 460 200 410 260 320 300" stroke="#1e3448" strokeWidth="1" opacity="0.3" />
+                        <line x1="320" y1="0" x2="320" y2="300" stroke="#1e3448" strokeWidth="1" strokeDasharray="4 4" opacity="0.4" />
+
+                        {/* Continents Night Lights (Dotted Matrix Clusters) */}
+                        {/* Americas Lights */}
+                        <g opacity="0.75">
+                          <circle cx="160" cy="95" r="1.5" fill="#c2ebfa" />
+                          <circle cx="172" cy="90" r="1.2" fill="#c2ebfa" />
+                          <circle cx="150" cy="105" r="1" fill="#71859c" />
+                          <circle cx="165" cy="115" r="1.4" fill="#c2ebfa" />
+                          <circle cx="180" cy="110" r="1.5" fill="#fef08a" />
+                          <circle cx="195" cy="125" r="1.2" fill="#c2ebfa" />
+                          <circle cx="190" cy="145" r="1" fill="#71859c" />
+                          <circle cx="205" cy="160" r="1.2" fill="#c2ebfa" />
+                        </g>
+
+                        {/* Europe & Africa Lights */}
+                        <g opacity="0.85">
+                          <circle cx="320" cy="65" r="1.5" fill="#fef08a" />
+                          <circle cx="330" cy="60" r="1.8" fill="#ffffff" />
+                          <circle cx="340" cy="70" r="1.5" fill="#fef08a" />
+                          <circle cx="325" cy="80" r="1.3" fill="#c2ebfa" />
+                          <circle cx="345" cy="85" r="1.2" fill="#c2ebfa" />
+                          <circle cx="335" cy="105" r="1.2" fill="#71859c" />
+                          <circle cx="350" cy="120" r="1" fill="#71859c" />
+                          <circle cx="340" cy="140" r="1.2" fill="#c2ebfa" />
+                        </g>
+
+                        {/* Middle East & Asia Lights */}
+                        <g opacity="0.85">
+                          <circle cx="390" cy="80" r="1.8" fill="#fef08a" />
+                          <circle cx="410" cy="75" r="1.5" fill="#ffffff" />
+                          <circle cx="425" cy="90" r="1.3" fill="#c2ebfa" />
+                          <circle cx="450" cy="85" r="1.6" fill="#fef08a" />
+                          <circle cx="475" cy="95" r="1.8" fill="#ffffff" />
+                          <circle cx="490" cy="105" r="1.5" fill="#c2ebfa" />
+                          <circle cx="460" cy="115" r="1.4" fill="#fef08a" />
+                          <circle cx="440" cy="125" r="1.2" fill="#c2ebfa" />
+                        </g>
+
+                        {/* Faint secondary route lines */}
+                        <path d="M 180 110 Q 260 155 340 135 T 460 110" stroke="#ffffff" strokeWidth="1" strokeDasharray="3 3" opacity="0.18" />
+                        <path d="M 340 68 Q 420 105 520 115" stroke="#ffffff" strokeWidth="1" strokeDasharray="4 4" opacity="0.22" />
+
+                        {/* Glowing Main Golden Trajectory Line */}
+                        <path 
+                          d="M 180 110 Q 250 35 340 65 Q 400 55 475 95" 
+                          stroke="#f59e0b" 
+                          strokeWidth="8" 
+                          opacity="0.3" 
+                          strokeLinecap="round" 
+                        />
+                        <path 
+                          d="M 180 110 Q 250 35 340 65 Q 400 55 475 95" 
+                          stroke="url(#amberPathGrad)" 
+                          strokeWidth="3.2" 
+                          strokeLinecap="round" 
+                        />
+
+                        {/* Node 1: Origin (Americas) */}
+                        <circle cx="180" cy="110" r="4.5" fill="#ffffff" />
+                        <circle cx="180" cy="110" r="7.5" stroke="#ffffff" strokeWidth="1.2" opacity="0.5" />
+
+                        {/* Node 2: Central Highlighted Golden Waypoint */}
+                        <circle cx="340" cy="65" r="14" fill="#fbbf24" opacity="0.25" className="animate-ping" />
+                        <circle cx="340" cy="65" r="8.5" fill="#f59e0b" filter="url(#goldenHalo)" />
+                        <circle cx="340" cy="65" r="4.5" fill="#ffffff" />
+
+                        {/* Node 3: Destination Node */}
+                        <circle cx="475" cy="95" r="4.5" fill="#ffffff" />
+                        <circle cx="475" cy="95" r="7.5" stroke="#ffffff" strokeWidth="1.2" opacity="0.5" />
+                      </svg>
+
+                      {/* Floating Intermodal Bypass Card at Top Right */}
+                      <div className="absolute top-2.5 right-2.5 bg-[#0a121a]/92 backdrop-blur-md border border-white/15 rounded-2xl p-2 sm:p-2.5 shadow-2xl flex items-center justify-between gap-3 w-52 sm:w-56 z-20">
+                        <div className="flex items-center gap-2">
+                          <div className="w-7 h-7 rounded-lg bg-[#08231a] border border-[#10b981]/40 flex items-center justify-center text-[#10b981] shrink-0">
+                            <Train className="w-3.5 h-3.5 text-[#10b981]" />
                           </div>
                           <div>
-                            <div className="text-[10px] font-mono text-[#a8e63d] font-bold uppercase">LOGISYNC NEURAL CORRIDOR</div>
-                            <div className="text-xs font-bold text-white">Direct Intermodal Rail Bypass</div>
+                            <div className="flex items-center gap-1.5">
+                              <span className="font-bold text-[11px] text-white">Intermodal Bypass</span>
+                              <span className="px-1.5 py-0.2 rounded-full bg-[#10b981]/20 border border-[#10b981]/40 text-[7.5px] font-bold text-[#10b981]">
+                                OPTIMAL
+                              </span>
+                            </div>
+                            <div className="text-[9.5px] text-[#71859c] font-mono">Rail + Road</div>
                           </div>
                         </div>
-                        <div className="flex items-center gap-6 text-right">
-                          <div>
-                            <div className="text-xs font-display font-black text-emerald-400">14.1 DAYS (-8.3D)</div>
-                            <div className="text-[9px] font-mono text-emerald-400">$31,800 (-$12,400)</div>
-                          </div>
-                          <span className="text-xs text-[#a8e63d] font-mono font-bold">-24% CO₂</span>
-                        </div>
+                        <ChevronRight className="w-3.5 h-3.5 text-white/40" />
                       </div>
                     </div>
 
-                    {/* Efficiency Score Highlights */}
-                    <div className="grid grid-cols-3 gap-2 pt-2">
-                      <div className="bg-[#0b211c] p-2 rounded-xl text-center border border-[#1b3e34]">
-                        <div className="text-[9px] font-mono text-[#7ca69a]">TIME SAVED</div>
-                        <div className="text-base font-display font-black text-emerald-400">37.1%</div>
+                    {/* Three Metric Cards */}
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                      {/* TIME SAVED */}
+                      <div className="bg-[#0b131a]/95 rounded-2xl border border-white/10 p-2.5 sm:p-3 flex items-center justify-between shadow-lg">
+                        <div className="flex items-center gap-2">
+                          <div className="w-7 h-7 rounded-full bg-[#0a251c] border border-[#10b981]/30 flex items-center justify-center text-[#10b981] shrink-0">
+                            <Leaf className="w-3.5 h-3.5 text-[#10b981]" />
+                          </div>
+                          <div>
+                            <div className="text-[8.5px] font-mono tracking-widest text-[#6e8294] uppercase">TIME SAVED</div>
+                            <div className="text-lg sm:text-xl font-display font-black text-[#10b981] leading-tight">37.1%</div>
+                          </div>
+                        </div>
+                        <svg viewBox="0 0 50 22" className="w-11 h-5 text-[#10b981]" fill="none">
+                          <path d="M 2 16 Q 14 18 24 10 T 48 4" stroke="#10b981" strokeWidth="2.5" strokeLinecap="round" />
+                        </svg>
                       </div>
-                      <div className="bg-[#0b211c] p-2 rounded-xl text-center border border-[#1b3e34]">
-                        <div className="text-[9px] font-mono text-[#7ca69a]">OPEX REDUCTION</div>
-                        <div className="text-base font-display font-black text-white">-$12.4K</div>
+
+                      {/* COST REDUCTION */}
+                      <div className="bg-[#0b131a]/95 rounded-2xl border border-white/10 p-2.5 sm:p-3 flex items-center justify-between shadow-lg">
+                        <div className="flex items-center gap-2">
+                          <div className="w-7 h-7 rounded-full bg-[#131b26] border border-white/10 flex items-center justify-center text-[#94a3b8] shrink-0">
+                            <Coins className="w-3.5 h-3.5 text-[#94a3b8]" />
+                          </div>
+                          <div>
+                            <div className="text-[8.5px] font-mono tracking-widest text-[#6e8294] uppercase">COST REDUCTION</div>
+                            <div className="text-lg sm:text-xl font-display font-black text-white leading-tight">$12.4K</div>
+                          </div>
+                        </div>
+                        <svg viewBox="0 0 50 22" className="w-11 h-5 text-[#64748b]" fill="none">
+                          <path d="M 2 14 Q 16 16 26 8 T 48 6" stroke="#64748b" strokeWidth="2" strokeLinecap="round" opacity="0.6" />
+                        </svg>
                       </div>
-                      <div className="bg-[#0b211c] p-2 rounded-xl text-center border border-[#1b3e34]">
-                        <div className="text-[9px] font-mono text-[#7ca69a]">EMISSION OFFSET</div>
-                        <div className="text-base font-display font-black text-[#a8e63d]">-3.8 TONS</div>
+
+                      {/* EMISSION OFFSET */}
+                      <div className="bg-[#0b131a]/95 rounded-2xl border border-white/10 p-2.5 sm:p-3 flex items-center justify-between shadow-lg">
+                        <div className="flex items-center gap-2">
+                          <div className="w-7 h-7 rounded-full bg-[#0a251c] border border-[#10b981]/30 flex items-center justify-center text-[#10b981] shrink-0">
+                            <Leaf className="w-3.5 h-3.5 text-[#10b981]" />
+                          </div>
+                          <div>
+                            <div className="text-[8.5px] font-mono tracking-widest text-[#6e8294] uppercase">EMISSION OFFSET</div>
+                            <div className="text-lg sm:text-xl font-display font-black text-[#10b981] leading-tight">-3.8 TONS</div>
+                          </div>
+                        </div>
+                        <svg viewBox="0 0 50 22" className="w-11 h-5 text-[#10b981]" fill="none">
+                          <path d="M 2 15 Q 12 17 24 9 T 48 5" stroke="#10b981" strokeWidth="2.5" strokeLinecap="round" />
+                        </svg>
                       </div>
+                    </div>
+
+                    {/* Bottom Action Toolbar */}
+                    <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-white/10">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <button
+                          type="button"
+                          onClick={onOpenAiAssistant}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#121924] hover:bg-[#1a2332] border border-white/10 hover:border-white/20 text-white text-[11px] font-medium cursor-pointer transition-all hover:scale-105 active:scale-95"
+                        >
+                          <Sparkles size={12} className="text-[#fbbf24]" />
+                          <span>Ask AI</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={onOpenPublicMap}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#121924] hover:bg-[#1a2332] border border-white/10 hover:border-white/20 text-white/90 text-[11px] font-medium cursor-pointer transition-all hover:scale-105 active:scale-95"
+                        >
+                          <Map size={12} className="text-white/70" />
+                          <span>Map</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={onOpenApiHub}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#121924] hover:bg-[#1a2332] border border-white/10 hover:border-white/20 text-white/90 text-[11px] font-medium cursor-pointer transition-all hover:scale-105 active:scale-95"
+                        >
+                          <Network size={12} className="text-white/70" />
+                          <span>API Hub</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => onOpenDashboard && onOpenDashboard('command-center')}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#121924] hover:bg-[#1a2332] border border-white/10 hover:border-white/20 text-white/90 text-[11px] font-medium cursor-pointer transition-all hover:scale-105 active:scale-95"
+                        >
+                          <LayoutGrid size={12} className="text-white/70" />
+                          <span>Open Dashboard</span>
+                        </button>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => onOpenDashboard && onOpenDashboard('command-center')}
+                        className="flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#f59e0b] hover:bg-[#fbbf24] text-[#0f172a] text-[11px] font-bold font-display uppercase tracking-wider shadow-md transition-all hover:scale-105 active:scale-95 cursor-pointer ml-auto"
+                      >
+                        <span>Launch Live Console</span>
+                        <ArrowRight size={13} className="stroke-[2.5]" />
+                      </button>
                     </div>
                   </div>
                 )}
