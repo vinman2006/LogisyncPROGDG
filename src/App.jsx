@@ -323,51 +323,6 @@ function AppContent() {
         />
       </AnimatedSection>
 
-      {/* ─── ANIMATED PLATFORM STATS SECTION ──────────────────────────────── */}
-      <AnimatedSection
-        animation="fade-up"
-        stagger={0.12}
-        className="relative z-10 py-20 px-6 sm:px-10 lg:px-16"
-      >
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-14">
-            <AnimatedSection animation="clip-reveal">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 mb-4">
-                <PulseRing color="#10b981" size={8} />
-                <span className="text-emerald-400 text-xs font-mono uppercase tracking-widest">Live Platform Stats</span>
-              </div>
-            </AnimatedSection>
-            <h2 className="text-3xl sm:text-5xl font-display font-black text-white mb-3 neon-text-green">
-              Architected for Enterprise Logistics
-            </h2>
-            <p className="text-[#6e80b2] text-base max-w-xl mx-auto">
-              Real-world performance specifications of the LogiSyncPRO autonomous infrastructure
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { label: 'Sub-Second Cloud Sync', display: '< 100ms', color: '#10b981', icon: '⚡' },
-              { label: 'GS1 EPCIS 2.0 Compliant', display: '100%', color: '#06b6d4', icon: '🌐' },
-              { label: 'Cold-Chain IoT Precision', display: '±0.1°C', color: '#38bdf8', icon: '❄️' },
-              { label: 'Audit Trail Security', display: '256-bit', color: '#ff5500', icon: '🛡️' },
-            ].map((stat, i) => (
-              <div
-                key={i}
-                className="glow-card hover-lift relative p-6 rounded-2xl border border-white/8 bg-white/[0.03] backdrop-blur-sm text-center"
-                style={{ '--glow-color': stat.color }}
-              >
-                <div className="text-3xl mb-2">{stat.icon}</div>
-                <div className="text-3xl sm:text-4xl font-display font-black mb-1 animated-border" style={{ color: stat.color }}>
-                  {stat.display}
-                </div>
-                <div className="text-xs font-mono text-[#6e80b2] uppercase tracking-widest mt-1">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </AnimatedSection>
-
       {/* ─── FOOTER (MATCHING USER'S EXACT DESIGN) ────────────────────── */}
       <Footer
         onOpenDashboard={handleOpenDashboard}
