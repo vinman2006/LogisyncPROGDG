@@ -192,31 +192,6 @@ export default function HeroShipmentStream({
             </button>
           </div>
 
-          {/* Secondary Quick Action Links */}
-          <div className="mt-4 flex flex-wrap items-center gap-2 text-xs font-mono text-[#8ca4d8]">
-            <span className="text-[#647bb3]">EXPLORE:</span>
-            <button
-              type="button"
-              onClick={() => onOpenPublicMap && onOpenPublicMap()}
-              className="px-3 py-1 rounded-full bg-white/5 hover:bg-white/10 text-emerald-300 hover:text-white border border-emerald-500/30 transition-all cursor-pointer"
-            >
-              ● Public Transit Map
-            </button>
-            <button
-              type="button"
-              onClick={() => onOpenApiHub && onOpenApiHub()}
-              className="px-3 py-1 rounded-full bg-white/5 hover:bg-white/10 text-amber-300 hover:text-white border border-amber-500/30 transition-all cursor-pointer"
-            >
-              ● API Hub (GS1 EPCIS)
-            </button>
-            <button
-              type="button"
-              onClick={() => onOpenDemo && onOpenDemo()}
-              className="px-3 py-1 rounded-full bg-white/5 hover:bg-white/10 text-[#c7d5fd] hover:text-white border border-white/10 transition-all cursor-pointer"
-            >
-              ● Simulation Console
-            </button>
-          </div>
         </div>
 
         {/* ── RIGHT SIDE: Horizontal Motion Lines & Shipping Boxes ────────── */}
