@@ -12,6 +12,7 @@ import PublicTransitMap from './components/PublicTransitMap';
 import ApiHubDashboard from './components/ApiHubDashboard';
 import LogiSyncAiAssistant from './components/LogiSyncAiAssistant';
 import FloatingAiWidget from './components/FloatingAiWidget';
+import Footer from './components/Footer';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { checkUserExistsInNeon } from './services/neonService';
 import SmoothScrollProvider from './components/SmoothScrollProvider';
@@ -367,101 +368,19 @@ function AppContent() {
         </div>
       </AnimatedSection>
 
-      {/* ─── FOOTER ───────────────────────────────────────────────────────── */}
-      <footer className="relative bg-[#060a14] border-t border-white/10 py-16 px-6 sm:px-10 lg:px-16 text-[#c7d5fd] overflow-hidden">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 pb-12 border-b border-white/10">
-          <div>
-            <LogiSyncLogo />
-          </div>
-          <div className="flex flex-wrap items-center gap-3">
-            <button
-              type="button"
-              onClick={() => handleOpenAiAssistant()}
-              className="px-6 py-3 rounded-full bg-[#ff5500] hover:bg-[#ff6924] text-black font-display font-black text-xs uppercase tracking-wider cursor-pointer transition-all hover:scale-105 active:scale-95 shadow-md flex items-center gap-2"
-            >
-              <span className="w-2 h-2 rounded-full bg-black animate-ping" />
-              <span>Ask Gemini AI</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => handleOpenDashboard('command-center')}
-              className="pill-btn-white px-7 py-3 rounded-full text-xs font-bold uppercase tracking-wider cursor-pointer transition-all hover:scale-105 active:scale-95"
-            >
-              LAUNCH COMMAND CENTER
-            </button>
-            <button
-              type="button"
-              onClick={handleOpenOnboarding}
-              className="pill-btn-dark px-7 py-3 rounded-full text-xs font-bold uppercase tracking-wider cursor-pointer flex items-center gap-2 transition-all hover:scale-105 active:scale-95"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span>SETUP WORKSPACE (8 STEPS)</span>
-            </button>
-            {!user && (
-              <button
-                type="button"
-                onClick={handleOpenLogin}
-                className="px-6 py-3 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-bold uppercase tracking-wider cursor-pointer transition-all"
-              >
-                SIGN IN
-              </button>
-            )}
-          </div>
-        </div>
-
-        <div className="max-w-7xl mx-auto pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-[#6e80b2]">
-          <div>© 2026 LOGISYNC PRO TECHNOLOGIES INC. ALL RIGHTS RESERVED.</div>
-          <div className="flex items-center gap-4">
-            <button 
-              type="button"
-              onClick={() => {
-                setCurrentView('api-hub');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }} 
-              className="text-[#ff5500] hover:text-[#ff7733] transition-colors cursor-pointer flex items-center gap-1.5 font-sans font-bold"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-[#ff5500] animate-pulse" />
-              <span>API &amp; Interop Hub</span>
-            </button>
-            <span className="text-white/20">•</span>
-            <button 
-              type="button"
-              onClick={() => {
-                setCurrentView('public-map');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }} 
-              className="text-[#10b981] hover:text-[#34d399] transition-colors cursor-pointer flex items-center gap-1.5 font-sans font-bold"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-[#10b981] animate-pulse" />
-              <span>Public Transit Map</span>
-            </button>
-            <span className="text-white/20">•</span>
-            <button 
-              type="button"
-              onClick={() => handleOpenAiAssistant()}
-              className="hover:text-[#ff7733] transition-colors cursor-pointer flex items-center gap-1 text-[#ff7733]"
-            >
-              <span>Gemini AI</span>
-            </button>
-            <span className="text-white/20">•</span>
-            <button 
-              type="button"
-              onClick={handleOpenOnboarding} 
-              className="hover:text-emerald-400 transition-colors cursor-pointer"
-            >
-              8-Step Onboarding
-            </button>
-            <span className="text-white/20">•</span>
-            <button 
-              type="button"
-              onClick={handleOpenLogin} 
-              className="hover:text-white transition-colors cursor-pointer"
-            >
-              {user ? `Signed in as ${onboardingProfile?.name || user.displayName || user.email}` : 'Firebase Google Auth'}
-            </button>
-          </div>
-        </div>
-      </footer>
+      {/* ─── FOOTER (MATCHING USER'S EXACT DESIGN) ────────────────────── */}
+      <Footer
+        onOpenDashboard={handleOpenDashboard}
+        onOpenAiAssistant={handleOpenAiAssistant}
+        onOpenApiHub={() => {
+          setCurrentView('api-hub');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+        onOpenTransitMap={() => {
+          setCurrentView('public-map');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+      />
 
       {/* ─── FLOATING AI ASSISTANT TRIGGER WIDGET (BOTTOM-RIGHT) ───────────── */}
       <FloatingAiWidget onOpen={() => handleOpenAiAssistant()} />
