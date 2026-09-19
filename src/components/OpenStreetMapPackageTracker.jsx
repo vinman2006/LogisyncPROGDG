@@ -26,10 +26,10 @@ const TILE_LAYERS = {
     maxZoom: 19,
   },
   dark: {
-    name: 'Night Operations',
-    url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
-    attribution: '&copy; OpenStreetMap &copy; CARTO',
-    maxZoom: 19,
+    name: 'Night Operations (Esri Dark)',
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+    attribution: '&copy; Esri &copy; OpenStreetMap',
+    maxZoom: 16,
   },
 };
 

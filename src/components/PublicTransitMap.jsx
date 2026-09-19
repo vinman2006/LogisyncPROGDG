@@ -28,11 +28,12 @@ const MetroIcon = ({ size = 14, className = '' }) => (
   </svg>
 );
 
-// Tile Layer Configuration - Clean dark logistics background showing roads, routes, and stations
+// Tile Layer Configuration - Esri World Dark Gray Canvas (Zero Watermarks, No API Key Required)
 const DARK_MAP_TILES = {
-  url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
-  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-  maxZoom: 19,
+  base: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+  reference: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}',
+  attribution: '&copy; <a href="https://www.esri.com/">Esri</a> &mdash; Esri, DeLorme, NAVTEQ',
+  maxZoom: 16,
 };
 
 // SVG Icon templates for clean custom map markers
@@ -118,6 +119,7 @@ export default function PublicTransitMap({ onBack, onExitToLanding }) {
   const [publicRoutes, setPublicRoutes] = useState([]);
   const [publicStations, setPublicStations] = useState([]);
   const [lastRefreshed, setLastRefreshed] = useState(null);
+  const [isAlertDismissed, setIsAlertDismissed] = useState(false);
 
   // Fetch real public transport feed from backend
   const fetchPublicTransitFeed = async () => {
@@ -170,10 +172,15 @@ export default function PublicTransitMap({ onBack, onExitToLanding }) {
       attributionControl: true,
     });
 
-    L.tileLayer(DARK_MAP_TILES.url, {
+    // Esri World Dark Gray Base (land, oceans, borders - 100% Free, Zero Watermark)
+    L.tileLayer(DARK_MAP_TILES.base, {
       attribution: DARK_MAP_TILES.attribution,
       maxZoom: DARK_MAP_TILES.maxZoom,
-      subdomains: 'abcd',
+    }).addTo(map);
+
+    // Esri World Dark Gray Reference (crisp labels, highways & borders overlay)
+    L.tileLayer(DARK_MAP_TILES.reference, {
+      maxZoom: DARK_MAP_TILES.maxZoom,
     }).addTo(map);
 
     // Layer groups for clean management
@@ -383,14 +390,24 @@ export default function PublicTransitMap({ onBack, onExitToLanding }) {
       {/* ─── FULL-SCREEN MAP ELEMENT ────────────────────────────────────────── */}
       <div ref={mapContainerRef} className="w-full h-full min-h-[500px] z-0 bg-[#030e0b]" />
 
-      {/* ─── HONEST EMPTY STATE BADGE (When no live public transit feed is connected) */}
-      {publicVehicles.length === 0 && !isLoading && (
-        <div className="absolute top-20 left-1/2 -translate-x-1/2 z-[1000] max-w-md w-[90%] p-4 rounded-2xl bg-[#041410]/95 border border-[#0f382e] backdrop-blur-md shadow-2xl text-center pointer-events-auto animate-in fade-in duration-200">
-          <div className="flex items-center justify-center gap-2 text-xs font-bold text-white mb-1">
-            <span className="w-2 h-2 rounded-full bg-amber-400" />
-            <span>No public transport data available</span>
+      {/* ─── HONEST EMPTY STATE BADGE (When no live public transit feed is connected, Dismissible) */}
+      {publicVehicles.length === 0 && !isLoading && !isAlertDismissed && (
+        <div className="absolute top-20 left-1/2 -translate-x-1/2 z-[1000] max-w-md w-[90%] p-4 rounded-2xl bg-[#041410]/95 border border-[#0f382e] backdrop-blur-md shadow-2xl pointer-events-auto animate-in fade-in duration-200">
+          <div className="flex items-center justify-between pb-1.5 border-b border-[#0f382e]/60 mb-2">
+            <div className="flex items-center gap-2 text-xs font-bold text-white">
+              <span className="w-2 h-2 rounded-full bg-amber-400" />
+              <span>No public transport data available</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsAlertDismissed(true)}
+              className="text-[#6d9487] hover:text-white cursor-pointer p-0.5 rounded-lg hover:bg-white/5 transition-colors"
+              title="Dismiss notification"
+            >
+              <X size={14} />
+            </button>
           </div>
-          <p className="text-[11px] text-[#7ea597] leading-relaxed">
+          <p className="text-[11px] text-[#7ea597] leading-relaxed text-center">
             Public transit telematics feed is currently offline or unconfigured for this region. 
             Only verified public vehicles (government buses, metro, passenger rail) appear on this map.
           </p>
