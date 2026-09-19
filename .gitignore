@@ -1,0 +1,64 @@
+# ==============================================================================
+# Git Ignore Configuration for LogiSyncPRO
+# ==============================================================================
+
+# Node dependencies
+node_modules/
+apk-backend/node_modules/
+.pnp
+.pnp.js
+
+# Production build outputs
+dist/
+dist-ssr/
+build/
+apk-backend/dist/
+
+# Environment and Secret Configuration
+.env
+.env.*
+!.env.example
+apk-backend/.env
+apk-backend/.env.*
+!apk-backend/.env.example
+*.local
+
+# Debug logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor & OS files
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Android Build Artifacts & Credentials
+android/.gradle/
+android/.kotlin/
+android/app/build/
+android/build/
+android/local.properties
+android/*.jks
+android/*.keystore
+*.apk
+*.aab
+
+# Temporary Testing & Screenshot Artifacts
+screenshots/
+scratch/
+screen*.png
+shipper_*.png
+android_launch_screen.png
+current_screen.png
+_

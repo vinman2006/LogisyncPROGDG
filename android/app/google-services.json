@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "58479456655",
+    "project_id": "logisyncgdg",
+    "storage_bucket": "logisyncgdg.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:58479456655:android:d84f18e9a1172a5b",
+        "android_client_info": {
+          "package_name": "com.example.logisyncpro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "58479456655-h3mulvb8hb9r3fidtfa85qjecbjks7so.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXppd8sr30_QoSvUK-61HnaT4qVDXOpzs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "58479456655-h3mulvb8hb9r3fidtfa85qjecbjks7so.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,559 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: 'Unbounded', sans-serif;
+  --font-editorial: 'Syne', sans-serif;
+  --font-sans: 'Plus Jakarta Sans', sans-serif;
+
+  --color-teal-dark: #071f1c;
+  --color-teal-deep: #051614;
+  --color-teal-surface: #0a2925;
+  --color-teal-light: #103d37;
+  --color-icy-blue: #c2ebfa;
+  --color-icy-tint: #daf2fd;
+  --color-safety-orange: #ff5500;
+  --color-burnt-orange: #c43c00;
+  --color-dark-orange: #7a2200;
+}
+
+:root {
+  color-scheme: dark;
+  --font-display: 'Unbounded', sans-serif;
+  --font-editorial: 'Syne', sans-serif;
+  --font-sans: 'Plus Jakarta Sans', sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #071f1c;
+  color: #c2ebfa;
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Custom Font Utilities */
+.font-display {
+  font-family: 'Unbounded', sans-serif;
+}
+
+.font-editorial {
+  font-family: 'Syne', sans-serif;
+}
+
+/* Ultra heavy condensed headline styling matching the reference screenshot */
+.hero-headline {
+  font-family: 'Unbounded', sans-serif;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.04em;
+  line-height: 0.88;
+  color: #c5eaf8;
+  text-shadow: 0 0 60px rgba(197, 234, 248, 0.08);
+}
+
+/* Subtle background vignette & grid lines */
+.bg-command-vignette {
+  background: radial-gradient(circle at 50% 30%, #0d3632 0%, #071f1c 65%, #041210 100%);
+}
+
+.bg-grid-pattern {
+  background-size: 48px 48px;
+  background-image: 
+    linear-gradient(to right, rgba(194, 235, 250, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(194, 235, 250, 0.02) 1px, transparent 1px);
+}
+
+/* Custom smooth pill styling */
+.pill-btn-white {
+  background: #f2f5f6;
+  color: #061917;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pill-btn-white:hover {
+  background: #ffffff;
+  transform: scale(1.03);
+  box-shadow: 0 10px 30px -5px rgba(255, 255, 255, 0.25), 0 0 20px rgba(255, 85, 0, 0.35);
+}
+
+.pill-btn-dark {
+  background: rgba(4, 18, 16, 0.85);
+  border: 1px solid rgba(194, 235, 250, 0.15);
+  color: #c2ebfa;
+  transition: all 0.25s ease;
+}
+
+.pill-btn-dark:hover {
+  border-color: rgba(194, 235, 250, 0.4);
+  background: rgba(10, 36, 33, 0.95);
+}
+
+/* Pulse animation for live indicators */
+@keyframes ping-slow {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+.animate-ping-slow {
+  animation: ping-slow 2.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* Hide scrollbar for clean horizontal or vertical views */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Container query support for track calculations */
+.hero-track-container {
+  container-type: inline-size;
+}
+
+/* ── Subtle, Premium Motion Trails Shimmer (Left → Right Light Flow) ────────── */
+@keyframes lineShimmerOrange {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: 0% 0;
+  }
+}
+
+@keyframes lineShimmerPurple {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: 0% 0;
+  }
+}
+
+@keyframes softPulseOrange {
+  0%, 100% {
+    filter: drop-shadow(0 0 14px rgba(255, 119, 0, 0.48));
+  }
+  50% {
+    filter: drop-shadow(0 0 20px rgba(255, 140, 0, 0.68));
+  }
+}
+
+@keyframes softPulsePurple {
+  0%, 100% {
+    filter: drop-shadow(0 0 12px rgba(124, 58, 237, 0.38));
+  }
+  50% {
+    filter: drop-shadow(0 0 18px rgba(139, 92, 246, 0.58));
+  }
+}
+
+.anim-shimmer-orange {
+  background-size: 250% 100% !important;
+  animation: lineShimmerOrange 4.2s linear infinite, softPulseOrange 4.5s ease-in-out infinite;
+}
+
+.anim-shimmer-purple {
+  background-size: 250% 100% !important;
+  animation: lineShimmerPurple 4.8s linear infinite, softPulsePurple 5.2s ease-in-out infinite;
+}
+
+/* ── Track 1: Medium Box Left → Right Smooth Travel across Full Track ───────── */
+@keyframes travelTrack1 {
+  0% {
+    transform: translate3d(-480px, 0, 0);
+    opacity: 0;
+  }
+  4% {
+    opacity: 1;
+  }
+  96% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(calc(100cqw + 80px), 0, 0);
+    opacity: 0;
+  }
+}
+
+/* ── Track 2: Small Box Left → Right Smooth Travel (Different Speed) ────────── */
+@keyframes travelTrack2 {
+  0% {
+    transform: translate3d(-380px, 0, 0);
+    opacity: 0;
+  }
+  4% {
+    opacity: 1;
+  }
+  96% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(calc(100cqw + 80px), 0, 0);
+    opacity: 0;
+  }
+}
+
+/* Fallback if cqw is not supported */
+@supports not (width: 100cqw) {
+  @keyframes travelTrack1 {
+    0% {
+      transform: translate3d(-480px, 0, 0);
+      opacity: 0;
+    }
+    4% {
+      opacity: 1;
+    }
+    96% {
+      opacity: 1;
+    }
+    100% {
+      transform: translate3d(calc(55vw + 80px), 0, 0);
+      opacity: 0;
+    }
+  }
+  @keyframes travelTrack2 {
+    0% {
+      transform: translate3d(-380px, 0, 0);
+      opacity: 0;
+    }
+    4% {
+      opacity: 1;
+    }
+    96% {
+      opacity: 1;
+    }
+    100% {
+      transform: translate3d(calc(55vw + 80px), 0, 0);
+      opacity: 0;
+    }
+  }
+}
+
+/* ── Large Box on Far Right: Subtle gentle idle drift, remaining partially cropped */
+@keyframes largeBoxSubtleDrift {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(6px, 0, 0);
+  }
+}
+
+.anim-large-box {
+  animation: largeBoxSubtleDrift 8s ease-in-out infinite;
+}
+
+/* Staggered delays: Box A is immediately in the reference screenshot position on load */
+.track1-box-a {
+  animation: travelTrack1 8.8s linear infinite;
+  animation-delay: -6.3s; /* ~72% along the track on initial load */
+}
+
+.track1-box-b {
+  animation: travelTrack1 8.8s linear infinite;
+  animation-delay: -1.9s; /* Enters seamlessly from left */
+}
+
+.track2-box-a {
+  animation: travelTrack2 7.2s linear infinite;
+  animation-delay: -4.6s; /* ~64% along the track on initial load */
+}
+
+.track2-box-b {
+  animation: travelTrack2 7.2s linear infinite;
+  animation-delay: -1.0s; /* Enters seamlessly from left */
+}
+
+/* Stable headline entrance opacity */
+@keyframes subtleHeadlineEntrance {
+  0% {
+    opacity: 0.92;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.headline-stable {
+  animation: subtleHeadlineEntrance 0.6s ease-out forwards;
+}
+
+/* ─── GLOW CARD — cursor-tracked spotlight glow ───────────────────────────── */
+.glow-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.glow-card::before {
+  content: '';
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  left: var(--glow-x, -999px);
+  top: var(--glow-y, -999px);
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, var(--glow-color, #10b981)18 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: inherit;
+}
+
+.glow-card:hover::before {
+  opacity: 1;
+}
+
+.glow-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── SHIMMER / SKELETON ─────────────────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -800px 0; }
+  100% { background-position: 800px 0; }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.06) 50%, transparent 100%);
+  background-size: 800px 100%;
+  animation: shimmer 2.2s infinite linear;
+}
+
+/* ─── GRADIENT BORDER ────────────────────────────────────────────────────── */
+@keyframes gradientBorderSpin {
+  0%   { --angle: 0deg; }
+  100% { --angle: 360deg; }
+}
+
+@property --angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.animated-border {
+  border: 2px solid transparent;
+  background:
+    linear-gradient(#0a1628, #0a1628) padding-box,
+    conic-gradient(from var(--angle), #10b981, #06b6d4, #6366f1, #ff5500, #10b981) border-box;
+  animation: gradientBorderSpin 4s linear infinite;
+}
+
+/* ─── FLOATING PARTICLES ─────────────────────────────────────────────────── */
+@keyframes floatParticle {
+  0%   { transform: translateY(0px) rotate(0deg); opacity: 0.6; }
+  50%  { transform: translateY(-20px) rotate(180deg); opacity: 1; }
+  100% { transform: translateY(0px) rotate(360deg); opacity: 0.6; }
+}
+
+.float-particle {
+  animation: floatParticle 6s ease-in-out infinite;
+}
+
+/* ─── SCAN LINE (data scanner effect) ────────────────────────────────────── */
+@keyframes scanLine {
+  0%   { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+.scan-line {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #10b981, transparent);
+  animation: scanLine 8s linear infinite;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.15;
+}
+
+/* ─── REVEAL CLIP ─────────────────────────────────────────────────────────── */
+.clip-reveal-init {
+  clip-path: inset(0 100% 0 0);
+}
+
+/* ─── HOVER LIFT CARDS ──────────────────────────────────────────────────── */
+.hover-lift {
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.35s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 0 24px 60px -10px rgba(16, 185, 129, 0.2),
+              0 0 0 1px rgba(16, 185, 129, 0.15);
+}
+
+/* ─── NEON GLOW TEXT ──────────────────────────────────────────────────────── */
+.neon-text-green {
+  text-shadow: 0 0 10px rgba(16, 185, 129, 0.8),
+               0 0 20px rgba(16, 185, 129, 0.5),
+               0 0 40px rgba(16, 185, 129, 0.3);
+}
+
+.neon-text-orange {
+  text-shadow: 0 0 10px rgba(255, 85, 0, 0.8),
+               0 0 20px rgba(255, 85, 0, 0.5),
+               0 0 40px rgba(255, 85, 0, 0.3);
+}
+
+.neon-text-cyan {
+  text-shadow: 0 0 10px rgba(6, 182, 212, 0.8),
+               0 0 20px rgba(6, 182, 212, 0.5),
+               0 0 40px rgba(6, 182, 212, 0.3);
+}
+
+/* ─── MARQUEE TICKER ──────────────────────────────────────────────────────── */
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.marquee-track {
+  animation: marquee 28s linear infinite;
+  will-change: transform;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+/* ─── BREATHE PULSE ───────────────────────────────────────────────────────── */
+@keyframes breathe {
+  0%, 100% { transform: scale(1); opacity: 0.85; }
+  50%       { transform: scale(1.06); opacity: 1; }
+}
+
+.breathe {
+  animation: breathe 4s ease-in-out infinite;
+}
+
+/* ─── COUNTER FLICKER ─────────────────────────────────────────────────────── */
+@keyframes counterFlicker {
+  0%, 100% { opacity: 1; }
+  92%       { opacity: 1; }
+  93%       { opacity: 0.7; }
+  94%       { opacity: 1; }
+  97%       { opacity: 1; }
+  98%       { opacity: 0.8; }
+  99%       { opacity: 1; }
+}
+
+.counter-flicker {
+  animation: counterFlicker 4s ease-in-out infinite;
+}
+
+/* ─── ROTATING RING ───────────────────────────────────────────────────────── */
+@keyframes rotateSlow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes rotateReverse {
+  from { transform: rotate(360deg); }
+  to   { transform: rotate(0deg); }
+}
+
+.rotate-slow  { animation: rotateSlow    15s linear infinite; }
+.rotate-rev   { animation: rotateReverse 20s linear infinite; }
+
+/* ─── BLOB MORPH ──────────────────────────────────────────────────────────── */
+@keyframes blobMorph {
+  0%   { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+  25%  { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+  50%  { border-radius: 50% 60% 30% 70% / 30% 40% 70% 60%; }
+  75%  { border-radius: 40% 30% 60% 50% / 70% 50% 40% 30%; }
+  100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+}
+
+.blob-morph {
+  animation: blobMorph 10s ease-in-out infinite;
+}
+
+/* ─── STATUS INDICATOR DOT ────────────────────────────────────────────────── */
+@keyframes statusPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+  50%       { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+}
+
+.status-dot-live {
+  animation: statusPulse 2s ease infinite;
+}
+
+/* ─── PAGE TRANSITION ─────────────────────────────────────────────────────── */
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(20px); filter: blur(8px); }
+  to   { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+
+.page-in {
+  animation: pageIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ─── INTERACTIVE BUTTON RIPPLE ───────────────────────────────────────────── */
+.btn-ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-ripple::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.2) 0%, transparent 70%);
+  opacity: 0;
+  transform: scale(0);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.btn-ripple:active::after {
+  opacity: 1;
+  transform: scale(2);
+  transition: 0s;
+}
+
+/* ─── LOADING SPINNER ─────────────────────────────────────────────────────── */
+@keyframes spinArc {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.spinner-arc {
+  border: 2px solid rgba(16, 185, 129, 0.2);
+  border-top-color: #10b981;
+  border-radius: 50%;
+  animation: spinArc 0.8s linear infinite;
+}
+
+/* ─── NOISE TEXTURE OVERLAY ───────────────────────────────────────────────── */
+.noise-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 1;
+}
+
+
+

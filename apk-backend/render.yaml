@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: logisync-apk-backend
+    env: node
+    plan: free
+    region: oregon
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      # ─── Set these in the Render Dashboard: Environment tab ───────────────
+      # Do NOT hardcode DATABASE_URL here — use Render's secret env var system
+      - key: DATABASE_URL
+        sync: false   # tells Render: this must be set manually in dashboard
+      - key: FIREBASE_PROJECT_ID
+        value: logisyncgdg
+      - key: GOOGLE_CLIENT_ID
+        value: 58479456655-h3mulvb8hb9r3fidtfa85qjecbjks7so.apps.googleusercontent.com
+      - key: FIREBASE_SERVICE_ACCOUNT_JSON
+        sync: false   # Set this manually in Render Dashboard → Environment → Secret
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+

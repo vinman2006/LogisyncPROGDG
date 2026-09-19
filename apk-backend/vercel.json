@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "src/server.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "src/server.js"
+    }
+  ],
+  "env": {
+    "DATABASE_URL": "postgresql://neondb_owner:npg_qoNFpJ2zm3Hj@ep-restless-moon-b4nzb2ae-pooler.c-6.us-east-2.aws.neon.tech/logisync_apk_db?sslmode=require",
+    "FIREBASE_PROJECT_ID": "logisyncgdg"
+  }
+}

@@ -1,0 +1,31 @@
+services:
+  logisync-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: logisync_web
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DATABASE_URL=${DATABASE_URL}
+      - VITE_FIREBASE_API_KEY=${VITE_FIREBASE_API_KEY}
+      - VITE_FIREBASE_AUTH_DOMAIN=${VITE_FIREBASE_AUTH_DOMAIN}
+      - VITE_FIREBASE_PROJECT_ID=${VITE_FIREBASE_PROJECT_ID}
+      - VITE_GEMINI_API_KEY=${VITE_GEMINI_API_KEY}
+
+  logisync-apk-backend:
+    build:
+      context: ./apk-backend
+      dockerfile: Dockerfile
+    container_name: logisync_apk_backend
+    restart: unless-stopped
+    ports:
+      - "5050:5050"
+    environment:
+      - NODE_ENV=production
+      - PORT=5050
+      - DATABASE_URL=${APK_DATABASE_URL}
+      - FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID}
