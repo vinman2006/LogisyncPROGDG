@@ -199,28 +199,105 @@ function AppContent() {
         />
       </div>
 
-      {/* ─── ANIMATED STATS TICKER BAR ─────────────────────────────────────── */}
-      <div className="relative z-10 border-y border-white/8 bg-white/[0.03] backdrop-blur-sm overflow-hidden">
-        <div className="flex items-center gap-0 marquee-track py-3">
+      {/* ─── LIVE PLATFORM CAPABILITIES & FEATURES TICKER BAR ─────────────── */}
+      <div className="relative z-10 border-y border-white/10 bg-[#060a14]/85 backdrop-blur-md overflow-hidden select-none">
+        <div className="flex items-center gap-0 marquee-track py-3.5">
           {[...Array(2)].map((_, outer) => (
             <div key={outer} className="flex items-center gap-0 flex-shrink-0">
               {[
-                { label: 'Shipments Tracked', val: 2847293, suffix: '+', color: '#10b981' },
-                { label: 'Active Routes', val: 14862, suffix: '', color: '#06b6d4' },
-                { label: 'Fleet Vehicles', val: 3291, suffix: '', color: '#6366f1' },
-                { label: 'Countries Connected', val: 87, suffix: '', color: '#ff5500' },
-                { label: 'API Calls / Day', val: 9400000, suffix: '+', color: '#c2ebfa' },
-                { label: 'Uptime SLA', val: 99, suffix: '.9%', color: '#10b981' },
-                { label: 'Transport Partners', val: 1240, suffix: '+', color: '#f59e0b' },
-              ].map((stat, i) => (
-                <div key={`${outer}-${i}`} className="flex items-center gap-8 px-10 flex-shrink-0">
-                  <div className="flex flex-col">
-                    <span className="text-[10px] font-mono uppercase tracking-widest" style={{ color: stat.color + '99' }}>{stat.label}</span>
-                    <span className="text-base font-display font-black counter-flicker" style={{ color: stat.color }}>
-                      {stat.val.toLocaleString()}{stat.suffix}
+                {
+                  tag: 'AUTONOMOUS AI',
+                  title: 'Gemini Dispatch Assistant',
+                  color: '#ff5500',
+                  icon: '✦',
+                  action: () => handleOpenAiAssistant(),
+                },
+                {
+                  tag: 'CLOUD LEDGER',
+                  title: 'NeonDB PostgreSQL Live Sync',
+                  color: '#00e599',
+                  icon: '◈',
+                  action: () => handleOpenDashboard('overview'),
+                },
+                {
+                  tag: 'LIVE TELEMETRY',
+                  title: 'OpenStreetMap GPS Tracking',
+                  color: '#06b6d4',
+                  icon: '◉',
+                  action: () => {
+                    setCurrentView('public-map');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  },
+                },
+                {
+                  tag: 'INTEROPERABILITY',
+                  title: 'GS1 EPCIS 2.0 & REST API Hub',
+                  color: '#a78bfa',
+                  icon: '⚡',
+                  action: () => {
+                    setCurrentView('api-hub');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  },
+                },
+                {
+                  tag: 'COLD CHAIN',
+                  title: 'Pharma IoT Sensor Telemetry',
+                  color: '#38bdf8',
+                  icon: '❄',
+                  action: () => handleOpenDashboard('cold-chain'),
+                },
+                {
+                  tag: 'NATIVE MOBILE',
+                  title: 'Android Jetpack Compose APK',
+                  color: '#10b981',
+                  icon: '📱',
+                  action: () => handleOpenDemo(),
+                },
+                {
+                  tag: 'VERIFICATION',
+                  title: 'Cryptographic Audit Trail',
+                  color: '#f59e0b',
+                  icon: '🛡',
+                  action: () => handleOpenDashboard('audit'),
+                },
+                {
+                  tag: 'MULTI-MODAL',
+                  title: 'Autonomous Freight Matching',
+                  color: '#ec4899',
+                  icon: '⇄',
+                  action: () => handleOpenDashboard('overview'),
+                },
+              ].map((feat, i) => (
+                <div 
+                  key={`${outer}-${i}`} 
+                  onClick={feat.action}
+                  className="flex items-center gap-6 px-7 flex-shrink-0 cursor-pointer group hover:bg-white/[0.04] py-1 rounded-lg transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <span 
+                      className="w-7 h-7 rounded-md flex items-center justify-center text-xs font-bold transition-transform group-hover:scale-110"
+                      style={{ 
+                        background: `${feat.color}18`, 
+                        color: feat.color,
+                        border: `1px solid ${feat.color}40`,
+                        boxShadow: `0 0 10px ${feat.color}20`
+                      }}
+                    >
+                      {feat.icon}
                     </span>
+                    <div className="flex flex-col text-left">
+                      <span 
+                        className="text-[9px] font-mono uppercase tracking-widest font-bold" 
+                        style={{ color: feat.color }}
+                      >
+                        {feat.tag}
+                      </span>
+                      <span className="text-xs sm:text-sm font-display font-bold text-white group-hover:text-[#daf2fd] transition-colors whitespace-nowrap">
+                        {feat.title}
+                      </span>
+                    </div>
                   </div>
-                  <span className="text-white/10 text-xl">|</span>
+                  <span className="text-white/10 text-lg font-mono">/</span>
                 </div>
               ))}
             </div>
@@ -261,19 +338,19 @@ function AppContent() {
               </div>
             </AnimatedSection>
             <h2 className="text-3xl sm:text-5xl font-display font-black text-white mb-3 neon-text-green">
-              Powering Global Logistics
+              Architected for Enterprise Logistics
             </h2>
             <p className="text-[#6e80b2] text-base max-w-xl mx-auto">
-              Real-time metrics from the LogiSyncPRO global network
+              Real-world performance specifications of the LogiSyncPRO autonomous infrastructure
             </p>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { label: 'Shipments Tracked', val: 2847293, suffix: '+', color: '#10b981', icon: '📦' },
-              { label: 'Countries Connected', val: 87, suffix: '', color: '#06b6d4', icon: '🌍' },
-              { label: 'Fleet Vehicles', val: 3291, suffix: '', color: '#6366f1', icon: '🚚' },
-              { label: 'Platform Uptime', val: 99.9, suffix: '%', color: '#ff5500', icon: '⚡' },
+              { label: 'Sub-Second Cloud Sync', display: '< 100ms', color: '#10b981', icon: '⚡' },
+              { label: 'GS1 EPCIS 2.0 Compliant', display: '100%', color: '#06b6d4', icon: '🌐' },
+              { label: 'Cold-Chain IoT Precision', display: '±0.1°C', color: '#38bdf8', icon: '❄️' },
+              { label: 'Audit Trail Security', display: '256-bit', color: '#ff5500', icon: '🛡️' },
             ].map((stat, i) => (
               <div
                 key={i}
@@ -281,10 +358,10 @@ function AppContent() {
                 style={{ '--glow-color': stat.color }}
               >
                 <div className="text-3xl mb-2">{stat.icon}</div>
-                <div className="text-4xl font-display font-black mb-1 animated-border" style={{ color: stat.color }}>
-                  <AnimatedCounter end={Math.floor(stat.val)} prefix="" suffix={stat.suffix} />
+                <div className="text-3xl sm:text-4xl font-display font-black mb-1 animated-border" style={{ color: stat.color }}>
+                  {stat.display}
                 </div>
-                <div className="text-xs font-mono text-[#6e80b2] uppercase tracking-widest">{stat.label}</div>
+                <div className="text-xs font-mono text-[#6e80b2] uppercase tracking-widest mt-1">{stat.label}</div>
               </div>
             ))}
           </div>
