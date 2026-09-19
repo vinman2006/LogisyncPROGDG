@@ -9,17 +9,10 @@
       "client_info": {
         "mobilesdk_app_id": "1:58479456655:android:ecb82ac941fd6783d55bfa",
         "android_client_info": {
-          "package_name": "com.example.logisyncpro",
-          "certificate_hash": [
-            "7FDB957A823EEFA94EFF7E888AF124B2E465DF0E"
-          ]
+          "package_name": "com.example.logisyncpro"
         }
       },
       "oauth_client": [
-        {
-          "client_id": "58479456655-p3l1j2q3n4m5k6r7s8t9.apps.googleusercontent.com",
-          "client_type": 1
-        },
         {
           "client_id": "58479456655-h3mulvb8hb9r3fidtfa85qjecbjks7so.apps.googleusercontent.com",
           "client_type": 3

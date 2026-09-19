@@ -126,10 +126,10 @@ fun LogisticsMapView(
           <script>
             var map = L.map('map', { zoomControl: false });
             
-            // High-Performance CartoDB Voyager / OpenStreetMap tiles
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+            // OpenStreetMap tiles (free, no API key required)
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
               maxZoom: 19,
-              subdomains: 'abcd'
+              subdomains: 'abc'
             }).addTo(map);
 
             var origLat = $safeOrigLat;
