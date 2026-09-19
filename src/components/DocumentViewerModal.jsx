@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { 
   X, Printer, Download, Copy, Check, FileText, ShieldCheck, 
   QrCode, ExternalLink, Calendar, MapPin, Package, Truck, User 
