@@ -3,7 +3,7 @@ import {
   Building2, Truck, MapPin, Package, Home, BarChart3, FileText, Search, Bell, 
   Globe, Clock, Calendar, AlertTriangle, ArrowRight, Plus, Minus, Crosshair, 
   ChevronDown, LogOut, Leaf, Coins, Train, Sparkles, Map, Network, LayoutGrid, 
-  ChevronRight, User
+  ChevronRight, User, Anchor, Shield
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -403,62 +403,64 @@ export default function FeatureGridSection({
               {/* CARD 03: PREDICT DELAYS BEFORE THEY HAPPEN */}
               <div 
                 style={getCardTransition(2)}
-                className="absolute inset-0 rounded-[32px] sm:rounded-[36px] bg-[#823719] text-white p-7 sm:p-9 flex flex-col justify-start shadow-2xl overflow-hidden will-change-transform"
+                className="absolute inset-0 rounded-[32px] sm:rounded-[36px] overflow-hidden shadow-2xl flex flex-col justify-between p-7 sm:p-9 will-change-transform select-none"
               >
-                <h3 className="font-display font-black text-3xl sm:text-4xl lg:text-[42px] uppercase tracking-tight leading-[0.92] text-white">
-                  PREDICT <br />
-                  DELAYS <br />
-                  BEFORE THEY <br />
-                  HAPPEN
-                </h3>
+                {/* Background Container Terminal Port Sunset Photo */}
+                <div 
+                  className="absolute inset-0 bg-cover bg-center pointer-events-none transition-transform duration-700 hover:scale-105"
+                  style={{
+                    backgroundImage: 'url(/assets/container_port_sunset.jpg)',
+                  }}
+                />
 
-                {/* Enlarged 3D Parcel Box + Weather Risk Radar at Lower Right */}
-                <div className="absolute -bottom-2 -right-2 sm:bottom-0 sm:right-0 w-[270px] sm:w-[320px] h-[220px] sm:h-[260px] flex items-end justify-end pointer-events-none">
-                  <div className="relative w-full h-full flex items-end justify-end">
-                    {/* Floating Delay Risk Glass Badge */}
-                    <div className="absolute top-2 left-2 w-36 rounded-xl bg-black/55 backdrop-blur-md border border-orange-500/30 p-2 shadow-2xl">
-                      <div className="flex items-center gap-1.5 mb-1">
-                        <span className="text-orange-400 text-[10px]">⚠️</span>
-                        <div>
-                          <div className="text-[7px] font-mono text-orange-200/70 uppercase leading-none">Risk Index</div>
-                          <div className="text-[10px] font-display font-black text-orange-400">High: Port Dwell</div>
+                {/* Ambient dark / warm vignette overlay */}
+                <div 
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    background: 'linear-gradient(180deg, rgba(12, 7, 5, 0.82) 0%, rgba(12, 7, 5, 0.3) 45%, rgba(12, 7, 5, 0.75) 100%)',
+                  }}
+                />
+
+                {/* Top Section: Bold Headlines */}
+                <div className="relative z-10">
+                  <h3 className="font-display font-black text-3xl sm:text-4xl lg:text-[42px] uppercase tracking-tight leading-[0.92] text-white">
+                    <span className="block text-white">PREDICT</span>
+                    <span className="block text-[#f59e0b] drop-shadow-sm">DELAYS</span>
+                    <span className="block text-white">BEFORE THEY</span>
+                    <span className="block text-white">HAPPEN</span>
+                  </h3>
+                </div>
+
+                {/* Floating High Risk Port Dwell HUD Card on the container */}
+                <div className="absolute right-7 sm:right-9 top-[42%] sm:top-[44%] z-20">
+                  <div className="relative bg-[#140e0a]/88 backdrop-blur-md border border-[#f59e0b]/40 rounded-2xl p-2.5 sm:p-3 shadow-2xl w-36 sm:w-40">
+                    <div className="flex items-center gap-1.5 mb-1.5">
+                      <span className="text-amber-400 text-xs">⚠️</span>
+                      <div>
+                        <div className="text-[7.5px] font-mono tracking-wider uppercase text-amber-400/80 font-bold leading-none">
+                          HIGH RISK
                         </div>
-                      </div>
-                      <div className="flex items-end gap-1 h-6 pt-1">
-                        <div className="flex-1 bg-orange-400/40 rounded-t h-[30%]" />
-                        <div className="flex-1 bg-orange-400/50 rounded-t h-[45%]" />
-                        <div className="flex-1 bg-orange-400/60 rounded-t h-[40%]" />
-                        <div className="flex-1 bg-orange-500/80 rounded-t h-[70%]" />
-                        <div className="flex-1 bg-red-500 rounded-t h-[95%] shadow-[0_0_6px_rgba(239,68,68,0.7)]" />
-                        <div className="flex-1 bg-orange-500/90 rounded-t h-[75%]" />
+                        <div className="text-[11px] font-display font-black text-white leading-tight">
+                          Port Dwell
+                        </div>
                       </div>
                     </div>
 
-                    {/* Enlarged 3D Parcel Box SVG */}
-                    <svg viewBox="0 0 160 140" className="w-[190px] sm:w-[220px] h-[170px] sm:h-[200px] drop-shadow-2xl" fill="none">
-                      <ellipse cx="80" cy="120" rx="55" ry="14" fill="#361306" opacity="0.6" />
-                      <polygon points="80,42 128,64 80,86 32,64" fill="#dca068" />
-                      <polygon points="74,45 86,50 86,83 74,78" fill="#b0733c" />
+                    {/* 6-Bar Histogram */}
+                    <div className="flex items-end gap-1.5 h-6 pt-1">
+                      <div className="flex-1 bg-white/20 rounded-sm h-[25%]" />
+                      <div className="flex-1 bg-white/30 rounded-sm h-[35%]" />
+                      <div className="flex-1 bg-amber-500/60 rounded-sm h-[50%]" />
+                      <div className="flex-1 bg-amber-500 rounded-sm h-[68%]" />
+                      <div className="flex-1 bg-orange-500 rounded-sm h-[82%]" />
+                      <div className="flex-1 bg-red-500 rounded-sm h-[100%] shadow-[0_0_8px_rgba(239,68,68,0.7)]" />
+                    </div>
 
-                      <polygon points="32,64 80,86 80,126 32,104" fill="#c38248" />
-                      <polygon points="74,83 80,86 80,126 74,123" fill="#9d612e" />
-
-                      <g transform="translate(42, 85) skewY(24)">
-                        <rect width="20" height="12" fill="#ffffff" rx="1" />
-                        <line x1="2" y1="2" x2="2" y2="10" stroke="#000" strokeWidth="1" />
-                        <line x1="5" y1="2" x2="5" y2="10" stroke="#000" strokeWidth="1.5" />
-                        <line x1="8" y1="2" x2="8" y2="10" stroke="#000" strokeWidth="0.8" />
-                        <line x1="11" y1="2" x2="11" y2="10" stroke="#000" strokeWidth="1.2" />
-                        <line x1="15" y1="2" x2="15" y2="10" stroke="#000" strokeWidth="1" />
-                      </g>
-
-                      <polygon points="80,86 128,64 128,104 80,126" fill="#a46835" />
-
-                      <g transform="translate(108, 88)">
-                        <path d="M12 2 L22 20 L2 20 Z" fill="#ff5500" stroke="#ffffff" strokeWidth="1.5" />
-                        <text x="12" y="17" textAnchor="middle" fill="#ffffff" fontSize="11" fontWeight="900" fontFamily="sans-serif">!</text>
-                      </g>
-                    </svg>
+                    {/* Connector line and beacon pin to the container */}
+                    <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center">
+                      <div className="w-[1.5px] h-4 bg-[#f59e0b]/70" />
+                      <div className="w-2.5 h-2.5 rounded-full bg-[#f59e0b] shadow-[0_0_8px_#f59e0b] ring-2 ring-[#f59e0b]/40" />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -603,7 +605,7 @@ export default function FeatureGridSection({
             <div className="relative rounded-[32px] sm:rounded-[38px] bg-[#071916] text-[#c2ebfa] border border-[#1b3e34] shadow-[0_25px_65px_rgba(7,31,28,0.3)] overflow-hidden flex flex-col h-[520px] sm:h-[560px] lg:h-[590px]">
 
               {/* ── DASHBOARD TOP OPERATING BAR ─────────────────────────── */}
-              {activeStage === 1 ? (
+              {activeStage === 1 || activeStage === 2 ? (
                 <div className="px-5 py-3 bg-[#080d14] border-b border-white/10 flex items-center justify-between">
                   <div className="flex items-center gap-6">
                     {/* Brand Logo: polygon mark + LOGISYNC */}
@@ -615,12 +617,14 @@ export default function FeatureGridSection({
                       <span>LOGISYNC</span>
                     </div>
 
-                    {/* Nav Items */}
-                    <div className="hidden sm:flex items-center gap-6 text-[11px] font-mono font-bold tracking-widest text-[#71859c]">
-                      <span className="text-white hover:text-[#fbbf24] cursor-pointer transition-colors">ROUTES</span>
-                      <span className="hover:text-white cursor-pointer transition-colors">FLEET</span>
-                      <span className="hover:text-white cursor-pointer transition-colors">ANALYTICS</span>
-                    </div>
+                    {/* Nav Items (for stage 1) */}
+                    {activeStage === 1 && (
+                      <div className="hidden sm:flex items-center gap-6 text-[11px] font-mono font-bold tracking-widest text-[#71859c]">
+                        <span className="text-white hover:text-[#fbbf24] cursor-pointer transition-colors">ROUTES</span>
+                        <span className="hover:text-white cursor-pointer transition-colors">FLEET</span>
+                        <span className="hover:text-white cursor-pointer transition-colors">ANALYTICS</span>
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex items-center gap-3">
@@ -1379,64 +1383,223 @@ export default function FeatureGridSection({
 
                 {/* ── STATE 2: Weather Risk & Port Bottleneck Radar ───────── */}
                 {activeStage === 2 && (
-                  <div className="relative z-10 flex-1 flex flex-col justify-between animate-in fade-in duration-300">
-                    <div className="flex items-center justify-between pb-3 border-b border-[#1b3e34]">
+                  <div className="relative z-10 flex-1 flex flex-col justify-between animate-in fade-in duration-300 gap-2.5">
+                    {/* Header: RISK RADAR + PROACTIVE RISK INTERCEPTION */}
+                    <div className="flex items-center justify-between pb-1">
                       <div>
-                        <span className="text-[10px] font-mono text-orange-400 uppercase">EARLY WARNING RADAR</span>
-                        <div className="font-display font-black text-lg text-white">PROACTIVE RISK INTERCEPTION</div>
-                      </div>
-                      <div className="px-2.5 py-1 rounded-full bg-red-500/20 text-red-400 text-[10px] font-mono font-bold">
-                        2 THREATS NEUTRALIZED
+                        <div className="text-[9.5px] font-mono tracking-widest text-[#71859c] uppercase font-bold">
+                          RISK RADAR
+                        </div>
+                        <h4 className="font-display font-black text-base sm:text-xl text-white tracking-tight leading-tight">
+                          PROACTIVE <span className="text-[#ea580c]">RISK INTERCEPTION</span>
+                        </h4>
                       </div>
                     </div>
 
-                    {/* Warning Alerts Interface */}
-                    <div className="space-y-2.5 my-auto">
-                      <div className="bg-[#241108] p-3 rounded-2xl border border-orange-500/40 flex items-start gap-3">
-                        <div className="w-6 h-6 rounded-lg bg-orange-500/20 text-orange-400 flex items-center justify-center text-xs mt-0.5">
-                          ⚠️
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs font-bold text-orange-200">TYPHOON PACIFIC CORRIDOR // LEVEL 4</span>
-                            <span className="text-[9px] font-mono text-orange-400 font-bold">T-MINUS 36H</span>
+                    {/* Middle Section: Left Alert Cards Stack + Right Threat Globe */}
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-2.5 flex-1 min-h-[140px] sm:min-h-[170px]">
+                      {/* Left: 2 Stacked Risk Alerts */}
+                      <div className="md:col-span-6 flex flex-col justify-center gap-2">
+                        {/* Alert 1: Typhoon Pacific Corridor */}
+                        <div className="bg-[#140b08]/92 border border-[#ea580c]/40 hover:border-[#ea580c] rounded-2xl p-2.5 sm:p-3 flex items-center justify-between gap-2.5 shadow-lg transition-all hover:bg-[#1a0f0a] cursor-pointer">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-xl bg-[#2a1008] border border-[#ef4444]/40 flex items-center justify-center text-[#ef4444] shrink-0">
+                              <AlertTriangle className="w-4 h-4 text-[#ef4444]" />
+                            </div>
+                            <div>
+                              <div className="font-bold text-xs text-white leading-snug">Typhoon Pacific Corridor</div>
+                              <div className="text-[10px] text-[#71859c]">Course adjustment detected</div>
+                            </div>
                           </div>
-                          <p className="text-[11px] text-orange-200/70 mt-0.5">
-                            Automated course deflection shifted 14 vessels 210 nautical miles south. Zero cargo exposure.
-                          </p>
+                          <ChevronRight className="w-4 h-4 text-white/40" />
+                        </div>
+
+                        {/* Alert 2: Port Rotterdam Dwell Spike */}
+                        <div className="bg-[#141206]/92 border border-[#f59e0b]/40 hover:border-[#f59e0b] rounded-2xl p-2.5 sm:p-3 flex items-center justify-between gap-2.5 shadow-lg transition-all hover:bg-[#1c1808] cursor-pointer">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-xl bg-[#261f06] border border-[#f59e0b]/40 flex items-center justify-center text-[#f59e0b] shrink-0">
+                              <Anchor className="w-4 h-4 text-[#f59e0b]" />
+                            </div>
+                            <div>
+                              <div className="font-bold text-xs text-white leading-snug">Port Rotterdam Dwell Spike</div>
+                              <div className="text-[10px] text-[#71859c]">Pre-booked rail slot impacted</div>
+                            </div>
+                          </div>
+                          <ChevronRight className="w-4 h-4 text-white/40" />
                         </div>
                       </div>
 
-                      <div className="bg-[#1e130a] p-3 rounded-2xl border border-amber-500/40 flex items-start gap-3">
-                        <div className="w-6 h-6 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center text-xs mt-0.5">
-                          ⚓
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs font-bold text-amber-200">PORT ROTTERDAM BERTH DWELL SPIKE</span>
-                            <span className="text-[9px] font-mono text-emerald-400 font-bold">RESOLVED VIA ANTWERP</span>
-                          </div>
-                          <p className="text-[11px] text-amber-200/70 mt-0.5">
-                            AI pre-booked rail slot in Antwerp before dockworkers strike took effect.
-                          </p>
-                        </div>
+                      {/* Right: Threat Radar Globe with Pulsing Red Threat Zone */}
+                      <div className="md:col-span-6 relative rounded-2xl bg-[#060b12] border border-white/10 overflow-hidden flex items-center justify-center min-h-[135px]">
+                        <svg viewBox="0 0 320 180" className="w-full h-full object-cover" fill="none">
+                          <defs>
+                            <radialGradient id="threatGlobeGrad" cx="50%" cy="50%" r="50%">
+                              <stop offset="0%" stopColor="#14283d" stopOpacity="0.8" />
+                              <stop offset="65%" stopColor="#0a1420" stopOpacity="0.9" />
+                              <stop offset="100%" stopColor="#04080e" stopOpacity="0" />
+                            </radialGradient>
+                            <filter id="threatHalo" x="-50%" y="-50%" width="200%" height="200%">
+                              <feGaussianBlur stdDeviation="5" result="blur" />
+                              <feMerge>
+                                <feMergeNode in="blur" />
+                                <feMergeNode in="SourceGraphic" />
+                              </feMerge>
+                            </filter>
+                          </defs>
+
+                          {/* Globe Sphere Background */}
+                          <circle cx="210" cy="110" r="140" fill="url(#threatGlobeGrad)" />
+
+                          {/* Globe Wireframe Latitude Lines */}
+                          <ellipse cx="210" cy="110" rx="135" ry="70" stroke="#1e3448" strokeWidth="0.8" strokeDasharray="3 3" opacity="0.4" />
+                          <ellipse cx="210" cy="110" rx="135" ry="38" stroke="#1e3448" strokeWidth="0.8" opacity="0.3" />
+                          <ellipse cx="210" cy="110" rx="135" ry="10" stroke="#1e3448" strokeWidth="0.8" opacity="0.25" />
+
+                          {/* Longitude Arcs */}
+                          <path d="M 210 0 C 150 25 120 70 120 110 C 120 150 150 190 210 220" stroke="#1e3448" strokeWidth="0.8" opacity="0.3" />
+                          <path d="M 210 0 C 270 25 300 70 300 110 C 300 150 270 190 210 220" stroke="#1e3448" strokeWidth="0.8" opacity="0.3" />
+                          <line x1="210" y1="0" x2="210" y2="220" stroke="#1e3448" strokeWidth="0.8" strokeDasharray="3 3" opacity="0.4" />
+
+                          {/* Continents Night Lights */}
+                          <g opacity="0.75">
+                            <circle cx="110" cy="80" r="1.2" fill="#c2ebfa" />
+                            <circle cx="120" cy="90" r="1.4" fill="#fef08a" />
+                            <circle cx="130" cy="105" r="1" fill="#c2ebfa" />
+                            <circle cx="140" cy="120" r="1.2" fill="#71859c" />
+                            <circle cx="190" cy="65" r="1.4" fill="#ffffff" />
+                            <circle cx="205" cy="60" r="1.6" fill="#fef08a" />
+                            <circle cx="225" cy="80" r="1.2" fill="#c2ebfa" />
+                            <circle cx="250" cy="120" r="1.3" fill="#fef08a" />
+                            <circle cx="270" cy="100" r="1.5" fill="#ffffff" />
+                            <circle cx="285" cy="95" r="1.2" fill="#c2ebfa" />
+                          </g>
+
+                          {/* Route Trajectories bypassing Threat */}
+                          <path d="M 90 95 Q 140 30 200 50 Q 240 60 275 80" stroke="#ffffff" strokeWidth="1" strokeDasharray="3 3" opacity="0.25" />
+                          <path d="M 90 95 Q 150 50 210 75 Q 245 80 290 110" stroke="#f59e0b" strokeWidth="2.5" strokeLinecap="round" opacity="0.9" />
+                          <path d="M 170 120 Q 220 145 285 110" stroke="#f59e0b" strokeWidth="1.8" strokeLinecap="round" opacity="0.8" />
+
+                          {/* Waypoint Nodes */}
+                          <circle cx="90" cy="95" r="3.5" fill="#ffffff" />
+                          <circle cx="90" cy="95" r="6" stroke="#ffffff" strokeWidth="1" opacity="0.5" />
+
+                          <circle cx="160" cy="65" r="3.5" fill="#ffffff" />
+                          <circle cx="210" cy="75" r="4.5" fill="#fbbf24" />
+                          <circle cx="210" cy="75" r="8" fill="#fbbf24" opacity="0.3" className="animate-ping" />
+                          <circle cx="290" cy="110" r="3.5" fill="#ffffff" />
+
+                          {/* Red Threat Hotspot over Corridor */}
+                          <g transform="translate(250, 68)">
+                            <circle cx="10" cy="10" r="22" stroke="#ef4444" strokeWidth="1" strokeDasharray="3 3" opacity="0.6" className="animate-ping" />
+                            <circle cx="10" cy="10" r="15" fill="#ef4444" opacity="0.22" />
+                            <circle cx="10" cy="10" r="9.5" fill="#dc2626" filter="url(#threatHalo)" />
+                            {/* Alert Triangle */}
+                            <path d="M 10 5 L 14 13 L 6 13 Z" fill="#ffffff" />
+                            <circle cx="10" cy="11.5" r="0.6" fill="#dc2626" />
+                          </g>
+                        </svg>
                       </div>
                     </div>
 
-                    {/* Threat Mitigation Stats */}
-                    <div className="grid grid-cols-3 gap-2 pt-2">
-                      <div className="bg-[#0b211c] p-2 rounded-xl text-center border border-[#1b3e34]">
-                        <div className="text-[9px] font-mono text-[#7ca69a]">DELAY PREVENTED</div>
-                        <div className="text-base font-display font-black text-emerald-400">72.5 HRS</div>
+                    {/* Three KPI Metric Cards */}
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                      {/* DELAY PREVENTED */}
+                      <div className="bg-[#091518]/95 rounded-2xl border border-white/10 p-2.5 sm:p-3 flex items-center justify-between shadow-lg">
+                        <div className="flex items-center gap-2">
+                          <div className="w-7 h-7 rounded-full bg-[#082220] border border-[#14b8a6]/40 flex items-center justify-center text-[#14b8a6] shrink-0">
+                            <Clock className="w-3.5 h-3.5 text-[#14b8a6]" />
+                          </div>
+                          <div>
+                            <div className="text-[8.5px] font-mono tracking-widest text-[#71859c] uppercase">DELAY PREVENTED</div>
+                            <div className="text-lg sm:text-xl font-display font-black text-white leading-tight">72.5 HRS</div>
+                          </div>
+                        </div>
+                        <svg viewBox="0 0 50 22" className="w-11 h-5 text-[#14b8a6]" fill="none">
+                          <path d="M 2 17 Q 14 18 24 10 T 48 4" stroke="#14b8a6" strokeWidth="2.5" strokeLinecap="round" />
+                        </svg>
                       </div>
-                      <div className="bg-[#0b211c] p-2 rounded-xl text-center border border-[#1b3e34]">
-                        <div className="text-[9px] font-mono text-[#7ca69a]">CLAIMS AVOIDED</div>
-                        <div className="text-base font-display font-black text-white">$210,000</div>
+
+                      {/* CLAIMS AVOIDED */}
+                      <div className="bg-[#091518]/95 rounded-2xl border border-white/10 p-2.5 sm:p-3 flex items-center justify-between shadow-lg">
+                        <div className="flex items-center gap-2">
+                          <div className="w-7 h-7 rounded-full bg-[#082220] border border-[#14b8a6]/40 flex items-center justify-center text-[#14b8a6] shrink-0">
+                            <Coins className="w-3.5 h-3.5 text-[#14b8a6]" />
+                          </div>
+                          <div>
+                            <div className="text-[8.5px] font-mono tracking-widest text-[#71859c] uppercase">CLAIMS AVOIDED</div>
+                            <div className="text-lg sm:text-xl font-display font-black text-white leading-tight">$210,000</div>
+                          </div>
+                        </div>
+                        <svg viewBox="0 0 50 22" className="w-11 h-5 text-[#14b8a6]" fill="none">
+                          <path d="M 2 18 Q 16 16 26 9 T 48 3" stroke="#14b8a6" strokeWidth="2.5" strokeLinecap="round" />
+                        </svg>
                       </div>
-                      <div className="bg-[#0b211c] p-2 rounded-xl text-center border border-[#1b3e34]">
-                        <div className="text-[9px] font-mono text-[#7ca69a]">ON-TIME GUARANTEE</div>
-                        <div className="text-base font-display font-black text-[#a8e63d]">99.82%</div>
+
+                      {/* ON-TIME GUARANTEE */}
+                      <div className="bg-[#091518]/95 rounded-2xl border border-white/10 p-2.5 sm:p-3 flex items-center justify-between shadow-lg">
+                        <div className="flex items-center gap-2">
+                          <div className="w-7 h-7 rounded-full bg-[#082220] border border-[#14b8a6]/40 flex items-center justify-center text-[#14b8a6] shrink-0">
+                            <Shield className="w-3.5 h-3.5 text-[#14b8a6]" />
+                          </div>
+                          <div>
+                            <div className="text-[8.5px] font-mono tracking-widest text-[#71859c] uppercase">ON-TIME GUARANTEE</div>
+                            <div className="text-lg sm:text-xl font-display font-black text-white leading-tight">99.9%</div>
+                          </div>
+                        </div>
+                        <svg viewBox="0 0 50 22" className="w-11 h-5 text-[#14b8a6]" fill="none">
+                          <path d="M 2 16 Q 12 17 24 9 T 48 5" stroke="#14b8a6" strokeWidth="2.5" strokeLinecap="round" />
+                        </svg>
                       </div>
+                    </div>
+
+                    {/* Bottom Action Toolbar */}
+                    <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-white/10">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <button
+                          type="button"
+                          onClick={onOpenAiAssistant}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#121924] hover:bg-[#1a2332] border border-white/10 hover:border-white/20 text-white text-[11px] font-medium cursor-pointer transition-all hover:scale-105 active:scale-95"
+                        >
+                          <Sparkles size={12} className="text-[#fbbf24]" />
+                          <span>Ask AI</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={onOpenPublicMap}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#121924] hover:bg-[#1a2332] border border-white/10 hover:border-white/20 text-white/90 text-[11px] font-medium cursor-pointer transition-all hover:scale-105 active:scale-95"
+                        >
+                          <Map size={12} className="text-white/70" />
+                          <span>Map</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={onOpenApiHub}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#121924] hover:bg-[#1a2332] border border-white/10 hover:border-white/20 text-white/90 text-[11px] font-medium cursor-pointer transition-all hover:scale-105 active:scale-95"
+                        >
+                          <Network size={12} className="text-white/70" />
+                          <span>API Hub</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => onOpenDashboard && onOpenDashboard('command-center')}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#121924] hover:bg-[#1a2332] border border-white/10 hover:border-white/20 text-white/90 text-[11px] font-medium cursor-pointer transition-all hover:scale-105 active:scale-95"
+                        >
+                          <LayoutGrid size={12} className="text-white/70" />
+                          <span>Open Dashboard</span>
+                        </button>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => onOpenDashboard && onOpenDashboard('command-center')}
+                        className="flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#f59e0b] hover:bg-[#fbbf24] text-[#0f172a] text-[11px] font-bold font-display uppercase tracking-wider shadow-md transition-all hover:scale-105 active:scale-95 cursor-pointer ml-auto"
+                      >
+                        <span>Launch Console</span>
+                        <ArrowRight size={13} className="stroke-[2.5]" />
+                      </button>
                     </div>
                   </div>
                 )}
