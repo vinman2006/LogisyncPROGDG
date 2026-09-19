@@ -172,23 +172,14 @@ export default function HeroShipmentStream({
             Autonomous multimodal logistics with sub-second telemetry, cold-chain compliance, and live NeonDB PostgreSQL coordination.
           </p>
 
-          {/* Primary Action Buttons: zero placeholders */}
-          <div className="mt-6 flex flex-wrap items-center gap-3">
+          {/* Single Action Button without animation */}
+          <div className="mt-6">
             <button
               type="button"
               onClick={() => onOpenDashboard && onOpenDashboard('command-center')}
-              className="px-6 sm:px-7 py-3.5 rounded-full bg-white hover:bg-[#f0f4ff] text-[#0d0738] font-display font-black text-xs uppercase tracking-wider transition-all duration-200 hover:scale-105 active:scale-95 shadow-[0_10px_30px_rgba(255,255,255,0.2)] cursor-pointer"
+              className="px-8 py-3.5 rounded-full bg-white hover:bg-[#f0f4ff] text-[#0d0738] font-display font-black text-xs uppercase tracking-wider cursor-pointer shadow-[0_4px_16px_rgba(0,0,0,0.25)]"
             >
-              LAUNCH COMMAND CENTER &rarr;
-            </button>
-
-            <button
-              type="button"
-              onClick={() => onOpenAiAssistant && onOpenAiAssistant()}
-              className="px-5 sm:px-6 py-3.5 rounded-full bg-[#ff5500] hover:bg-[#ff6a1f] text-black font-display font-black text-xs uppercase tracking-wider flex items-center gap-2 transition-all duration-200 hover:scale-105 active:scale-95 shadow-[0_10px_25px_rgba(255,85,0,0.35)] cursor-pointer"
-            >
-              <span className="w-2 h-2 rounded-full bg-black animate-ping" />
-              <span>ASK GEMINI AI</span>
+              START NOW
             </button>
           </div>
 
