@@ -58,19 +58,8 @@ export default function Navbar({
 
           {/* Right: AI Assistant + Auth Status + Get Started CTA + Hamburger Menu Button */}
           <div className="flex items-center gap-2.5 sm:gap-3">
-            {/* Quick AI Assistant Trigger in Navbar */}
-            <button
-              type="button"
-              onClick={onOpenAiAssistant}
-              className="flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-full bg-[#ff5500]/15 hover:bg-[#ff5500]/25 text-[#ff7733] hover:text-white text-xs font-bold border border-[#ff5500]/40 transition-all hover:scale-105 active:scale-95 cursor-pointer shadow-sm"
-              title="Open LogiSyncPRO Gemini AI Assistant"
-            >
-              <Sparkles size={13} className="text-[#ff5500] animate-pulse" />
-              <span className="hidden xs:inline">Gemini AI</span>
-            </button>
-
-            {/* Authenticated User Profile Pill or Sign In Button */}
-            {user ? (
+            {/* Authenticated User Profile Pill */}
+            {user && (
               <div className="relative">
                 <button
                   type="button"
@@ -222,53 +211,22 @@ export default function Navbar({
                   </>
                 )}
               </div>
-            ) : (
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={onOpenApiHub}
-                  className="hidden md:flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#1a0f0a]/90 hover:bg-[#2e1810] text-[#ff7733] hover:text-white text-xs font-semibold border border-[#ff5500]/40 transition-all hover:scale-105 active:scale-95 cursor-pointer shadow-sm"
-                >
-                  <Network size={13} className="text-[#ff5500]" />
-                  <span>API Hub</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={onOpenPublicMap}
-                  className="hidden md:flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#0e3328]/90 hover:bg-[#124233] text-[#34d399] hover:text-white text-xs font-semibold border border-[#10b981]/40 transition-all hover:scale-105 active:scale-95 cursor-pointer shadow-sm"
-                >
-                  <MapPin size={13} className="text-[#10b981]" />
-                  <span>Public Map</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={onOpenLogin}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-semibold border border-white/20 transition-all hover:scale-105 active:scale-95 cursor-pointer shadow-sm"
-                >
-                  <LogIn size={13} />
-                  <span>Sign In</span>
-                </button>
-              </div>
             )}
 
-            {/* Get Started CTA */}
+            {/* Get Started CTA - Redirects directly to authentication */}
             <button
               type="button"
               onClick={() => {
                 if (user && onOpenDashboard) {
                   onOpenDashboard();
-                } else if (!user && onOpenLogin) {
+                } else if (onOpenLogin) {
                   onOpenLogin();
-                } else if (onOpenDashboard) {
-                  onOpenDashboard();
-                } else if (onOpenDemo) {
-                  onOpenDemo();
                 }
               }}
-              className="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-full bg-black/40 hover:bg-black/70 text-white text-xs font-bold tracking-wide border border-white/15 transition-all hover:scale-105 active:scale-95 cursor-pointer shadow-sm"
+              className="flex items-center gap-1.5 px-4 sm:px-5 py-2 rounded-full bg-white hover:bg-[#f0f4ff] text-[#0d0738] text-xs font-bold font-display uppercase tracking-wider transition-all hover:scale-105 active:scale-95 cursor-pointer shadow-md"
             >
               <span>{user ? 'Dashboard' : 'Get Started'}</span>
-              <ArrowUpRight size={14} className="stroke-[2.5]" />
+              <ArrowUpRight size={13} className="stroke-[2.5]" />
             </button>
 
             {/* Minimal 2-Bar Hamburger Menu Icon */}

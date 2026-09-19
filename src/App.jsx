@@ -184,7 +184,7 @@ function AppContent() {
       <div className="relative overflow-hidden">
         <ThreeJsBackground />
         <HeroShipmentStream 
-          onOpenDashboard={handleOpenDashboard}
+          onOpenDashboard={handleOpenLogin}
           onOpenAiAssistant={() => handleOpenAiAssistant()}
           onOpenPublicMap={() => {
             setCurrentView('public-map');
