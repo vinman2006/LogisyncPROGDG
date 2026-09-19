@@ -4,6 +4,20 @@
 
 ---
 
+## 🌐 Live Web App & Mobile Access
+
+Scan the QR code below or visit **[https://logisyncgdg.vercel.app/](https://logisyncgdg.vercel.app/)** to experience LogiSyncPRO live:
+
+<p align="center">
+  <a href="https://logisyncgdg.vercel.app/">
+    <img src="public/assets/qr_code.png" alt="LogiSyncPRO Live Demo QR Code" width="220" />
+  </a>
+  <br />
+  <sub><b>Scan to launch live platform:</b> <a href="https://logisyncgdg.vercel.app/">logisyncgdg.vercel.app</a></sub>
+</p>
+
+---
+
 ## 🏛️ System Architecture
 
 LogiSyncPRO uses an isolated, dual-database architecture:
