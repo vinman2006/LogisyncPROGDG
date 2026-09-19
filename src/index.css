@@ -367,24 +367,6 @@ body {
   animation: floatParticle 6s ease-in-out infinite;
 }
 
-/* ─── SCAN LINE (data scanner effect) ────────────────────────────────────── */
-@keyframes scanLine {
-  0%   { transform: translateY(-100%); }
-  100% { transform: translateY(100vh); }
-}
-
-.scan-line {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #10b981, transparent);
-  animation: scanLine 8s linear infinite;
-  pointer-events: none;
-  z-index: 9999;
-  opacity: 0.15;
-}
 
 /* ─── REVEAL CLIP ─────────────────────────────────────────────────────────── */
 .clip-reveal-init {

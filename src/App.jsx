@@ -156,9 +156,6 @@ function AppContent() {
     <SmoothScrollProvider>
     <div className="relative bg-[#0a0d1a] text-[#c7d5fd] selection:bg-[#ff5500] selection:text-black min-h-screen noise-overlay">
 
-      {/* ─── Ambient scan-line effect ─────────────────────────────────────── */}
-      <div className="scan-line" aria-hidden="true" />
-
       {/* ─── Floating ambient orbs for background depth ───────────────────── */}
       <FloatingOrb size={700} color="#10b981" x="15%" y="20%" speed={10} opacity={0.07} />
       <FloatingOrb size={500} color="#6366f1" x="75%" y="10%" speed={13} opacity={0.06} />
