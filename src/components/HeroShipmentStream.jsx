@@ -185,126 +185,189 @@ export default function HeroShipmentStream({
 
         </div>
 
-        {/* ── RIGHT SIDE: Horizontal Motion Lines & Shipping Boxes ────────── */}
-        <div className="hero-track-container w-full lg:w-[54%] h-[420px] sm:h-[500px] lg:h-[620px] relative overflow-hidden flex items-center">
+        {/* ── RIGHT SIDE: Contained Conveyor Transport Animation Zone ─────── */}
+        <div 
+          className="hero-track-container w-full lg:w-[54%] h-[380px] sm:h-[480px] lg:h-[560px] relative overflow-hidden rounded-2xl border border-white/[0.06] bg-gradient-to-r from-white/[0.01] via-white/[0.025] to-transparent select-none pointer-events-none"
+          aria-hidden="true"
+        >
+          {/* Subtle Ambient Depth Lighting inside the Zone */}
+          <div 
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: 'radial-gradient(ellipse 90% 70% at 50% 50%, rgba(124, 58, 237, 0.08) 0%, transparent 80%)',
+            }}
+          />
 
           {/* ═════════════════════════════════════════════════════════════════ */}
-          {/* TRACK 1 (TOP): Medium Cardboard Box with Trailing Speed Beams     */}
+          {/* CONVEYOR LANE 1 (TOP): Medium Cardboard Boxes (Left → Right)      */}
           {/* ═════════════════════════════════════════════════════════════════ */}
-          <div 
-            className="absolute right-0 flex items-center w-full justify-end z-10 pointer-events-none anim-track1-float"
-            style={{ top: '18%' }}
-          >
-            {/* Speed motion trail behind the box extending to the left */}
-            <div className="flex flex-col items-end gap-1.5 mr-[-14px] z-10 flex-1 max-w-[560px]">
-              {/* Orange motion beam with continuous shimmer */}
-              <div 
-                className="h-3.5 sm:h-4 rounded-full w-[78%] anim-shimmer-orange"
-                style={{
-                  background: 'linear-gradient(90deg, transparent 0%, rgba(255, 119, 0, 0.3) 20%, #ff7700 45%, #ffb347 65%, #ff7700 85%, #ff5500 100%)',
-                  boxShadow: '0 0 18px rgba(255, 119, 0, 0.6)',
-                }}
-              />
-              {/* Purple motion beam underneath, offset to the left */}
-              <div 
-                className="h-3 sm:h-3.5 rounded-full w-[92%] mr-5 anim-shimmer-purple"
-                style={{
-                  background: 'linear-gradient(90deg, transparent 0%, rgba(124, 58, 237, 0.3) 15%, #7c3aed 40%, #a78bfa 60%, #7c3aed 80%, #6d28d9 100%)',
-                  boxShadow: '0 0 16px rgba(124, 58, 237, 0.45)',
-                }}
-              />
+          <div className="absolute left-0 right-0 h-0 pointer-events-none" style={{ top: '22%' }}>
+            {/* Subtle transit guide line */}
+            <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-white/[0.05] to-transparent" />
+
+            {/* Lane 1 Package A */}
+            <div className="conveyor-item conveyor-lane1-a">
+              <div className="flex flex-col items-end gap-1 mr-[-12px] z-0">
+                <div 
+                  className="h-3 sm:h-3.5 rounded-full anim-shimmer-orange"
+                  style={{
+                    width: 'clamp(140px, 18vw, 240px)',
+                    background: 'linear-gradient(90deg, transparent 0%, rgba(255, 119, 0, 0.3) 25%, #ff7700 50%, #ffb347 75%, #ff5500 100%)',
+                    boxShadow: '0 0 16px rgba(255, 119, 0, 0.55)',
+                  }}
+                />
+                <div 
+                  className="h-2.5 sm:h-3 rounded-full mr-4 anim-shimmer-purple"
+                  style={{
+                    width: 'clamp(180px, 22vw, 300px)',
+                    background: 'linear-gradient(90deg, transparent 0%, rgba(124, 58, 237, 0.3) 20%, #7c3aed 45%, #a78bfa 70%, #6d28d9 100%)',
+                    boxShadow: '0 0 14px rgba(124, 58, 237, 0.4)',
+                  }}
+                />
+              </div>
+              <div className="relative z-10 flex-shrink-0">
+                <CardboardBox id="boxL1A" size={118} className="origin-center" />
+              </div>
             </div>
-            {/* 3D Isometric Cardboard Box */}
-            <div 
-              className="relative z-20 flex-shrink-0"
-              style={{ marginRight: '60px' }}
-            >
-              <CardboardBox id="boxTrack1" size={135} className="origin-left" />
+
+            {/* Lane 1 Package B (Staggered by 50% for continuous motion) */}
+            <div className="conveyor-item conveyor-lane1-b">
+              <div className="flex flex-col items-end gap-1 mr-[-12px] z-0">
+                <div 
+                  className="h-3 sm:h-3.5 rounded-full anim-shimmer-orange"
+                  style={{
+                    width: 'clamp(140px, 18vw, 240px)',
+                    background: 'linear-gradient(90deg, transparent 0%, rgba(255, 119, 0, 0.3) 25%, #ff7700 50%, #ffb347 75%, #ff5500 100%)',
+                    boxShadow: '0 0 16px rgba(255, 119, 0, 0.55)',
+                  }}
+                />
+                <div 
+                  className="h-2.5 sm:h-3 rounded-full mr-4 anim-shimmer-purple"
+                  style={{
+                    width: 'clamp(180px, 22vw, 300px)',
+                    background: 'linear-gradient(90deg, transparent 0%, rgba(124, 58, 237, 0.3) 20%, #7c3aed 45%, #a78bfa 70%, #6d28d9 100%)',
+                    boxShadow: '0 0 14px rgba(124, 58, 237, 0.4)',
+                  }}
+                />
+              </div>
+              <div className="relative z-10 flex-shrink-0">
+                <CardboardBox id="boxL1B" size={118} className="origin-center" />
+              </div>
             </div>
           </div>
 
           {/* ═════════════════════════════════════════════════════════════════ */}
-          {/* TRACK 2 (MIDDLE): Smaller Cardboard Box with Trailing Speed Beams  */}
+          {/* CONVEYOR LANE 2 (MIDDLE): Compact Cardboard Boxes (Left → Right)   */}
           {/* ═════════════════════════════════════════════════════════════════ */}
-          <div 
-            className="absolute right-0 flex items-center w-full justify-end z-10 pointer-events-none anim-track2-float"
-            style={{ top: '44%' }}
-          >
-            <div className="flex flex-col items-end gap-1.5 mr-[-10px] z-10 flex-1 max-w-[420px]">
-              {/* Orange motion beam */}
-              <div 
-                className="h-2.5 sm:h-3 rounded-full w-[72%] anim-shimmer-orange"
-                style={{
-                  background: 'linear-gradient(90deg, transparent 0%, rgba(255, 136, 0, 0.3) 20%, #ff8800 45%, #ffc060 65%, #ff8800 85%, #ff6600 100%)',
-                  boxShadow: '0 0 14px rgba(255, 136, 0, 0.5)',
-                }}
-              />
-              {/* Purple motion beam underneath */}
-              <div 
-                className="h-2 sm:h-2.5 rounded-full w-[88%] mr-4 anim-shimmer-purple"
-                style={{
-                  background: 'linear-gradient(90deg, transparent 0%, rgba(139, 92, 246, 0.3) 15%, #8b5cf6 40%, #c4b5fd 60%, #8b5cf6 80%, #7c3aed 100%)',
-                  boxShadow: '0 0 12px rgba(139, 92, 246, 0.4)',
-                }}
-              />
+          <div className="absolute left-0 right-0 h-0 pointer-events-none" style={{ top: '50%' }}>
+            <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-white/[0.05] to-transparent" />
+
+            {/* Lane 2 Package A */}
+            <div className="conveyor-item conveyor-lane2-a">
+              <div className="flex flex-col items-end gap-1 mr-[-10px] z-0">
+                <div 
+                  className="h-2.5 sm:h-3 rounded-full anim-shimmer-orange"
+                  style={{
+                    width: 'clamp(120px, 16vw, 200px)',
+                    background: 'linear-gradient(90deg, transparent 0%, rgba(255, 136, 0, 0.3) 25%, #ff8800 50%, #ffc060 75%, #ff6600 100%)',
+                    boxShadow: '0 0 14px rgba(255, 136, 0, 0.5)',
+                  }}
+                />
+                <div 
+                  className="h-2 sm:h-2.5 rounded-full mr-3 anim-shimmer-purple"
+                  style={{
+                    width: 'clamp(150px, 20vw, 250px)',
+                    background: 'linear-gradient(90deg, transparent 0%, rgba(139, 92, 246, 0.3) 20%, #8b5cf6 45%, #c4b5fd 70%, #7c3aed 100%)',
+                    boxShadow: '0 0 12px rgba(139, 92, 246, 0.4)',
+                  }}
+                />
+              </div>
+              <div className="relative z-10 flex-shrink-0">
+                <CardboardBox id="boxL2A" size={88} className="origin-center" />
+              </div>
             </div>
-            {/* Smaller 3D Isometric Cardboard Box */}
-            <div 
-              className="relative z-20 flex-shrink-0"
-              style={{ marginRight: '185px' }}
-            >
-              <CardboardBox id="boxTrack2" size={95} className="origin-left" />
+
+            {/* Lane 2 Package B */}
+            <div className="conveyor-item conveyor-lane2-b">
+              <div className="flex flex-col items-end gap-1 mr-[-10px] z-0">
+                <div 
+                  className="h-2.5 sm:h-3 rounded-full anim-shimmer-orange"
+                  style={{
+                    width: 'clamp(120px, 16vw, 200px)',
+                    background: 'linear-gradient(90deg, transparent 0%, rgba(255, 136, 0, 0.3) 25%, #ff8800 50%, #ffc060 75%, #ff6600 100%)',
+                    boxShadow: '0 0 14px rgba(255, 136, 0, 0.5)',
+                  }}
+                />
+                <div 
+                  className="h-2 sm:h-2.5 rounded-full mr-3 anim-shimmer-purple"
+                  style={{
+                    width: 'clamp(150px, 20vw, 250px)',
+                    background: 'linear-gradient(90deg, transparent 0%, rgba(139, 92, 246, 0.3) 20%, #8b5cf6 45%, #c4b5fd 70%, #7c3aed 100%)',
+                    boxShadow: '0 0 12px rgba(139, 92, 246, 0.4)',
+                  }}
+                />
+              </div>
+              <div className="relative z-10 flex-shrink-0">
+                <CardboardBox id="boxL2B" size={88} className="origin-center" />
+              </div>
             </div>
           </div>
 
+          {/* ═════════════════════════════════════════════════════════════════ */}
+          {/* CONVEYOR LANE 3 (BOTTOM): Large Freight Boxes (Left → Right)      */}
+          {/* ═════════════════════════════════════════════════════════════════ */}
+          <div className="absolute left-0 right-0 h-0 pointer-events-none" style={{ top: '78%' }}>
+            <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-white/[0.05] to-transparent" />
 
-          {/* ═════════════════════════════════════════════════════════════════ */}
-          {/* TRACK 3 (BOTTOM): Static Speed Lines + Cropped Large Box on Right */}
-          {/* ═════════════════════════════════════════════════════════════════ */}
-          <div className="absolute right-0 bottom-[14%] sm:bottom-[16%] flex items-center w-full justify-end z-20 pointer-events-none">
-            
-            {/* Speed Lines extending across the screen towards the right edge */}
-            <div className="flex flex-col items-end gap-2.5 mr-[-35px] z-10 flex-1 max-w-[850px]">
-              {/* Thick vibrant orange speed bar with shimmer */}
-              <div 
-                className="h-5 sm:h-6 rounded-full w-[85%] anim-shimmer-orange"
-                style={{
-                  background: 'linear-gradient(90deg, transparent 0%, rgba(255, 115, 0, 0.4) 15%, #ff7700 40%, #ffaa33 60%, #ff7700 85%, #ff5500 100%)',
-                  boxShadow: '0 0 24px rgba(255, 119, 0, 0.7)',
-                }}
-              />
-              {/* Vibrant violet/purple speed bar with shimmer */}
-              <div 
-                className="h-4 sm:h-5 rounded-full w-[95%] mr-8 anim-shimmer-purple"
-                style={{
-                  background: 'linear-gradient(90deg, transparent 0%, rgba(139, 92, 246, 0.3) 12%, #8b5cf6 35%, #a78bfa 60%, #8b5cf6 85%, #7c3aed 100%)',
-                  boxShadow: '0 0 20px rgba(139, 92, 246, 0.55)',
-                }}
-              />
-              {/* Thin periwinkle speed line */}
-              <div 
-                className="h-2 sm:h-2.5 rounded-full w-[60%] mr-20 opacity-80"
-                style={{
-                  background: 'linear-gradient(90deg, transparent 0%, #c4b5fd 40%, #e0e7ff 70%, #c4b5fd 100%)',
-                }}
-              />
+            {/* Lane 3 Package A */}
+            <div className="conveyor-item conveyor-lane3-a">
+              <div className="flex flex-col items-end gap-1.5 mr-[-16px] z-0">
+                <div 
+                  className="h-4 sm:h-5 rounded-full anim-shimmer-orange"
+                  style={{
+                    width: 'clamp(160px, 20vw, 280px)',
+                    background: 'linear-gradient(90deg, transparent 0%, rgba(255, 115, 0, 0.35) 20%, #ff7700 45%, #ffaa33 70%, #ff5500 100%)',
+                    boxShadow: '0 0 20px rgba(255, 119, 0, 0.65)',
+                  }}
+                />
+                <div 
+                  className="h-3 sm:h-4 rounded-full mr-5 anim-shimmer-purple"
+                  style={{
+                    width: 'clamp(200px, 25vw, 340px)',
+                    background: 'linear-gradient(90deg, transparent 0%, rgba(139, 92, 246, 0.3) 15%, #8b5cf6 40%, #a78bfa 65%, #7c3aed 100%)',
+                    boxShadow: '0 0 18px rgba(139, 92, 246, 0.5)',
+                  }}
+                />
+              </div>
+              <div className="relative z-10 flex-shrink-0">
+                <CardboardBox id="boxL3A" size={142} className="origin-center" />
+              </div>
             </div>
 
-            {/* ── LARGE PARTIALLY VISIBLE BOX ANCHORED ON FAR RIGHT ─────────── */}
-            {/* Positioned so its right portion is permanently cropped off-screen */}
-            <div 
-              className="relative z-20 flex-shrink-0 anim-large-box"
-              style={{
-                marginRight: '-75px', // Anchored and partially cropped at the right edge
-              }}
-            >
-              <CardboardBox 
-                id="boxLargeRight" 
-                size={270} 
-                className="sm:scale-105 lg:scale-115 origin-center" 
-              />
+            {/* Lane 3 Package B */}
+            <div className="conveyor-item conveyor-lane3-b">
+              <div className="flex flex-col items-end gap-1.5 mr-[-16px] z-0">
+                <div 
+                  className="h-4 sm:h-5 rounded-full anim-shimmer-orange"
+                  style={{
+                    width: 'clamp(160px, 20vw, 280px)',
+                    background: 'linear-gradient(90deg, transparent 0%, rgba(255, 115, 0, 0.35) 20%, #ff7700 45%, #ffaa33 70%, #ff5500 100%)',
+                    boxShadow: '0 0 20px rgba(255, 119, 0, 0.65)',
+                  }}
+                />
+                <div 
+                  className="h-3 sm:h-4 rounded-full mr-5 anim-shimmer-purple"
+                  style={{
+                    width: 'clamp(200px, 25vw, 340px)',
+                    background: 'linear-gradient(90deg, transparent 0%, rgba(139, 92, 246, 0.3) 15%, #8b5cf6 40%, #a78bfa 65%, #7c3aed 100%)',
+                    boxShadow: '0 0 18px rgba(139, 92, 246, 0.5)',
+                  }}
+                />
+              </div>
+              <div className="relative z-10 flex-shrink-0">
+                <CardboardBox id="boxL3B" size={142} className="origin-center" />
+              </div>
             </div>
-
           </div>
 
         </div>
