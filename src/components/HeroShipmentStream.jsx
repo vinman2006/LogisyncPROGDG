@@ -158,14 +158,14 @@ export default function HeroShipmentStream({
           <h1 
             className="font-display font-black uppercase tracking-tight sm:tracking-tighter leading-[0.84] text-[#c7d5fd] headline-stable"
             style={{
-              fontSize: 'clamp(3.8rem, 8.8vw, 7.8rem)',
+              fontSize: 'clamp(3.2rem, 7.5vw, 6.8rem)',
               textShadow: '0 4px 30px rgba(10, 4, 40, 0.5)',
             }}
           >
-            <span className="block text-[#dbe5ff] drop-shadow-sm">TURN</span>
-            <span className="block text-[#dbe5ff] drop-shadow-sm">YOUR</span>
-            <span className="block text-[#c7d5fd] drop-shadow-sm">SHIPMENTS</span>
-            <span className="block text-[#c7d5fd] drop-shadow-sm">ON</span>
+            <span className="block text-[#dbe5ff] drop-shadow-sm">MOVE</span>
+            <span className="block text-[#dbe5ff] drop-shadow-sm">EVERY</span>
+            <span className="block text-[#c7d5fd] drop-shadow-sm">SHIPMENT</span>
+            <span className="block text-[#c7d5fd] drop-shadow-sm">SMARTER</span>
           </h1>
 
           <p className="mt-5 text-sm sm:text-base text-[#a9bee8] max-w-lg leading-relaxed font-sans">
